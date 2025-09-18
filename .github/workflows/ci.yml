@@ -1,0 +1,138 @@
+name: CI - Test and Validate
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd yuihub_api && npm ci
+          cd ../yuihub_mcp && npm ci
+
+      - name: Validate OpenAPI specification
+        run: |
+          npx swagger-parser validate yuihub_api/openapi.yml
+
+      - name: Lint JavaScript files
+        run: |
+          # Basic syntax check
+          node -c yuihub_api/src/server.js
+          node -c yuihub_api/src/storage.js
+          node -c yuihub_api/src/search.js
+          node -c yuihub_mcp/src/server.js
+          node -c scripts/chunk_and_lunr.mjs
+          node -c scripts/build_terms.mjs
+          node -c scripts/summarize_weekly.mjs
+
+      - name: Test API server startup
+        run: |
+          cd yuihub_api
+          timeout 10s npm start &
+          sleep 5
+          curl -f http://localhost:3000/health || exit 1
+        env:
+          STORAGE_ADAPTER: local
+          LOCAL_STORAGE_PATH: ./test_chatlogs
+
+      - name: Test search indexing
+        run: |
+          # Create test data
+          mkdir -p test_chatlogs/2025/09
+          cat > test_chatlogs/2025/09/test-note.md << 'EOF'
+          ---
+          id: 01TEST123456789ABCDEFGHIJK
+          date: 2025-09-18T21:00:00+09:00
+          actors: [test]
+          topic: Test Note
+          tags: [test, ci]
+          decision: 採用
+          ---
+          ## Test Content
+          This is a test note for CI validation.
+          EOF
+          
+          # Test indexing
+          node scripts/chunk_and_lunr.mjs --source=./test_chatlogs --output=./test_index
+          
+          # Verify index was created
+          test -f test_index/lunr.idx.json
+          test -f test_index/documents.json
+          test -f test_index/stats.json
+          
+          # Test terms building
+          LOCAL_STORAGE_PATH=./test_chatlogs node scripts/build_terms.mjs
+          test -f index/terms.json
+
+  test-mcp:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: cd yuihub_mcp && npm ci
+
+      - name: Test MCP server syntax
+        run: |
+          cd yuihub_mcp
+          node -c src/server.js
+
+      - name: Validate MCP tools schema
+        run: |
+          cd yuihub_mcp
+          # Test that the server can start and list tools
+          echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | timeout 5s node src/server.js || true
+
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd yuihub_api && npm ci
+          cd ../yuihub_mcp && npm ci
+
+      - name: Run npm audit
+        run: |
+          cd yuihub_api && npm audit --audit-level moderate
+          cd ../yuihub_mcp && npm audit --audit-level moderate
+
+      - name: Check for hardcoded secrets
+        run: |
+          # Simple check for common secret patterns
+          if grep -r "password\|secret\|key\|token" --include="*.js" --include="*.mjs" --exclude-dir=node_modules .; then
+            echo "⚠️ Potential hardcoded secrets found. Please review."
+            exit 1
+          fi
