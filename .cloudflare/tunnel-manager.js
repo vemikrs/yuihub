@@ -40,12 +40,15 @@ export class TunnelManager {
       return url;
       
     } else if (this.mode === 'named') {
-      const domain = process.env.TUNNEL_DOMAIN;
+      const baseUrl = process.env.TUNNEL_BASE_URL;
       const name = process.env.TUNNEL_NAME || 'yuihub-prod';
       
-      if (!domain) {
-        throw new Error('TUNNEL_DOMAIN environment variable is required for named tunnels');
+      if (!baseUrl) {
+        throw new Error('TUNNEL_BASE_URL environment variable is required for named tunnels');
       }
+      
+      // Extract domain from TUNNEL_BASE_URL (e.g., https://poc-yuihub.vemi.jp -> poc-yuihub.vemi.jp)
+      const domain = new URL(baseUrl).hostname;
       
       this.manager = new NamedTunnelManager(name, domain);
       const url = await this.manager.start();

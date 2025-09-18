@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import { ulid } from 'ulid';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import yaml from 'js-yaml';
 import { createStorageAdapter } from './storage.js';
 import { SearchService } from './search.js';
 
@@ -63,14 +64,59 @@ app.get('/openapi.yml', async (req, reply) => {
     const fs = await import('fs/promises');
     const schemaPath = path.join(__dirname, '../openapi.yml');
     app.log.info(`Attempting to load OpenAPI schema from: ${schemaPath}`);
-    const schema = await fs.readFile(schemaPath, 'utf8');
     
-    // Set correct MIME type with UTF-8 charset
+    // Load and parse YAML
+    const schemaFile = await fs.readFile(schemaPath, 'utf8');
+    const schemaObj = yaml.load(schemaFile);
+    
+    // Dynamic server URL generation based on request headers
+    const protocol = req.headers['x-forwarded-proto'] || 
+                     (req.headers.host && req.headers.host.includes('.trycloudflare.com')) ? 'https' : 'http';
+    const host = req.headers.host || 'localhost:3000';
+    
+    // Environment-specific server URL logic
+    let serverUrl;
+    let description;
+    
+    if (host.includes('localhost')) {
+      serverUrl = 'http://localhost:3000';
+      description = 'Local development server';
+    } else if (host.includes('.trycloudflare.com')) {
+      serverUrl = `https://${host}`;
+      description = `Cloudflare Quick Tunnel (${host})`;
+    } else if (process.env.TUNNEL_BASE_URL) {
+      // Use TUNNEL_BASE_URL if configured (for fixed tunnels)
+      serverUrl = process.env.TUNNEL_BASE_URL;
+      description = `Cloudflare Named Tunnel (${process.env.TUNNEL_BASE_URL})`;
+    } else if (host.includes('poc-yuihub.vemi.jp')) {
+      // Handle the PoC tunnel case - domain root
+      serverUrl = `https://${host}`;
+      description = `YuiHub PoC (${host})`;
+    } else if (host.includes('vemi.jp')) {
+      // General vemi.jp domain handling
+      serverUrl = `https://${host}`;
+      description = `Cloudflare Named Tunnel (${host})`;
+    } else {
+      serverUrl = `${protocol}://${host}`;
+      description = `Runtime server (${host})`;
+    }
+    
+    // Update servers section dynamically
+    schemaObj.servers = [{
+      url: serverUrl,
+      description: description
+    }];
+    
+    app.log.info(`OpenAPI dynamic server: ${serverUrl}`);
+    
+    // Convert back to YAML and return
+    const dynamicSchema = yaml.dump(schemaObj);
+    
     reply
       .type('text/yaml; charset=utf-8')
       .header('Content-Disposition', 'inline; filename="openapi.yml"');
     
-    return schema;
+    return dynamicSchema;
   } catch (error) {
     app.log.error(error, `Failed to load OpenAPI schema from: ${path.join(__dirname, '../openapi.yml')}`);
     reply.status(500);
@@ -205,7 +251,14 @@ const start = async () => {
         app.decorate('tunnelUrl', url);
         
       } catch (tunnelError) {
-        app.log.error('Failed to start tunnel:', tunnelError.message);
+        app.log.error('Failed to start tunnel:', tunnelError.message || tunnelError);
+        app.log.error('Tunnel error details:', {
+          name: tunnelError.name,
+          stack: tunnelError.stack,
+          mode: process.env.TUNNEL_MODE,
+          baseUrl: process.env.TUNNEL_BASE_URL,
+          enableTunnel: process.env.ENABLE_TUNNEL
+        });
         app.log.info('💡 Server will continue without tunnel');
       }
     }

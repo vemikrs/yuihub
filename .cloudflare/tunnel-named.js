@@ -2,78 +2,66 @@
 // Handles fixed subdomain tunnels for production use
 
 import { spawn } from 'child_process';
-import fs from 'fs/promises';
-import yaml from 'js-yaml';
-import path from 'path';
 
 export class NamedTunnelManager {
   constructor(tunnelName, domain) {
     this.tunnelName = tunnelName;
     this.domain = domain;
     this.process = null;
-  }
-
-  async setup() {
-    // Generate configuration file for named tunnel
-    const config = {
-      tunnel: this.tunnelName,
-      'credentials-file': `~/.cloudflared/${await this.getTunnelId()}.json`,
-      ingress: [{
-        hostname: this.domain,
-        service: 'http://localhost:3000'
-      }, {
-        service: 'http_status:404'
-      }]
-    };
+    this.token = process.env.TUNNEL_TOKEN;
     
-    const configPath = '.cloudflare/config/named.yml';
-    await fs.writeFile(configPath, yaml.dump(config));
-    
-    console.log(`✅ Named tunnel config written to ${configPath}`);
+    if (!this.token) {
+      throw new Error('TUNNEL_TOKEN environment variable is required for named tunnels');
+    }
   }
 
   async start() {
-    await this.setup();
+    console.log(`🚀 Starting named tunnel with token: ${this.domain}`);
     
-    console.log(`🚀 Starting named tunnel: ${this.tunnelName}`);
-    
+    // Use token-based approach instead of config file
     this.process = spawn('cloudflared', [
       'tunnel',
-      '--config', '.cloudflare/config/named.yml',
-      'run'
+      'run',
+      '--token', this.token,
+      '--url', 'http://localhost:3000'
     ], {
-      detached: true,
+      detached: false,
       stdio: ['ignore', 'pipe', 'pipe']
     });
-    
+
     this.process.stdout.on('data', (data) => {
       console.log('Named tunnel stdout:', data.toString().trim());
     });
-    
+
     this.process.stderr.on('data', (data) => {
       console.log('Named tunnel stderr:', data.toString().trim());
     });
     
+    this.process.on('close', (code) => {
+      console.log(`Named tunnel process exited with code ${code}`);
+      this.process = null;
+    });
+
     this.process.on('error', (error) => {
       console.error('Named tunnel error:', error);
+      this.process = null;
     });
-    
-    this.process.unref(); // Allow process to run independently
-    
-    return `https://${this.domain}`;
-  }
 
-  async getTunnelId() {
-    // This would normally query cloudflared tunnel list
-    // For now, return a placeholder - in practice this would be implemented
-    // based on actual tunnel configuration
-    return 'tunnel-id-placeholder';
+    // Wait for process to start
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    });
+
+    const url = `https://${this.domain}`;
+    console.log(`✅ Named tunnel started: ${url}`);
+    return url;
   }
 
   async stop() {
     if (this.process) {
       console.log('🛑 Stopping named tunnel...');
       this.process.kill('SIGTERM');
+      this.process = null;
     }
   }
 

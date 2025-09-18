@@ -9,9 +9,10 @@
   ],
   "scripts": {
     "dev:api": "cd yuihub_api && npm run dev",
-    "dev:tunnel": "cd yuihub_api && ENABLE_TUNNEL=true npm run dev",
+    "dev:tunnel": "cd yuihub_api && ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev",
     "start:api": "cd yuihub_api && npm start",
-    "start:prod": "cd yuihub_api && TUNNEL_MODE=named ENABLE_TUNNEL=true npm start",
+    "start:prod": "cd yuihub_api && ENABLE_TUNNEL=true TUNNEL_MODE=named npm start",
+    "start:prod-tunnel": "cd yuihub_api && ENABLE_TUNNEL=true TUNNEL_MODE=named npm start",
     "start:mcp": "cd yuihub_mcp && npm start",
     "build-index": "node scripts/chunk_and_lunr.mjs",
     "build-terms": "node scripts/build_terms.mjs",
