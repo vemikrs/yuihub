@@ -1,0 +1,21 @@
+# YuiHub MCP Server specific ignores
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# Node modules
+node_modules/
+
+# Debug files
+debug/
+
+# IDE
+.vscode/settings.json
+
+# MCP specific temp files
+mcp-debug.log
+mcp-trace.log

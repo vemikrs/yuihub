@@ -1,0 +1,217 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "YuiHub: Start API Server",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "start:api"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "PORT": "3000",
+                    "HOST": "localhost",
+                    "STORAGE_ADAPTER": "local"
+                }
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*YuiHub API server listening.*$",
+                    "endsPattern": "^.*YuiHub API server listening.*$"
+                }
+            }
+        },
+        {
+            "label": "YuiHub: Start API Server (Dev)",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "dev:api"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "PORT": "3000",
+                    "HOST": "localhost",
+                    "STORAGE_ADAPTER": "local"
+                }
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*watching for file changes.*$",
+                    "endsPattern": "^.*YuiHub API server listening.*$"
+                }
+            }
+        },
+        {
+            "label": "YuiHub: Start MCP Server", 
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "start:mcp"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "YUIHUB_API": "http://localhost:3000"
+                }
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Starting yuihub-mcp.*$",
+                    "endsPattern": "^.*MCP Server ready.*$"
+                }
+            }
+        },
+        {
+            "label": "YuiHub: Build Search Index",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "build-all"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "env": {
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs"
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Test API Endpoints",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "echo 'Testing YuiHub API endpoints...' && sleep 2 && curl -s http://localhost:3000/health | python3 -m json.tool && echo '' && echo 'Search test:' && curl -s 'http://localhost:3000/search?q=TypeScript' | python3 -m json.tool && echo '' && echo 'Recent notes:' && curl -s 'http://localhost:3000/recent?n=5' | python3 -m json.tool"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Stop All Servers",
+            "type": "shell",
+            "command": "pkill",
+            "args": ["-f", "yuihub"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Setup Cloudflare Tunnel",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/.cloudflare/setup-tunnel.sh"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Start Cloudflare Tunnel (Quick)",
+            "type": "shell", 
+            "command": "bash",
+            "args": ["${workspaceFolder}/.cloudflare/start-tunnel-quick.sh"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Starting Cloudflare Tunnel.*$",
+                    "endsPattern": "^.*Tunnel established successfully.*$"
+                }
+            }
+        },
+        {
+            "label": "YuiHub: Test Tunnel Connection",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "echo 'Testing Cloudflare Tunnel connection...' && sleep 2 && if [ -f .cloudflare/start-tunnel.sh ]; then API_URL=$(grep -o 'https://[^/]*' .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool; else echo 'Tunnel not set up. Run Setup Cloudflare Tunnel first.'; fi"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

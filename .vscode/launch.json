@@ -1,0 +1,123 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug YuiHub API Server",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/yuihub_api/src/server.js",
+            "cwd": "${workspaceFolder}/yuihub_api",
+            "env": {
+                "NODE_ENV": "development",
+                "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
+                "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                "PORT": "3000",
+                "HOST": "localhost",
+                "STORAGE_ADAPTER": "local"
+            },
+            "console": "integratedTerminal",
+            "restart": true,
+            "runtimeArgs": ["--inspect"],
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Debug YuiHub MCP Server",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/yuihub_mcp/src/server.js",
+            "cwd": "${workspaceFolder}/yuihub_mcp", 
+            "env": {
+                "NODE_ENV": "development",
+                "YUIHUB_API": "http://localhost:3000"
+            },
+            "console": "integratedTerminal",
+            "restart": true,
+            "runtimeArgs": ["--inspect=9230"],
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Run YuiHub API Server (Production)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/yuihub_api/src/server.js",
+            "cwd": "${workspaceFolder}/yuihub_api",
+            "env": {
+                "NODE_ENV": "production",
+                "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
+                "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                "PORT": "3000",
+                "HOST": "localhost",
+                "STORAGE_ADAPTER": "local"
+            },
+            "console": "integratedTerminal",
+            "restart": true,
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Run YuiHub MCP Server (Production)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/yuihub_mcp/src/server.js",
+            "cwd": "${workspaceFolder}/yuihub_mcp", 
+            "env": {
+                "NODE_ENV": "production",
+                "YUIHUB_API": "http://localhost:3000"
+            },
+            "console": "integratedTerminal",
+            "restart": true,
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug YuiHub Full Stack",
+            "configurations": [
+                "Debug YuiHub API Server",
+                "Debug YuiHub MCP Server"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "YuiHub Debug",
+                "order": 1
+            }
+        },
+        {
+            "name": "Run YuiHub Full Stack (Production)",
+            "configurations": [
+                "Run YuiHub API Server (Production)",
+                "Run YuiHub MCP Server (Production)"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "YuiHub Production",
+                "order": 2
+            }
+        },
+        {
+            "name": "Debug API Only",
+            "configurations": [
+                "Debug YuiHub API Server"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "YuiHub Debug",
+                "order": 3
+            }
+        },
+        {
+            "name": "Debug MCP Only",
+            "configurations": [
+                "Debug YuiHub MCP Server"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "YuiHub Debug",
+                "order": 4
+            }
+        }
+    ]
+}

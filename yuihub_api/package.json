@@ -9,12 +9,14 @@
     "build-index": "node ../scripts/chunk_and_lunr.mjs"
   },
   "dependencies": {
+    "@fastify/cors": "^8.5.0",
+    "@octokit/rest": "^21.0.0",
     "fastify": "^4.28.1",
-    "@fastify/cors": "^10.0.0",
-    "gray-matter": "^4.0.3",
-    "ulid": "^2.3.0",
-    "js-yaml": "^4.1.0",
     "fs-extra": "^11.2.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
+    "lunr": "^2.3.9",
+    "ulid": "^2.3.0"
   }
 }

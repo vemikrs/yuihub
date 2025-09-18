@@ -1,0 +1,27 @@
+{
+  "name": "yuihub-workspace",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "yuihub_api",
+    "yuihub_mcp"
+  ],
+  "scripts": {
+    "dev:api": "cd yuihub_api && npm run dev",
+    "start:api": "cd yuihub_api && npm start",
+    "start:mcp": "cd yuihub_mcp && npm start",
+    "build-index": "node scripts/chunk_and_lunr.mjs",
+    "build-terms": "node scripts/build_terms.mjs",
+    "build-summaries": "node scripts/summarize_weekly.mjs",
+    "build-all": "npm run build-index && npm run build-terms && npm run build-summaries",
+    "install-all": "npm install && cd yuihub_api && npm install && cd ../yuihub_mcp && npm install",
+    "tunnel:setup": "bash .cloudflare/setup-tunnel.sh",
+    "tunnel:start": "bash .cloudflare/start-tunnel.sh",
+    "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
