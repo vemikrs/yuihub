@@ -212,6 +212,118 @@
                 "clear": false
             },
             "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Run Smoke Tests (All)",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/run-all-tests.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - API Health",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-api-health.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - API Search",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-api-search.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - API Recent",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-api-recent.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - API Save",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-api-save.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - Data Flow",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-data-flow.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - MCP Connection",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-mcp-connection.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
         }
     ]
 }
