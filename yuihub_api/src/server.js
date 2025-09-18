@@ -1,96 +1,179 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import fs from 'fs-extra';
-import path from 'path';
-import matter from 'gray-matter';
 import { ulid } from 'ulid';
-import yaml from 'js-yaml';
+import path from 'path';
 import { fileURLToPath } from 'url';
+import { createStorageAdapter } from './storage.js';
+import { SearchService } from './search.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT || 8787;
-const DATA_ROOT = process.env.DATA_ROOT || path.join(__dirname, '../../chatlogs');
-const INDEX_DIR = process.env.INDEX_DIR || path.join(__dirname, '../../index');
-const LUNR_JSON = path.join(INDEX_DIR, 'lunr.idx.json');
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || 'localhost';
 
-const app = Fastify({ logger: true });
+const app = Fastify({ 
+  logger: true,
+  requestIdHeader: 'x-request-id'
+});
+
 await app.register(cors, { origin: true });
 
-function sanitizeSlug(s) {
-  return (s || '').toLowerCase().replace(/[^a-z0-9-_]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64);
+// Initialize services
+const storageAdapter = createStorageAdapter();
+const searchService = new SearchService();
+
+// Load search index on startup
+const indexPath = process.env.LUNR_INDEX_PATH || path.resolve(__dirname, '../../index/lunr.idx.json');
+console.log(`🔍 Looking for search index at: ${indexPath}`);
+const indexLoaded = await searchService.loadIndex(indexPath);
+if (indexLoaded) {
+  console.log(`✅ Search index loaded from ${indexPath}`);
+} else {
+  console.warn(`⚠️ Search index not found at ${indexPath}`);
 }
 
-app.get('/health', async () => ({ ok: true }));
-
-// POST /save
-app.post('/save', async (req, reply) => {
-  const { frontmatter, body } = req.body || {};
-  const id = (frontmatter?.id) || ulid();
-  const date = new Date(frontmatter?.date || Date.now());
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,'0');
-  const d = String(date.getDate()).padStart(2,'0');
-  const topic = sanitizeSlug(frontmatter?.topic || 'note');
-  const dir = path.join(DATA_ROOT, `${y}`, `${m}`);
-  await fs.ensureDir(dir);
-  const filename = `${y}-${m}-${d}-${topic}-${id}.md`;
-  const full = path.join(dir, filename);
-
-  const fm = { id, date: date.toISOString(), actors: [], topic: '', tags: [], decision: null, links: [], ...frontmatter };
-  const md = matter.stringify(body || '', fm);
-  await fs.writeFile(full, md, 'utf8');
-
-  return { ok: true, path: full, url: `file://${full}` };
+// Health check endpoint
+app.get('/health', async (req, reply) => {
+  return { 
+    ok: true, 
+    timestamp: new Date().toISOString(),
+    storage: storageAdapter.type,
+    searchIndex: searchService.index ? 'loaded' : 'missing'
+  };
 });
 
-// GET /recent?n=20
-app.get('/recent', async (req, reply) => {
-  const n = Number(req.query.n || 20);
-  const files = (await fs.glob(`${DATA_ROOT}/**/*.md`)).sort((a,b)=>fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
-  const items = [];
-  for (const f of files.slice(0, n*3)) {
-    const raw = await fs.readFile(f, 'utf8');
-    const p = matter(raw);
-    if (p.data?.decision) {
-      items.push({ id: p.data.id, date: p.data.date, topic: p.data.topic, decision: p.data.decision, path: f });
-      if (items.length >= n) break;
-    }
-  }
-  return { items };
-});
-
-// GET /search?q=... (Lunr prebuilt JSON)
-app.get('/search', async (req, reply) => {
-  const q = String(req.query.q || '').trim();
-  if (!q) return { hits: [] };
+// OpenAPI schema endpoint for ChatGPT Actions
+app.get('/openapi.yml', async (req, reply) => {
   try {
-    const idx = await fs.readJson(LUNR_JSON);
-    // naive client-side style search: substring match on title/body as a placeholder (Lunr query is done in UI normally)
-    const hits = [];
-    for (const doc of idx.docs || []) {
-      const hay = `${doc.title} ${doc.text}`.toLowerCase();
-      const pos = hay.indexOf(q.toLowerCase());
-      if (pos >= 0) {
-        hits.push({
-          id: doc.id,
-          score: doc.text.length, // placeholder score
-          title: doc.title,
-          path: doc.path,
-          snippet: doc.text.slice(Math.max(0, pos-40), pos+80) + '...',
-          url: doc.url || ''
-        });
-        if (hits.length >= Number(req.query.limit || 10)) break;
+    const fs = await import('fs-extra');
+    const path = await import('path');
+    const schemaPath = path.join(__dirname, '../openapi.yml');
+    const schema = await fs.readFile(schemaPath, 'utf8');
+    reply.type('text/yaml');
+    return schema;
+  } catch (error) {
+    reply.status(500);
+    return { error: 'OpenAPI schema not found' };
+  }
+});
+
+// POST /save - Save chat log with YAML frontmatter + Markdown body
+app.post('/save', {
+  schema: {
+    body: {
+      type: 'object',
+      required: ['frontmatter', 'body'],
+      properties: {
+        frontmatter: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            date: { type: 'string' },
+            actors: { type: 'array', items: { type: 'string' } },
+            topic: { type: 'string' },
+            tags: { type: 'array', items: { type: 'string' } },
+            decision: { type: 'string', enum: ['採用', '保留', '却下'] },
+            links: { type: 'array', items: { type: 'string' } }
+          }
+        },
+        body: { type: 'string' }
       }
     }
-    return { hits };
-  } catch (e) {
-    return { hits: [], error: 'index_missing_or_invalid' };
+  }
+}, async (req, reply) => {
+  try {
+    const { frontmatter, body } = req.body;
+    
+    // Generate ULID if not provided
+    const enrichedFrontmatter = {
+      id: ulid(),
+      date: new Date().toISOString(),
+      actors: [],
+      topic: '',
+      tags: [],
+      decision: null,
+      links: [],
+      ...frontmatter
+    };
+
+    const result = await storageAdapter.save(enrichedFrontmatter, body);
+    
+    // Log the save operation for audit
+    app.log.info('Chat log saved', { 
+      id: enrichedFrontmatter.id, 
+      topic: enrichedFrontmatter.topic,
+      path: result.path
+    });
+    
+    return result;
+  } catch (error) {
+    app.log.error('Save failed', error);
+    reply.status(500);
+    return { ok: false, error: error.message };
   }
 });
 
-app.listen({ port: Number(PORT), host: '0.0.0.0' }).catch((err)=>{
-  app.log.error(err);
-  process.exit(1);
+// GET /search - Full-text search with Lunr
+app.get('/search', {
+  schema: {
+    querystring: {
+      type: 'object',
+      properties: {
+        q: { type: 'string' },
+        limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 }
+      },
+      required: ['q']
+    }
+  }
+}, async (req, reply) => {
+  try {
+    const { q, limit = 10 } = req.query;
+    const result = await searchService.search(q, limit);
+    
+    app.log.info('Search performed', { query: q, hits: result.hits.length });
+    
+    return result;
+  } catch (error) {
+    app.log.error('Search failed', error);
+    reply.status(500);
+    return { hits: [], error: error.message };
+  }
 });
+
+// GET /recent - Get recent decisions
+app.get('/recent', {
+  schema: {
+    querystring: {
+      type: 'object',
+      properties: {
+        n: { type: 'integer', minimum: 1, maximum: 100, default: 20 }
+      }
+    }
+  }
+}, async (req, reply) => {
+  try {
+    const { n = 20 } = req.query;
+    const basePath = process.env.LOCAL_STORAGE_PATH || './chatlogs';
+    const items = await searchService.getRecent(n, basePath);
+    
+    return { items };
+  } catch (error) {
+    app.log.error('Get recent failed', error);
+    reply.status(500);
+    return { items: [], error: error.message };
+  }
+});
+
+// Start server
+const start = async () => {
+  try {
+    await app.listen({ port: PORT, host: HOST });
+    app.log.info(`YuiHub API server listening on http://${HOST}:${PORT}`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();

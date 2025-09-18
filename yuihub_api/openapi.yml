@@ -1,46 +1,343 @@
 openapi: 3.0.3
 info:
   title: YuiHub API
+  description: |
+    YuiHub provides a unified external memory system for AI conversations and decision tracking. 
+    It enables saving, searching, and retrieving chat logs across multiple AI clients (ChatGPT, Claude, Copilot, etc.)
+    using both HTTP APIs and Model Context Protocol (MCP).
   version: 0.1.0
+  contact:
+    name: YuiHub Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
 paths:
   /health:
     get:
+      summary: Health check endpoint
+      description: Returns server status and configuration information
+      operationId: getHealth
+      tags:
+        - System
       responses:
         '200':
-          description: OK
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  timestamp:
+                    type: string
+                    format: date-time
+                  storage:
+                    type: string
+                    enum: [local, github, notion]
+                  searchIndex:
+                    type: string
+                    enum: [loaded, missing]
+
   /save:
     post:
+      summary: Save chat conversation or decision
+      description: |
+        Saves a structured chat log with YAML frontmatter and Markdown content.
+        The frontmatter contains metadata about the conversation, while the body
+        contains the actual conversation content or decision rationale.
+      operationId: saveNote
+      tags:
+        - Notes
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [frontmatter, body]
               properties:
                 frontmatter:
-                  type: object
-                  additionalProperties: true
+                  $ref: '#/components/schemas/NoteFrontmatter'
                 body:
                   type: string
+                  description: Markdown content with conversation details
+                  example: |
+                    ## 要点（3行）
+                    - TypeScriptよりJavaScriptを選択してPoC開発を優先
+                    - MCPとHTTPの二面対応でAI横断利用を実現
+                    - Lunr全文検索で軽量な検索機能を提供
+                    
+                    ## 本文
+                    技術選定の背景として、PoC段階では開発速度を優先し...
+            examples:
+              decision_note:
+                summary: Decision tracking example
+                value:
+                  frontmatter:
+                    topic: "TypeScript vs JavaScript選択"
+                    actors: ["chatgpt", "copilot"]
+                    tags: ["tech-decision", "poc"]
+                    decision: "採用"
+                    links: ["https://example.com/discussion"]
+                  body: |
+                    ## 要点（3行）
+                    - PoC速度優先でJavaScript選択
+                    - TypeScript移行は段階的に検討
+                    - 現時点でのリスクは許容範囲
+
+                    ## 本文
+                    開発期間2.5-3.0日の制約下で、TypeScript導入による...
       responses:
-        '200': { description: Saved }
-  /recent:
-    get:
-      parameters:
-        - in: query
-          name: n
-          schema: { type: integer, default: 20 }
-      responses:
-        '200': { description: OK }
+        '200':
+          description: Successfully saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /search:
     get:
+      summary: Full-text search across notes
+      description: |
+        Performs full-text search using Lunr indexing with support for 
+        Japanese and English content. Returns ranked results with snippets.
+      operationId: searchNotes
+      tags:
+        - Search
       parameters:
-        - in: query
-          name: q
+        - name: q
+          in: query
           required: true
-          schema: { type: string }
-        - in: query
-          name: limit
-          schema: { type: integer, default: 10 }
+          description: Search query string
+          schema:
+            type: string
+            example: "API設計 decision"
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
       responses:
-        '200': { description: OK }
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Search error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /recent:
+    get:
+      summary: Get recent decisions and discussions
+      description: |
+        Returns a list of recently saved notes, prioritizing those with 
+        decision values. Sorted by creation/modification date.
+      operationId: getRecentNotes
+      tags:
+        - Notes
+      parameters:
+        - name: n
+          in: query
+          description: Number of recent items to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Recent notes list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecentResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    NoteFrontmatter:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ULID identifier (auto-generated if not provided)
+          example: "01HZXK7QCMXKJ8G2N5D4WVYB3R"
+        date:
+          type: string
+          format: date-time
+          description: ISO8601 timestamp (defaults to current time)
+          example: "2025-09-18T21:00:00+09:00"
+        actors:
+          type: array
+          items:
+            type: string
+            enum: [chatgpt, claude, copilot, perplexity, cursor, continue]
+          description: AI actors involved in the conversation
+          example: ["chatgpt", "copilot"]
+        topic:
+          type: string
+          description: Brief topic or title for the conversation
+          example: "API設計検討"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Classification tags for categorization
+          example: ["api", "architecture", "poc"]
+        decision:
+          type: string
+          enum: ["採用", "保留", "却下"]
+          description: Decision status if applicable
+          example: "採用"
+        links:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Reference URLs
+          example: ["https://example.com/reference"]
+
+    SaveResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: true
+        path:
+          type: string
+          description: Relative path where the note was saved
+          example: "2025/09/2025-09-18-api-design-01HZXK7QCMXKJ8G2N5D4WVYB3R.md"
+        url:
+          type: string
+          description: Accessible URL for the saved note
+          example: "https://github.com/user/repo/blob/main/chatlogs/2025/09/note.md"
+
+    SearchHit:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "01HZXK7QCMXKJ8G2N5D4WVYB3R-0"
+        score:
+          type: number
+          description: Relevance score
+          example: 2.45
+        title:
+          type: string
+          example: "API設計検討"
+        path:
+          type: string
+          example: "2025/09/api-design-discussion.md"
+        snippet:
+          type: string
+          description: Text snippet showing context
+          example: "...RESTful APIの設計において、エンドポイント構成を..."
+        url:
+          type: string
+          example: "https://example.com/note.md"
+        date:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        decision:
+          type: string
+          enum: ["採用", "保留", "却下"]
+
+    SearchResponse:
+      type: object
+      properties:
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+
+    RecentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        path:
+          type: string
+        date:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        decision:
+          type: string
+          enum: ["採用", "保留", "却下"]
+        actors:
+          type: array
+          items:
+            type: string
+
+    RecentResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecentItem'
+
+    ErrorResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+          example: "Invalid request parameters"
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Notes
+    description: Note saving and retrieval operations
+  - name: Search
+    description: Search and discovery functionality
