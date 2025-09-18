@@ -44,7 +44,8 @@ echo "   Hit Count: $HIT_COUNT"
 # 日本語検索テスト
 echo
 echo "📡 Testing search with Japanese query..."
-RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" "$API_BASE/search?q=テスト")
+JAPANESE_QUERY=$(python3 -c "import urllib.parse; print(urllib.parse.quote('テスト'))")
+RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" "$API_BASE/search?q=$JAPANESE_QUERY")
 HTTP_STATUS=$(echo $RESPONSE | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
 if [ "$HTTP_STATUS" -ne 200 ]; then

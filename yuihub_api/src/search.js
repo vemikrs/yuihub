@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import lunr from 'lunr';
 import path from 'path';
+import { tokenizeQuery, normalizeJa } from './text-ja.js';
 
 export class SearchService {
   constructor() {
@@ -34,7 +35,15 @@ export class SearchService {
     }
 
     try {
-      const results = this.index.search(query);
+      // 日本語クエリ処理: URLデコード → 正規化 → トークン化
+      const processedQuery = tokenizeQuery(query);
+      console.log(`Search query: "${query}" -> "${processedQuery}"`);
+      
+      if (!processedQuery.trim()) {
+        return { hits: [] };
+      }
+
+      const results = this.index.search(processedQuery);
       const hits = results
         .slice(0, limit)
         .map(result => {
@@ -46,7 +55,7 @@ export class SearchService {
             score: result.score,
             title: doc.title || doc.topic,
             path: doc.path,
-            snippet: this._generateSnippet(doc.body, query),
+            snippet: this._generateSnippet(doc.body, query), // 元のクエリでスニペット生成
             url: doc.url,
             date: doc.date,
             tags: doc.tags || [],

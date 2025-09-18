@@ -10,6 +10,7 @@ import matter from 'gray-matter';
 import lunr from 'lunr';
 import { glob } from 'glob';
 import { fileURLToPath } from 'url';
+import { tokenizeJa, combineAndTokenize } from '../yuihub_api/src/text-ja.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -113,10 +114,10 @@ async function buildIndex() {
         
         documents.push({
           id: docId,
-          title: frontmatter.topic || path.basename(filePath, '.md'),
-          body: chunk,
-          tags: (frontmatter.tags || []).join(' '),
-          actors: (frontmatter.actors || []).join(' ')
+          title: tokenizeJa(frontmatter.topic || path.basename(filePath, '.md')),
+          body: tokenizeJa(chunk),
+          tags: tokenizeJa((frontmatter.tags || []).join(' ')),
+          actors: tokenizeJa((frontmatter.actors || []).join(' '))
         });
         
         docMetadata.push({

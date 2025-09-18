@@ -20,8 +20,10 @@
     "tunnel:start": "bash .cloudflare/start-tunnel.sh",
     "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "tiny-segmenter": "^0.2.0"
   }
 }
