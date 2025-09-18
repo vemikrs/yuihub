@@ -64,7 +64,12 @@ app.get('/openapi.yml', async (req, reply) => {
     const schemaPath = path.join(__dirname, '../openapi.yml');
     app.log.info(`Attempting to load OpenAPI schema from: ${schemaPath}`);
     const schema = await fs.readFile(schemaPath, 'utf8');
-    reply.type('text/yaml');
+    
+    // Set correct MIME type with UTF-8 charset
+    reply
+      .type('text/yaml; charset=utf-8')
+      .header('Content-Disposition', 'inline; filename="openapi.yml"');
+    
     return schema;
   } catch (error) {
     app.log.error(error, `Failed to load OpenAPI schema from: ${path.join(__dirname, '../openapi.yml')}`);
