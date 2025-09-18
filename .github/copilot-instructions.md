@@ -10,11 +10,39 @@ YuiHubは、複数のAI（ChatGPT、Claude、GitHub Copilot等）での会話・
   - ✅ 必須: `run_task`でVS Code Tasks経由での起動
   - 理由: 直接コマンド実行は割り込み停止でプロセスが残り、システム不安定化を招く
 
+- **Node.jsプロセス終了は必ずPID特定方式を使用すること**
+  - ❌ 絶対禁止: `pkill -f node`や`killall node`等の全Node.js一括Kill
+  - ❌ 危険: WSL2のRemote Server（VS Code接続）プロセスも誤って終了する
+  - ✅ 必須: ポート→PID特定→PID指定Kill方式
+  - 安全手順: `lsof -ti:3000 | xargs kill` または `fuser -k 3000/tcp`
+
 ### 正しいプロセス管理手順
 1. **起動**: `run_task`を使用してバックグラウンドタスク実行
 2. **確認**: タスクのログ出力で正常起動を確認
 3. **テスト**: 別ターミナルで`curl`等によるエンドポイント確認
 4. **停止**: VS Code Task終了機能またはTask管理画面から適切に停止
+
+### 安全なプロセス終了コマンド集
+```bash
+# ✅ 推奨: ポート3000で動作するプロセスのみ終了
+lsof -ti:3000 | xargs kill
+
+# ✅ 推奨: fuser使用版（よりシンプル）
+fuser -k 3000/tcp
+
+# ✅ 推奨: 特定プロセス名での安全終了
+pgrep -f "yuihub_api/src/server.js" | xargs kill
+
+# ❌ 危険: 全Node.jsプロセス終了（Remote Server含む）
+# pkill -f node          # 絶対禁止
+# killall node           # 絶対禁止
+# kill $(pgrep node)     # 絶対禁止
+
+# 📋 プロセス確認用コマンド
+lsof -i:3000           # ポート使用状況確認
+ps aux | grep node     # Node.jsプロセス一覧
+netstat -tlnp | grep 3000  # ポート詳細情報
+```
 
 ### Cloudflare Tunnel統合
 - 新しいNode.js統合システムを使用
