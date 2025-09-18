@@ -45,7 +45,7 @@ export class StorageAdapter {
     return {
       ok: true,
       path: relativePath,
-      url: `file://${fullPath}`
+      url: `file://./${relativePath}`
     };
   }
 

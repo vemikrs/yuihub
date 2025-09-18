@@ -38,7 +38,7 @@
 {
     "ok": true,
     "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
-    "url": "file:///home/nimaz/dev/yuihub/yuihub_min_bundle/chatlogs/2025/09/..."
+    "url": "file://./chatlogs/2025/09/..."
 }
 ```
 
