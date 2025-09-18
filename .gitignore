@@ -177,6 +177,9 @@ index/stats.json
 index/terms.json
 index/terms-quick.json
 
+# Phase 2: Data directory generated indexes
+data/index/*.json
+
 # Generated summaries (can be regenerated)
 summaries/*.json
 
@@ -211,6 +214,9 @@ Thumbs.db
 *.backup
 *.bak
 *.orig
+
+# Phase 2: History directory for moved backup files
+history/
 
 # Debug files
 debug.log

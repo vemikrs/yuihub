@@ -1,38 +1,41 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
-import { timingSafeEqual } from 'crypto';
 import { ulid } from 'ulid';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 import { createStorageAdapter } from './storage.js';
 import { SearchService } from './search.js';
+import { EnhancedSearchService } from './enhanced-search.js';
+import { IndexManager } from './index-manager.js';
+import { ConfigManager } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || 'localhost';
+// 設定管理初期化
+const configManager = new ConfigManager();
+const config = configManager.current;
 
-// Validate API token on startup
-const token = process.env.API_TOKEN;
-if (!token || token.trim().length < 16) {
-  console.error('❌ API_TOKEN is missing or too short (minimum 16 characters)');
+// 設定検証
+const validation = configManager.validate();
+if (!validation.valid) {
+  console.error('❌ Configuration validation failed:');
+  validation.errors.forEach(error => console.error(`   - ${error}`));
   process.exit(1);
 }
 
-// Safe token comparison function
-function safeEquals(a, b) {
-  const A = Buffer.from(String(a ?? ''));
-  const B = Buffer.from(String(b ?? ''));
-  if (A.length !== B.length) return false;
-  try { return timingSafeEqual(A, B); } catch { return false; }
-}
+// 設定サマリー出力
+console.log('🔧 YuiHub API Configuration:');
+const summary = configManager.getSummary();
+Object.entries(summary).forEach(([key, value]) => {
+  console.log(`   ${key}: ${Array.isArray(value) ? value.join(', ') : value}`);
+});
 
-// Tunnel integration - only load if enabled
+// Tunnel integration - 設定に基づいて読み込み
 let TunnelManager;
-if (process.env.ENABLE_TUNNEL === 'true') {
+if (config.enableTunnel) {
   try {
     const { TunnelManager: TM } = await import('../../.cloudflare/tunnel-manager.js');
     TunnelManager = TM;
@@ -41,70 +44,113 @@ if (process.env.ENABLE_TUNNEL === 'true') {
   }
 }
 
+// Fastify アプリケーション初期化
 const app = Fastify({ 
-  logger: true,
-  requestIdHeader: 'x-request-id'
+  logger: configManager.getFastifyLogLevel(),
+  requestIdHeader: 'x-request-id',
+  requestTimeout: config.requestTimeout
 });
 
+// CORS設定
 await app.register(cors, {
-  origin: process.env.ALLOWED_ORIGINS?.split(',').map(s => s.trim()) ?? ['*'],
+  origin: config.corsOrigins,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'x-yuihub-token'],
 });
 
-// Rate limiting for public endpoints
+// Rate limiting
 await app.register(rateLimit, {
-  max: 120,
-  timeWindow: '1 minute',
+  max: config.rateLimitMax,
+  timeWindow: config.rateLimitWindow,
   allowList: ['127.0.0.1', '::1']
 });
 
-// Authentication hook
-app.addHook('onRequest', async (req, res) => {
-  // Skip authentication for OPTIONS (CORS preflight)
-  if (req.method === 'OPTIONS') return;
-  
-  // Skip authentication for /health endpoint
-  if (req.method === 'GET' && req.url.startsWith('/health')) return;
-  
-  const header = req.headers['x-yuihub-token'];
-  if (!header) {
-    res.code(401).send({ ok: false, error: 'Missing x-yuihub-token header' });
-    return;
-  }
-  
-  if (!safeEquals(header, token)) {
-    req.log.warn({ ip: req.ip, url: req.url }, 'Forbidden: invalid token');
-    res.code(403).send({ ok: false, error: 'Forbidden' });
-    return;
-  }
-});
+// 認証ミドルウェア登録
+const authMiddleware = configManager.createAuthMiddleware();
+app.addHook('onRequest', authMiddleware);
 
-// Initialize services
+// サービス初期化
 const storageAdapter = createStorageAdapter();
-const searchService = new SearchService();
+const searchService = new EnhancedSearchService();
+
+// IndexManager初期化
+const indexManager = new IndexManager({
+  searchService: searchService,
+  indexPath: config.lunrIndexPath,
+  termsPath: config.termsIndexPath,
+  statsPath: config.statsPath,
+  dataRoot: config.dataRoot,
+  logger: app.log
+});
 
 // Tunnel manager instance (if enabled)
 let tunnelManager = null;
 
-// Load search index on startup
-const indexPath = process.env.LUNR_INDEX_PATH || path.resolve(__dirname, '../../index/lunr.idx.json');
-console.log(`🔍 Looking for search index at: ${indexPath}`);
-const indexLoaded = await searchService.loadIndex(indexPath);
-if (indexLoaded) {
-  console.log(`✅ Search index loaded from ${indexPath}`);
-} else {
-  console.warn(`⚠️ Search index not found at ${indexPath}`);
+// 索引の初期化
+const indexInitialized = await indexManager.initialize();
+if (indexInitialized && config.termsIndexPath) {
+  // 用語インデックスも読み込み
+  await searchService.loadTermsIndex(config.termsIndexPath);
 }
 
-// Health check endpoint
+if (!indexInitialized && config.indexAutoRebuild) {
+  app.log.info('🔄 Index missing, triggering rebuild...');
+  indexManager.scheduleRebuild();
+}
+
+// === API ENDPOINTS ===
+
+// Health check endpoint (enhanced)
 app.get('/health', async (req, reply) => {
+  const indexStatus = await indexManager.getStatus();
+  
   return { 
     ok: true, 
     timestamp: new Date().toISOString(),
+    environment: config.env,
     storage: storageAdapter.type,
-    searchIndex: searchService.index ? 'loaded' : 'missing'
+    searchIndex: indexStatus.status,
+    lastIndexBuild: indexStatus.lastBuildAt,
+    auth: config.auth ? 'enabled' : 'disabled',
+    version: process.env.npm_package_version || '1.0.0'
   };
+});
+
+// Index management endpoints
+app.get('/index/status', async (req, reply) => {
+  return await indexManager.getStatus();
+});
+
+app.post('/index/rebuild', async (req, reply) => {
+  try {
+    app.log.info('📚 Manual index rebuild requested');
+    await indexManager.rebuild();
+    return { 
+      ok: true, 
+      status: 'rebuilt', 
+      timestamp: new Date().toISOString() 
+    };
+  } catch (error) {
+    app.log.error('Index rebuild failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+app.post('/index/reload', async (req, reply) => {
+  try {
+    app.log.info('🔄 Manual index reload requested');
+    const loaded = await indexManager.reload();
+    return { 
+      ok: loaded, 
+      status: loaded ? 'reloaded' : 'failed',
+      timestamp: new Date().toISOString() 
+    };
+  } catch (error) {
+    app.log.error('Index reload failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
 });
 
 // OpenAPI schema endpoint for ChatGPT Actions
@@ -134,15 +180,12 @@ app.get('/openapi.yml', async (req, reply) => {
       serverUrl = `https://${host}`;
       description = `Cloudflare Quick Tunnel (${host})`;
     } else if (process.env.TUNNEL_BASE_URL) {
-      // Use TUNNEL_BASE_URL if configured (for fixed tunnels)
       serverUrl = process.env.TUNNEL_BASE_URL;
       description = `Cloudflare Named Tunnel (${process.env.TUNNEL_BASE_URL})`;
     } else if (host.includes('poc-yuihub.vemi.jp')) {
-      // Handle the PoC tunnel case - domain root
       serverUrl = `https://${host}`;
       description = `YuiHub PoC (${host})`;
     } else if (host.includes('vemi.jp')) {
-      // General vemi.jp domain handling
       serverUrl = `https://${host}`;
       description = `Cloudflare Named Tunnel (${host})`;
     } else {
@@ -150,197 +193,180 @@ app.get('/openapi.yml', async (req, reply) => {
       description = `Runtime server (${host})`;
     }
     
-    // Update servers section dynamically
-    schemaObj.servers = [{
-      url: serverUrl,
-      description: description
-    }];
+    // Update server info dynamically
+    schemaObj.servers = [{ url: serverUrl, description }];
+    schemaObj.info = schemaObj.info || {};
+    schemaObj.info['x-generated-at'] = new Date().toISOString();
     
-    app.log.info(`OpenAPI dynamic server: ${serverUrl}`);
+    reply.type('application/x-yaml');
+    return yaml.dump(schemaObj);
     
-    // Convert back to YAML and return
-    const dynamicSchema = yaml.dump(schemaObj);
-    
-    reply
-      .type('text/yaml; charset=utf-8')
-      .header('Content-Disposition', 'inline; filename="openapi.yml"');
-    
-    return dynamicSchema;
   } catch (error) {
-    app.log.error(error, `Failed to load OpenAPI schema from: ${path.join(__dirname, '../openapi.yml')}`);
-    reply.status(500);
-    return { error: 'OpenAPI schema not found' };
+    app.log.error(`Failed to load OpenAPI schema: ${error.message}`);
+    reply.code(500);
+    return { ok: false, error: 'Failed to load OpenAPI schema', details: error.message };
   }
 });
 
-// POST /save - Save chat log with YAML frontmatter + Markdown body
-app.post('/save', {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['frontmatter', 'body'],
-      properties: {
-        frontmatter: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            date: { type: 'string' },
-            actors: { type: 'array', items: { type: 'string' } },
-            topic: { type: 'string' },
-            tags: { type: 'array', items: { type: 'string' } },
-            decision: { type: 'string', enum: ['採用', '保留', '却下'] },
-            links: { type: 'array', items: { type: 'string' } }
-          }
-        },
-        body: { type: 'string' }
-      }
-    }
-  }
-}, async (req, reply) => {
+// Save note endpoint (enhanced with index auto-rebuild)
+app.post('/save', async (req, reply) => {
   try {
     const { frontmatter, body } = req.body;
     
-    // Generate ULID if not provided
+    // Validation
+    if (!frontmatter || !body) {
+      reply.code(400);
+      return { ok: false, error: 'frontmatter and body are required' };
+    }
+    
+    // Ensure required frontmatter fields
     const enrichedFrontmatter = {
       id: ulid(),
       date: new Date().toISOString(),
-      actors: [],
-      topic: '',
-      tags: [],
-      decision: null,
-      links: [],
       ...frontmatter
     };
-
+    
+    app.log.info(`💾 Saving note with ID: ${enrichedFrontmatter.id}`);
+    
+    // Save to storage
     const result = await storageAdapter.save(enrichedFrontmatter, body);
     
-    // Log the save operation for audit
-    app.log.info('Chat log saved', { 
-      id: enrichedFrontmatter.id, 
-      topic: enrichedFrontmatter.topic,
-      path: result.path
-    });
+    // Trigger background index rebuild if enabled
+    if (config.indexAutoRebuild) {
+      app.log.info('🔄 Triggering background index rebuild...');
+      indexManager.scheduleRebuild();
+    }
     
     return result;
+    
   } catch (error) {
-    app.log.error('Save failed', error);
-    reply.status(500);
+    app.log.error('Save operation failed:', error);
+    reply.code(500);
     return { ok: false, error: error.message };
   }
 });
 
-// GET /search - Full-text search with Lunr
-app.get('/search', {
-  schema: {
-    querystring: {
-      type: 'object',
-      properties: {
-        q: { type: 'string' },
-        limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 }
-      },
-      required: ['q']
-    }
-  }
-}, async (req, reply) => {
+// Search endpoint
+app.get('/search', async (req, reply) => {
   try {
-    const { q, limit = 10 } = req.query;
-    const result = await searchService.search(q, limit);
+    const { q: query, limit = 10 } = req.query;
     
-    app.log.info('Search performed', { query: q, hits: result.hits.length });
+    if (!query) {
+      reply.code(400);
+      return { ok: false, error: 'Query parameter q is required' };
+    }
     
-    return result;
+    const hits = await searchService.search(query, parseInt(limit));
+    
+    app.log.info(`🔍 Search for "${query}" returned ${hits.length} results`);
+    
+    return {
+      ok: true,
+      query,
+      total: hits.length,
+      hits,
+      timestamp: new Date().toISOString()
+    };
+    
   } catch (error) {
-    app.log.error('Search failed', error);
-    reply.status(500);
-    return { hits: [], error: error.message };
+    app.log.error('Search operation failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
   }
 });
 
-// GET /recent - Get recent decisions
-app.get('/recent', {
-  schema: {
-    querystring: {
-      type: 'object',
-      properties: {
-        n: { type: 'integer', minimum: 1, maximum: 100, default: 20 }
-      }
-    }
-  }
-}, async (req, reply) => {
+// Recent notes endpoint
+app.get('/recent', async (req, reply) => {
   try {
     const { n = 20 } = req.query;
-    const basePath = process.env.LOCAL_STORAGE_PATH || './chatlogs';
-    const items = await searchService.getRecent(n, basePath);
+    const limit = Math.min(parseInt(n), 100); // 最大100件
     
-    return { items };
+    const recentNotes = await storageAdapter.getRecent(limit);
+    
+    app.log.info(`📋 Retrieved ${recentNotes.length} recent notes`);
+    
+    return {
+      ok: true,
+      total: recentNotes.length,
+      notes: recentNotes,
+      timestamp: new Date().toISOString()
+    };
+    
   } catch (error) {
-    app.log.error('Get recent failed', error);
-    reply.status(500);
-    return { items: [], error: error.message };
+    app.log.error('Recent notes retrieval failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
   }
 });
 
-// Start server
-const start = async () => {
+// Generic error handler
+app.setErrorHandler((error, req, reply) => {
+  app.log.error(error);
+  reply.code(error.statusCode || 500).send({
+    ok: false,
+    error: error.message || 'Internal Server Error',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Graceful shutdown handling
+const gracefulShutdown = async (signal) => {
+  app.log.info(`🛑 Received ${signal}, shutting down gracefully...`);
+  
   try {
-    await app.listen({ port: PORT, host: HOST });
-    app.log.info(`YuiHub API server listening on http://${HOST}:${PORT}`);
-    
-    // Start tunnel if enabled
-    if (TunnelManager && process.env.ENABLE_TUNNEL === 'true') {
-      try {
-        tunnelManager = new TunnelManager();
-        const url = await tunnelManager.start();
-        
-        app.log.info(`🌐 Cloudflare Tunnel: ${url}`);
-        app.log.info(`📋 OpenAPI Schema: ${url}/openapi.yml`);
-        app.log.info(`🔍 Search API: ${url}/search?q=example`);
-        
-        // Store tunnel URL globally for potential API use
-        app.decorate('tunnelUrl', url);
-        
-      } catch (tunnelError) {
-        app.log.error('Failed to start tunnel:', tunnelError.message || tunnelError);
-        app.log.error('Tunnel error details:', {
-          name: tunnelError.name,
-          stack: tunnelError.stack,
-          mode: process.env.TUNNEL_MODE,
-          baseUrl: process.env.TUNNEL_BASE_URL,
-          enableTunnel: process.env.ENABLE_TUNNEL
-        });
-        app.log.info('💡 Server will continue without tunnel');
-      }
+    // Stop tunnel if running
+    if (tunnelManager) {
+      await tunnelManager.stop();
     }
     
-  } catch (err) {
-    app.log.error(err);
+    // Close Fastify
+    await app.close();
+    app.log.info('✅ Server closed successfully');
+    process.exit(0);
+  } catch (error) {
+    app.log.error('❌ Error during shutdown:', error);
     process.exit(1);
   }
 };
 
-// Graceful shutdown handling
-process.on('SIGINT', async () => {
-  app.log.info('🛑 Graceful shutdown initiated...');
-  
-  if (tunnelManager) {
-    app.log.info('🔌 Stopping tunnel...');
-    await tunnelManager.stop();
-  }
-  
-  await app.close();
-  app.log.info('✅ Server stopped');
-  process.exit(0);
-});
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-process.on('SIGTERM', async () => {
-  app.log.info('🛑 SIGTERM received, shutting down...');
-  
-  if (tunnelManager) {
-    await tunnelManager.stop();
+// Start server
+const start = async () => {
+  try {
+    // Start Tunnel if enabled
+    if (config.enableTunnel && TunnelManager) {
+      tunnelManager = new TunnelManager({
+        port: config.port,
+        mode: config.tunnelMode,
+        logger: app.log
+      });
+      
+      await tunnelManager.start();
+    }
+    
+    // Start HTTP server
+    await app.listen({ 
+      port: config.port, 
+      host: config.host 
+    });
+    
+    app.log.info(`🚀 YuiHub API server listening on ${config.host}:${config.port}`);
+    app.log.info(`📂 Data root: ${config.dataRoot}`);
+    app.log.info(`🔍 Search index: ${indexManager.status}`);
+    
+    if (tunnelManager && tunnelManager.url) {
+      app.log.info(`🌐 Cloudflare Tunnel: ${tunnelManager.url}`);
+    }
+    
+  } catch (error) {
+    console.error('❌ Server startup failed:');
+    console.error('Error details:', error);
+    console.error('Stack trace:', error.stack);
+    process.exit(1);
   }
-  
-  await app.close();
-  process.exit(0);
-});
+};
 
 start();

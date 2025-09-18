@@ -18,8 +18,12 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "NODE_ENV": "production",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local"
@@ -53,8 +57,12 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "NODE_ENV": "development",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local"
@@ -88,8 +96,12 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "NODE_ENV": "development",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local",
@@ -125,8 +137,12 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "NODE_ENV": "production",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local",
@@ -192,290 +208,57 @@
             },
             "options": {
                 "env": {
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs"
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs"
                 }
             },
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Test API Endpoints",
+            "label": "YuiHub: Health Check",
             "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo 'Testing YuiHub API endpoints...' && sleep 2 && curl -s http://localhost:3000/health | python3 -m json.tool && echo '' && echo 'Search test:' && curl -s 'http://localhost:3000/search?q=TypeScript' | python3 -m json.tool && echo '' && echo 'Recent notes:' && curl -s 'http://localhost:3000/recent?n=5' | python3 -m json.tool"],
+            "command": "curl",
+            "args": ["-s", "-f", "http://localhost:3000/health"],
             "group": "test",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
                 "focus": true,
                 "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Stop All Servers",
-            "type": "shell",
-            "command": "pkill",
-            "args": ["-f", "yuihub"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Start Cloudflare Tunnel",
-            "type": "shell", 
-            "command": "bash",
-            "args": ["${workspaceFolder}/.cloudflare/tunnel.sh"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*Starting YuiHub Cloudflare Tunnel.*$",
-                    "endsPattern": "^.*Tunnel established successfully.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub: Test Tunnel Connection",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo 'Testing Cloudflare Tunnel connection...' && sleep 2 && if [ -f .cloudflare/.tunnel-url ]; then API_URL=$(cat .cloudflare/.tunnel-url) && echo 'Tunnel URL: '$API_URL && curl -s \"$API_URL/health\" | python3 -m json.tool; else echo 'Tunnel not active. Start tunnel first.'; fi"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Test Named Tunnel (PoC)",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo 'Testing PoC Named Tunnel connection...' && sleep 2 && echo 'Tunnel URL: https://poc-yuihub.vemi.jp' && curl -s 'https://poc-yuihub.vemi.jp/health' | python3 -m json.tool && echo '' && echo 'OpenAPI Schema:' && curl -s 'https://poc-yuihub.vemi.jp/openapi.yml' | head -5"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Run Smoke Tests (All)",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/run-all-tests.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "dedicated",
-                "showReuseMessage": true,
+                "showReuseMessage": false,
                 "clear": true
             },
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Smoke Test - API Health",
-            "type": "shell",
+            "label": "YuiHub: API Quick Test",
+            "type": "shell", 
             "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-api-health.sh"],
+            "args": ["-c", "curl -s http://localhost:3000/health && echo '\n✓ Health OK' && curl -s 'http://localhost:3000/recent?n=3' | head -20 && echo '\n✓ Recent API OK'"],
             "group": "test",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
                 "focus": true,
                 "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
+                "showReuseMessage": false,
+                "clear": true
             },
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Smoke Test - API Search",
+            "label": "YuiHub: Safe Stop Server",
             "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-api-search.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Smoke Test - API Recent",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-api-recent.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Smoke Test - API Save",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-api-save.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Smoke Test - Data Flow",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-data-flow.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Smoke Test - MCP Connection",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-mcp-connection.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Get Tunnel URL",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/.cloudflare/get-tunnel-url.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Stop Cloudflare Tunnel",
-            "type": "shell",
-            "command": "pkill",
-            "args": ["-f", "cloudflared.*tunnel"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Smoke Test - Tunnel",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/tests/smoke/test-tunnel.sh"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Safe Stop API Server",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo '🛑 Safely stopping YuiHub API server...' && PID=$(lsof -ti:3000) && if [ ! -z \"$PID\" ]; then echo \"Found API server on PID: $PID\" && kill -TERM $PID && echo \"✅ Graceful shutdown signal sent\"; else echo \"No API server running on port 3000\"; fi"],
+            "command": "bash", 
+            "args": ["-c", "pkill -f 'node.*yuihub_api/src/server.js' && echo '✓ Server stopped safely' || echo 'ℹ No server process found'"],
             "group": "build",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
                 "focus": true,
                 "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Stop and Wait",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo '🛑 Stopping API server with wait...' && PID=$(lsof -ti:3000) && if [ ! -z \"$PID\" ]; then echo \"Found API server on PID: $PID\" && kill -TERM $PID && echo \"Waiting for process to exit...\" && sleep 3 && if lsof -ti:3000 >/dev/null 2>&1; then echo \"⚠️ Process still running, force kill\" && kill -9 $PID; else echo \"✅ Process stopped cleanly\"; fi; else echo \"No API server running\"; fi"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
+                "showReuseMessage": false,
+                "clear": true
             },
             "problemMatcher": []
         }

@@ -20,5 +20,8 @@
     "lunr": "^2.3.9",
     "tiny-segmenter": "^0.2.0",
     "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^13.1.1"
   }
 }
