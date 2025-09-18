@@ -15,12 +15,17 @@ servers:
   - url: http://localhost:3000
     description: Local development server
 
+# Global security requirement (API key for all endpoints except /health)
+security:
+  - ApiKeyAuth: []
+
 paths:
   /health:
     get:
       summary: Health check endpoint
       description: Returns server status and configuration information
       operationId: getHealth
+      security: []  # No authentication required
       tags:
         - System
       responses:
@@ -94,14 +99,32 @@ paths:
                     ## 本文
                     開発期間2.5-3.0日の制約下で、TypeScript導入による...
       responses:
-        '200':
-          description: Successfully saved
+        '201':
+          description: Successfully created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SaveResponse'
         '400':
           description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Invalid authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
           content:
             application/json:
               schema:
@@ -151,6 +174,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Invalid authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Search error
           content:
@@ -183,6 +224,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecentResponse'
+        '401':
+          description: Missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Invalid authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Server error
           content:
@@ -191,6 +250,13 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-yuihub-token
+      description: API token for YuiHub authentication
+
   schemas:
     NoteFrontmatter:
       type: object

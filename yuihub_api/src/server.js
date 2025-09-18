@@ -1,5 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
+import { timingSafeEqual } from 'crypto';
 import { ulid } from 'ulid';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,6 +14,21 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
+
+// Validate API token on startup
+const token = process.env.API_TOKEN;
+if (!token || token.trim().length < 16) {
+  console.error('❌ API_TOKEN is missing or too short (minimum 16 characters)');
+  process.exit(1);
+}
+
+// Safe token comparison function
+function safeEquals(a, b) {
+  const A = Buffer.from(String(a ?? ''));
+  const B = Buffer.from(String(b ?? ''));
+  if (A.length !== B.length) return false;
+  try { return timingSafeEqual(A, B); } catch { return false; }
+}
 
 // Tunnel integration - only load if enabled
 let TunnelManager;
@@ -29,7 +46,39 @@ const app = Fastify({
   requestIdHeader: 'x-request-id'
 });
 
-await app.register(cors, { origin: true });
+await app.register(cors, {
+  origin: process.env.ALLOWED_ORIGINS?.split(',').map(s => s.trim()) ?? ['*'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-yuihub-token'],
+});
+
+// Rate limiting for public endpoints
+await app.register(rateLimit, {
+  max: 120,
+  timeWindow: '1 minute',
+  allowList: ['127.0.0.1', '::1']
+});
+
+// Authentication hook
+app.addHook('onRequest', async (req, res) => {
+  // Skip authentication for OPTIONS (CORS preflight)
+  if (req.method === 'OPTIONS') return;
+  
+  // Skip authentication for /health endpoint
+  if (req.method === 'GET' && req.url.startsWith('/health')) return;
+  
+  const header = req.headers['x-yuihub-token'];
+  if (!header) {
+    res.code(401).send({ ok: false, error: 'Missing x-yuihub-token header' });
+    return;
+  }
+  
+  if (!safeEquals(header, token)) {
+    req.log.warn({ ip: req.ip, url: req.url }, 'Forbidden: invalid token');
+    res.code(403).send({ ok: false, error: 'Forbidden' });
+    return;
+  }
+});
 
 // Initialize services
 const storageAdapter = createStorageAdapter();
