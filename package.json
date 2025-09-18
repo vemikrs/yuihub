@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "dev:api": "cd yuihub_api && npm run dev",
+    "dev:tunnel": "cd yuihub_api && ENABLE_TUNNEL=true npm run dev",
     "start:api": "cd yuihub_api && npm start",
+    "start:prod": "cd yuihub_api && TUNNEL_MODE=named ENABLE_TUNNEL=true npm start",
     "start:mcp": "cd yuihub_mcp && npm start",
     "build-index": "node scripts/chunk_and_lunr.mjs",
     "build-terms": "node scripts/build_terms.mjs",
@@ -18,6 +20,10 @@
     "install-all": "npm install && cd yuihub_api && npm install && cd ../yuihub_mcp && npm install",
     "tunnel:setup": "bash .cloudflare/setup-tunnel.sh",
     "tunnel:start": "bash .cloudflare/start-tunnel.sh",
+    "tunnel:quick": "node .cloudflare/tunnel-cli.js quick",
+    "tunnel:named": "node .cloudflare/tunnel-cli.js named",
+    "tunnel:status": "node .cloudflare/tunnel-cli.js status",
+    "tunnel:stop": "node .cloudflare/tunnel-cli.js stop",
     "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'"
   },
   "engines": {

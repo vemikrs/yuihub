@@ -12,6 +12,17 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 
+// Tunnel integration - only load if enabled
+let TunnelManager;
+if (process.env.ENABLE_TUNNEL === 'true') {
+  try {
+    const { TunnelManager: TM } = await import('../../.cloudflare/tunnel-manager.js');
+    TunnelManager = TM;
+  } catch (error) {
+    console.warn('⚠️  Tunnel integration failed to load:', error.message);
+  }
+}
+
 const app = Fastify({ 
   logger: true,
   requestIdHeader: 'x-request-id'
@@ -22,6 +33,9 @@ await app.register(cors, { origin: true });
 // Initialize services
 const storageAdapter = createStorageAdapter();
 const searchService = new SearchService();
+
+// Tunnel manager instance (if enabled)
+let tunnelManager = null;
 
 // Load search index on startup
 const indexPath = process.env.LUNR_INDEX_PATH || path.resolve(__dirname, '../../index/lunr.idx.json');
@@ -46,13 +60,14 @@ app.get('/health', async (req, reply) => {
 // OpenAPI schema endpoint for ChatGPT Actions
 app.get('/openapi.yml', async (req, reply) => {
   try {
-    const fs = await import('fs-extra');
-    const path = await import('path');
+    const fs = await import('fs/promises');
     const schemaPath = path.join(__dirname, '../openapi.yml');
+    app.log.info(`Attempting to load OpenAPI schema from: ${schemaPath}`);
     const schema = await fs.readFile(schemaPath, 'utf8');
     reply.type('text/yaml');
     return schema;
   } catch (error) {
+    app.log.error(error, `Failed to load OpenAPI schema from: ${path.join(__dirname, '../openapi.yml')}`);
     reply.status(500);
     return { error: 'OpenAPI schema not found' };
   }
@@ -170,10 +185,55 @@ const start = async () => {
   try {
     await app.listen({ port: PORT, host: HOST });
     app.log.info(`YuiHub API server listening on http://${HOST}:${PORT}`);
+    
+    // Start tunnel if enabled
+    if (TunnelManager && process.env.ENABLE_TUNNEL === 'true') {
+      try {
+        tunnelManager = new TunnelManager();
+        const url = await tunnelManager.start();
+        
+        app.log.info(`🌐 Cloudflare Tunnel: ${url}`);
+        app.log.info(`📋 OpenAPI Schema: ${url}/openapi.yml`);
+        app.log.info(`🔍 Search API: ${url}/search?q=example`);
+        
+        // Store tunnel URL globally for potential API use
+        app.decorate('tunnelUrl', url);
+        
+      } catch (tunnelError) {
+        app.log.error('Failed to start tunnel:', tunnelError.message);
+        app.log.info('💡 Server will continue without tunnel');
+      }
+    }
+    
   } catch (err) {
     app.log.error(err);
     process.exit(1);
   }
 };
+
+// Graceful shutdown handling
+process.on('SIGINT', async () => {
+  app.log.info('🛑 Graceful shutdown initiated...');
+  
+  if (tunnelManager) {
+    app.log.info('🔌 Stopping tunnel...');
+    await tunnelManager.stop();
+  }
+  
+  await app.close();
+  app.log.info('✅ Server stopped');
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  app.log.info('🛑 SIGTERM received, shutting down...');
+  
+  if (tunnelManager) {
+    await tunnelManager.stop();
+  }
+  
+  await app.close();
+  process.exit(0);
+});
 
 start();

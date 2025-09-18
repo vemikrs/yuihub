@@ -72,6 +72,43 @@
             }
         },
         {
+            "label": "YuiHub: Start Dev Server (with Tunnel)",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "dev:tunnel"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/index/lunr.idx.json",
+                    "PORT": "3000",
+                    "HOST": "localhost",
+                    "STORAGE_ADAPTER": "local",
+                    "ENABLE_TUNNEL": "true",
+                    "TUNNEL_MODE": "quick"
+                }
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*YuiHub API server listening.*$",
+                    "endsPattern": "^.*Cloudflare Tunnel: https.*$"
+                }
+            }
+        },
+        {
             "label": "YuiHub: Start MCP Server", 
             "type": "shell",
             "command": "npm",
@@ -313,7 +350,7 @@
             "label": "YuiHub: Get Tunnel URL",
             "type": "shell",
             "command": "bash",
-            "args": ["-c", "if [ -f .cloudflare/.tunnel-url ]; then echo '🌐 Current Tunnel URL:'; cat .cloudflare/.tunnel-url; echo ''; echo '📋 OpenAPI Schema:'; echo $(cat .cloudflare/.tunnel-url)/openapi.yml; else echo '❌ No active tunnel found. Start tunnel first.'; fi"],
+            "args": ["${workspaceFolder}/.cloudflare/get-tunnel-url.sh"],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -335,6 +372,22 @@
                 "echo": true,
                 "reveal": "always",
                 "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Smoke Test - Tunnel",
+            "type": "shell",
+            "command": "bash",
+            "args": ["${workspaceFolder}/tests/smoke/test-tunnel.sh"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false

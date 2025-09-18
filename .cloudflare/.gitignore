@@ -3,6 +3,7 @@
 *.json
 *.txt
 .tunnel-url
+.tunnel-pid
 tunnel-credentials.json
 start-tunnel*.sh
 config.yml

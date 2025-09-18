@@ -57,6 +57,7 @@ echo "3. API Recent Notes"
 echo "4. API Note Save"
 echo "5. Data Flow Integration"
 echo "6. MCP Server Connection"
+echo "7. Cloudflare Tunnel"
 echo
 echo "🏁 Starting test execution..."
 echo
@@ -78,6 +79,9 @@ run_test "test-data-flow.sh" "Data Flow Integration"
 
 # テスト6: MCPサーバー接続
 run_test "test-mcp-connection.sh" "MCP Server Connection"
+
+# テスト7: Cloudflare Tunnel
+run_test "test-tunnel.sh" "Cloudflare Tunnel"
 
 # 結果サマリー
 echo "📊 TEST EXECUTION SUMMARY"
