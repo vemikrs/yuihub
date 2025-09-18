@@ -1,0 +1,20 @@
+{
+  "name": "yuihub_api",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/server.js",
+    "start": "node --env-file=.env src/server.js",
+    "build-index": "node ../scripts/chunk_and_lunr.mjs"
+  },
+  "dependencies": {
+    "fastify": "^4.28.1",
+    "@fastify/cors": "^10.0.0",
+    "gray-matter": "^4.0.3",
+    "ulid": "^2.3.0",
+    "js-yaml": "^4.1.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^11.0.0"
+  }
+}
