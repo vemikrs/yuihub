@@ -1,0 +1,81 @@
+=== YuiHub PoC Technical Data ===
+
+## File Structure
+./.github/workflows/build-index.yml
+./.github/workflows/ci.yml
+./.vscode/launch.json
+./.vscode/settings.json
+./.vscode/tasks.json
+./README.md
+./RUNBOOK.md
+./chatlogs/2025-09-18-sample-test-0001.md
+./chatlogs/2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md
+./chatlogs/2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md
+./chatlogs/2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md
+./docs/250918A_PoC/yuihub_poc_plan.md
+./docs/PoC_Implementation_Report.md
+./index/documents.json
+./index/lunr.idx.json
+./index/stats.json
+./index/terms-quick.json
+./index/terms.json
+./package-lock.json
+./package.json
+./scripts/build_terms.mjs
+./scripts/chunk_and_lunr.mjs
+./scripts/summarize_weekly.mjs
+./summaries/2025-38.json
+./summaries/recent-activity.json
+./summaries/weekly-summaries.json
+./templates/save_template.md
+./yuihub_api/README.md
+./yuihub_api/openapi.yml
+./yuihub_api/package.json
+./yuihub_api/src/search.js
+./yuihub_api/src/server.js
+./yuihub_api/src/storage.js
+./yuihub_mcp/README.md
+./yuihub_mcp/package.json
+./yuihub_mcp/src/server.js
+
+## Code Metrics
+  147 yuihub_api/src/search.js
+  164 yuihub_api/src/server.js
+  109 yuihub_api/src/storage.js
+  361 yuihub_mcp/src/server.js
+  265 scripts/build_terms.mjs
+  248 scripts/chunk_and_lunr.mjs
+  171 scripts/summarize_weekly.mjs
+ 1465 total
+
+## Index Statistics
+total 96
+drwxr-xr-x  2 user user  4096 Sep 18 09:34 .
+drwxr-xr-x 14 user user  4096 Sep 18 09:51 ..
+-rw-r--r--  1 user user  3311 Sep 18 09:53 documents.json
+-rw-r--r--  1 user user 16943 Sep 18 09:53 lunr.idx.json
+-rw-r--r--  1 user user   386 Sep 18 09:53 stats.json
+-rw-r--r--  1 user user 10283 Sep 18 09:53 terms-quick.json
+-rw-r--r--  1 user user 47187 Sep 18 09:53 terms.json
+
+## Sample Index Content
+{
+  "totalFiles": 3,
+  "byDecision": {
+    "採用": 3,
+    "保留": 0,
+    "却下": 0,
+    "null": 0
+  },
+  "byActor": {
+    "chatgpt": 2,
+    "copilot": 2,
+    "claude": 1
+  },
+  "byTag": {
+    "demo": 1,
+    "tech-decision": 1,
+    "poc": 1,
+    "language": 1,
+    "architecture": 1,
+    "protocol": 1,
