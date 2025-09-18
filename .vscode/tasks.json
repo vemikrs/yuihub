@@ -156,26 +156,10 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Setup Cloudflare Tunnel",
-            "type": "shell",
-            "command": "bash",
-            "args": ["${workspaceFolder}/.cloudflare/setup-tunnel.sh"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub: Start Cloudflare Tunnel (Quick)",
+            "label": "YuiHub: Start Cloudflare Tunnel",
             "type": "shell", 
             "command": "bash",
-            "args": ["${workspaceFolder}/.cloudflare/start-tunnel-quick.sh"],
+            "args": ["${workspaceFolder}/.cloudflare/tunnel.sh"],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -192,7 +176,7 @@
                 },
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": "^.*Starting Cloudflare Tunnel.*$",
+                    "beginsPattern": "^.*Starting YuiHub Cloudflare Tunnel.*$",
                     "endsPattern": "^.*Tunnel established successfully.*$"
                 }
             }
@@ -201,7 +185,7 @@
             "label": "YuiHub: Test Tunnel Connection",
             "type": "shell",
             "command": "bash",
-            "args": ["-c", "echo 'Testing Cloudflare Tunnel connection...' && sleep 2 && if [ -f .cloudflare/start-tunnel.sh ]; then API_URL=$(grep -o 'https://[^/]*' .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool; else echo 'Tunnel not set up. Run Setup Cloudflare Tunnel first.'; fi"],
+            "args": ["-c", "echo 'Testing Cloudflare Tunnel connection...' && sleep 2 && if [ -f .cloudflare/.tunnel-url ]; then API_URL=$(cat .cloudflare/.tunnel-url) && echo 'Tunnel URL: '$API_URL && curl -s \"$API_URL/health\" | python3 -m json.tool; else echo 'Tunnel not active. Start tunnel first.'; fi"],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -319,6 +303,38 @@
                 "echo": true,
                 "reveal": "always",
                 "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Get Tunnel URL",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "if [ -f .cloudflare/.tunnel-url ]; then echo '🌐 Current Tunnel URL:'; cat .cloudflare/.tunnel-url; echo ''; echo '📋 OpenAPI Schema:'; echo $(cat .cloudflare/.tunnel-url)/openapi.yml; else echo '❌ No active tunnel found. Start tunnel first.'; fi"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Stop Cloudflare Tunnel",
+            "type": "shell",
+            "command": "pkill",
+            "args": ["-f", "cloudflared.*tunnel"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false

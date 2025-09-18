@@ -157,10 +157,18 @@ public
 .pnp.*
 
 # YuiHub specific files
-# Cloudflare tunnel credentials and configs
-.cloudflare/tunnel-credentials.json
+# Cloudflare tunnel dynamic files (regenerated each run)
+.cloudflare/*.yml
 .cloudflare/*.json
-.cloudflare/tunnel-url.txt
+.cloudflare/*.txt
+.cloudflare/.tunnel-url
+.cloudflare/tunnel-credentials.json
+.cloudflare/start-tunnel*.sh  # Auto-generated scripts
+
+# Keep only essential Cloudflare files
+!.cloudflare/tunnel.sh
+!.cloudflare/README.md
+!.cloudflare/.gitignore
 
 # Generated search indexes (can be regenerated)
 index/lunr.idx.json

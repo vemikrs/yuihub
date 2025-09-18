@@ -1,0 +1,21 @@
+# Cloudflare dynamic files (auto-generated, exclude from Git)
+*.yml
+*.json
+*.txt
+.tunnel-url
+tunnel-credentials.json
+start-tunnel*.sh
+config.yml
+
+# Cloudflare binary
+cloudflared
+cloudflared.exe
+
+# Logs
+*.log
+cloudflare.log
+
+# Keep only essential files
+!README.md
+!tunnel.sh
+!.gitignore
