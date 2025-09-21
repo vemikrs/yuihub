@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Block commits while FREEZE sentinel exists.
+if [ -f "FREEZE" ]; then
+  echo "⛔ FREEZE is active. Remove FREEZE to commit. See FREEZE-LOG.md."
+  exit 1
+fi
+exit 0
