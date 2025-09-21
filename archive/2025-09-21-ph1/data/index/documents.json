@@ -1,0 +1,255 @@
+[
+  {
+    "id": "01J8K7XAMPLE123456789ABCD-0",
+    "originalId": "01J8K7XAMPLE123456789ABCD",
+    "chunkIndex": 0,
+    "title": "TypeScript vs JavaScript選択",
+    "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+    "url": "file://./2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+    "date": "2025-09-18T12:00:00.000Z",
+    "tags": [
+      "tech-decision",
+      "poc",
+      "language"
+    ],
+    "decision": "採用",
+    "actors": [
+      "chatgpt",
+      "copilot"
+    ],
+    "body": "要点（3行） - PoC段階ではJavaScript選択で開発速度を優先 - TypeScript移行は段階的に検討（Phase 2以降） - 現時点でのリスクは許容範囲内と判断 本文 議論の背景 YuiHub PoCの実装において、JavaScriptとTypeScriptのどちらを採用するかという技術選択について検討した。 検討要素 JavaScript選択の理由: - 開発期間2.5-3.0日という制約 - MCP SDKのサンプルがJavaScript中心 - 依存関係とビルドプロセスの簡素化 - 起動時間の高速化（tscコンパイル不要） TypeScriptの利点: - 型安全性による品質向上 - IDE支援の充実 - リファクタリング安全性 - エンタープライズ開発での標準 意思決定 PoC段階ではJavaScript採用とし、以下の段階的移行パスを計画： 1. Phase 1: JSDocによる型ヒント追加 2. Phase 2: TypeScript導入（型定義のみ） 3. Phase 3: 厳密な型チェック有効化 根拠 - プロトタイプとしては適切な技術選択 - Ja"
+  },
+  {
+    "id": "01J8K8EXAMPLE456789ABCDEF-0",
+    "originalId": "01J8K8EXAMPLE456789ABCDEF",
+    "chunkIndex": 0,
+    "title": "MCP vs HTTP API二面対応",
+    "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+    "url": "file://./2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+    "date": "2025-09-18T13:30:00.000Z",
+    "tags": [
+      "architecture",
+      "protocol",
+      "mcp",
+      "api"
+    ],
+    "decision": "採用",
+    "actors": [
+      "claude",
+      "copilot"
+    ],
+    "body": "要点（3行） - MCPとHTTP APIの二面対応で異なるAIクライアントから統一アクセス - プロトコルアダプタパターンで実装の分離を実現 - 将来の拡張性と相互運用性を確保 本文 設計方針の検討 複数のAIクライアント（ChatGPT、Claude、VS Code、Cursor等）から同一のデータストアにアクセスする方法について検討。 アーキテクチャ案 案1: HTTP API のみ - シンプルな実装 - ChatGPT Actionsで直接利用可能 - ただしMCP対応クライアントには非対応 案2: MCP のみ - 標準プロトコル準拠 - Claude Desktopなどで直接利用 - ただしHTTP Actionsには非対応 案3: 二面対応（採用案） 実装詳細 - HTTP API: Fastifyベースの軽量API - MCP Server: HTTP APIをラップするプロトコルアダプタ - 共通契約: 同じ保存・検索機能を両方で提供 利点 1. クライアント選択の自由度: ユーザーが好きなAIツールを選択可能 2. 標準準拠: MCPという業界標準に対応 3. 段"
+  },
+  {
+    "id": "01K5D5A58RYN7PTVT9NZ0SB250-0",
+    "originalId": "01K5D5A58RYN7PTVT9NZ0SB250",
+    "chunkIndex": 0,
+    "title": "VS Code Tasks Test",
+    "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+    "url": "file://./2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+    "date": "2025-09-18T00:59:09.465Z",
+    "tags": [
+      "test",
+      "vscode"
+    ],
+    "decision": "採用",
+    "actors": [
+      "api"
+    ],
+    "body": "要点（3行） - VS Code tasks.jsonによるサーバー起動の外部化 - npmコマンドのKill問題を解決 - 開発効率の大幅向上 本文 VS CodeのTask機能を使って、YuiHub APIサーバーを専用タスクで起動することで、ターミナルの混在によるプロセスKill問題を解決した。"
+  },
+  {
+    "id": "01K5DK63CYNB1WYAN7M82WAFE3-0",
+    "originalId": "01K5DK63CYNB1WYAN7M82WAFE3",
+    "chunkIndex": 0,
+    "title": "スモークテスト_1758171696",
+    "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+    "url": "file://./2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+    "date": "2025-09-18T05:01:36.543Z",
+    "tags": [
+      "smoke-test",
+      "automated"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "test"
+    ],
+    "body": "スモークテスト実行 これは自動化されたスモークテストです。 実行情報 - タイムスタンプ: 1758171696 - テスト対象: ノート保存機能 - 期待結果: 正常保存とパス生成"
+  },
+  {
+    "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T-0",
+    "originalId": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+    "chunkIndex": 0,
+    "title": "スモークテスト_1758167582",
+    "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+    "url": "file://./2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+    "date": "2025-09-18T03:53:02.712Z",
+    "tags": [
+      "smoke-test",
+      "automated"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "test"
+    ],
+    "body": "スモークテスト実行 これは自動化されたスモークテストです。 実行情報 - タイムスタンプ: 1758167582 - テスト対象: ノート保存機能 - 期待結果: 正常保存とパス生成"
+  },
+  {
+    "id": "01K5DEMF9ND9XCTCW9G0A7MN1F-0",
+    "originalId": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+    "chunkIndex": 0,
+    "title": "スモークテスト_1758166924",
+    "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+    "url": "file://./2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+    "date": "2025-09-18T03:42:04.598Z",
+    "tags": [
+      "smoke-test",
+      "automated"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "test"
+    ],
+    "body": "スモークテスト実行 これは自動化されたスモークテストです。 実行情報 - タイムスタンプ: 1758166924 - テスト対象: ノート保存機能 - 期待結果: 正常保存とパス生成"
+  },
+  {
+    "id": "01K5DCQ5E6FVPXSF10YT3KCS05-0",
+    "originalId": "01K5DCQ5E6FVPXSF10YT3KCS05",
+    "chunkIndex": 0,
+    "title": "スモークテスト_1758164915",
+    "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+    "url": "file://./2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+    "date": "2025-09-18T03:08:35.655Z",
+    "tags": [
+      "smoke-test",
+      "automated"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "test"
+    ],
+    "body": "スモークテスト実行 これは自動化されたスモークテストです。 実行情報 - タイムスタンプ: 1758164915 - テスト対象: ノート保存機能 - 期待結果: 正常保存とパス生成"
+  },
+  {
+    "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT-0",
+    "originalId": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+    "chunkIndex": 0,
+    "title": "パス修正テスト",
+    "path": "2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+    "url": "file://./2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+    "date": "2025-09-18T02:57:12.629Z",
+    "tags": [
+      "test",
+      "path-fix"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot"
+    ],
+    "body": "パス修正完了 絶対パスから相対パスへの修正が完了しました。 修正箇所 - .cloudflare/設定ファイル - storage.js のURL生成 - chunkandlunr.mjs のメタデータ - ドキュメント内の例"
+  },
+  {
+    "id": "01K5DK64JXBQWP1W0RHCYKYRN0-0",
+    "originalId": "01K5DK64JXBQWP1W0RHCYKYRN0",
+    "chunkIndex": 0,
+    "title": "データフロー統合テスト_1758171697",
+    "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+    "url": "file://./2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+    "date": "2025-09-18T05:01:37.757Z",
+    "tags": [
+      "integration",
+      "data-flow",
+      "automated-test"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "integration-test"
+    ],
+    "body": "データフロー統合テスト このノートは統合テストの一部です。 検索対象キーワード DataFlowTest1758171697 テスト内容 - ノート保存機能 - インデックス更新機能 - 検索機能 期待結果 このノートが保存後、検索で発見できること。"
+  },
+  {
+    "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4-0",
+    "originalId": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+    "chunkIndex": 0,
+    "title": "データフロー統合テスト_1758167583",
+    "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+    "url": "file://./2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+    "date": "2025-09-18T03:53:03.935Z",
+    "tags": [
+      "integration",
+      "data-flow",
+      "automated-test"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "integration-test"
+    ],
+    "body": "データフロー統合テスト このノートは統合テストの一部です。 検索対象キーワード DataFlowTest1758167583 テスト内容 - ノート保存機能 - インデックス更新機能 - 検索機能 期待結果 このノートが保存後、検索で発見できること。"
+  },
+  {
+    "id": "01K5DEMGHC8J62PV33NS3WG9RN-0",
+    "originalId": "01K5DEMGHC8J62PV33NS3WG9RN",
+    "chunkIndex": 0,
+    "title": "データフロー統合テスト_1758166925",
+    "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+    "url": "file://./2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+    "date": "2025-09-18T03:42:05.868Z",
+    "tags": [
+      "integration",
+      "data-flow",
+      "automated-test"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "integration-test"
+    ],
+    "body": "データフロー統合テスト このノートは統合テストの一部です。 検索対象キーワード DataFlowTest1758166925 テスト内容 - ノート保存機能 - インデックス更新機能 - 検索機能 期待結果 このノートが保存後、検索で発見できること。"
+  },
+  {
+    "id": "01K5DCQ6P1X6EB53QS0SKB7VQC-0",
+    "originalId": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+    "chunkIndex": 0,
+    "title": "データフロー統合テスト_1758164916",
+    "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+    "url": "file://./2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+    "date": "2025-09-18T03:08:36.929Z",
+    "tags": [
+      "integration",
+      "data-flow",
+      "automated-test"
+    ],
+    "decision": "採用",
+    "actors": [
+      "copilot",
+      "integration-test"
+    ],
+    "body": "データフロー統合テスト このノートは統合テストの一部です。 検索対象キーワード DataFlowTest1758164916 テスト内容 - ノート保存機能 - インデックス更新機能 - 検索機能 期待結果 このノートが保存後、検索で発見できること。"
+  },
+  {
+    "id": "cat-type-diagnosis-001-0",
+    "originalId": "cat-type-diagnosis-001",
+    "chunkIndex": 0,
+    "title": "あなたはどんな猫タイプ？診断",
+    "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+    "url": "file://./2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+    "date": "2025-09-18",
+    "tags": [
+      "猫診断",
+      "性格タイプ",
+      "黒猫"
+    ],
+    "decision": "採用",
+    "actors": [
+      "chatgpt",
+      "user"
+    ],
+    "body": "ユーザーが「わたしはなんの猫なんだろう」と質問。 質問と回答 1. 性格 → わからない 2. 人との距離感 → ひとりの時間大事だが、仲良くなると依存傾向 3. 好きなこと → 考えること 4. こだわり → わからない 診断結果 - 黒猫タイプ 🐈‍⬛ - ミステリアスで落ち着いていて、自分の世界を大事にする。 - でも心を許した相手にはとても甘えん坊になる。 - 不思議で魅力的な存在感を持つ猫。"
+  }
+]

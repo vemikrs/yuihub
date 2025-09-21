@@ -1,0 +1,50 @@
+{
+  "totalFiles": 15,
+  "byDecision": {
+    "採用": 14,
+    "保留": 1,
+    "却下": 0,
+    "null": 0
+  },
+  "byActor": {
+    "chatgpt": 4,
+    "copilot": 11,
+    "claude": 1,
+    "api": 1,
+    "test": 4,
+    "user": 2,
+    "integration-test": 4
+  },
+  "byTag": {
+    "tech-decision": 1,
+    "poc": 1,
+    "language": 1,
+    "architecture": 1,
+    "protocol": 1,
+    "mcp": 1,
+    "api": 1,
+    "test": 2,
+    "vscode": 1,
+    "テスト": 1,
+    "保存": 1,
+    "smoke-test": 4,
+    "automated": 4,
+    "path-fix": 1,
+    "猫": 1,
+    "アイデンティティ": 1,
+    "integration": 4,
+    "data-flow": 4,
+    "automated-test": 4,
+    "猫診断": 1,
+    "性格タイプ": 1,
+    "黒猫": 1
+  },
+  "generatedAt": "2025-09-18T10:25:40.483Z",
+  "operations": {
+    "rebuild": 1,
+    "reload": 1
+  },
+  "lastBuild": "2025-09-18T10:27:57.946Z",
+  "lastRebuild": "2025-09-18T10:25:40.505Z",
+  "lastReload": "2025-09-18T10:27:57.946Z"
+}

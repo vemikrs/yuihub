@@ -1,0 +1,3654 @@
+{
+  "generatedAt": "2025-09-18T10:14:19.158Z",
+  "documentsCount": 15,
+  "termsCount": 179,
+  "topTerms": [
+    {
+      "term": "ノート保存機能",
+      "frequency": 8,
+      "documentCount": 8
+    },
+    {
+      "term": "期待結果",
+      "frequency": 8,
+      "documentCount": 8
+    },
+    {
+      "term": "スモークテスト",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "スモークテスト実行",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "これは自動化されたスモークテストです",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "実行情報",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "タイムスタンプ",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "テスト対象",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "正常保存とパス生成",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "データフロー統合テスト",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "このノートは統合テストの一部です",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索対象キーワード",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "テスト内容",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "インデックス更新機能",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索機能",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "このノートが保存後",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索で発見できること",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "dataflowtest",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "要点",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "本文",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "api",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "yuihub",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "mcp",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "code",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "storage",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "ユーザーが",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "選択",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "段階では",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "選択で開発速度を優先",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "移行は段階的に検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "以降",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "現時点でのリスクは許容範囲内と判断",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "議論の背景",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の実装において",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のどちらを採用するかという技術選択について検討した",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "検討要素",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "選択の理由",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "開発期間",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "日という制約",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のサンプルが",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "中心",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "依存関係とビルドプロセスの簡素化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "起動時間の高速化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "コンパイル不要",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の利点",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "型安全性による品質向上",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "支援の充実",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "リファクタリング安全性",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "エンタープライズ開発での標準",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "意思決定",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "採用とし",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "以下の段階的移行パスを計画",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "による型ヒント追加",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "導入",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "型定義のみ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "厳密な型チェック有効化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "根拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "プロトタイプとしては適切な技術選択",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "経験者には物足りないが",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "実用性を重視",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "後からの移行パスが明確に定義されている",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "typescript",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "javascript",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "poc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "phase",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "sdk",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "tsc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ide",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "jsdoc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "java",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "二面対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の二面対応で異なる",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアントから統一アクセス",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "プロトコルアダプタパターンで実装の分離を実現",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "将来の拡張性と相互運用性を確保",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "設計方針の検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "複数の",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアント",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "から同一のデータストアにアクセスする方法について検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "アーキテクチャ案",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のみ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "シンプルな実装",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "で直接利用可能",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ただし",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "対応クライアントには非対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "標準プロトコル準拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "などで直接利用",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "には非対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "採用案",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "実装詳細",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ベースの軽量",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "をラップするプロトコルアダプタ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "共通契約",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "同じ保存・検索機能を両方で提供",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "利点",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアント選択の自由度",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ユーザーが好きな",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ツールを選択可能",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "標準準拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "という業界標準に対応",
+      "frequency": 1,
+      "documentCount": 1
+    }
+  ],
+  "terms": {
+    "ノート保存機能": {
+      "frequency": 8,
+      "documentCount": 8,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        }
+      ]
+    },
+    "期待結果": {
+      "frequency": 8,
+      "documentCount": 8,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 0.6286086594223741
+        }
+      ]
+    },
+    "スモークテスト": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "スモークテスト実行": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "これは自動化されたスモークテストです": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "実行情報": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "タイムスタンプ": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "テスト対象": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "正常保存とパス生成": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+          "topic": "スモークテスト_1758171696",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+          "topic": "スモークテスト_1758167582",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+          "topic": "スモークテスト_1758166924",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+          "topic": "スモークテスト_1758164915",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "データフロー統合テスト": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "このノートは統合テストの一部です": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "検索対象キーワード": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "テスト内容": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "インデックス更新機能": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "検索機能": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "このノートが保存後": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "検索で発見できること": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "dataflowtest": {
+      "frequency": 4,
+      "documentCount": 4,
+      "documents": [
+        {
+          "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+          "topic": "データフロー統合テスト_1758171697",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+          "topic": "データフロー統合テスト_1758167583",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+          "topic": "データフロー統合テスト_1758166925",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        },
+        {
+          "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+          "topic": "データフロー統合テスト_1758164916",
+          "count": 1,
+          "relevance": 1.3217558399823195
+        }
+      ]
+    },
+    "要点": {
+      "frequency": 3,
+      "documentCount": 3,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        }
+      ]
+    },
+    "本文": {
+      "frequency": 3,
+      "documentCount": 3,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        }
+      ]
+    },
+    "api": {
+      "frequency": 3,
+      "documentCount": 3,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        },
+        {
+          "id": "test-note-001",
+          "topic": "テスト保存",
+          "count": 1,
+          "relevance": 1.6094379124341003
+        }
+      ]
+    },
+    "yuihub": {
+      "frequency": 2,
+      "documentCount": 2,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        },
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        }
+      ]
+    },
+    "mcp": {
+      "frequency": 2,
+      "documentCount": 2,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        },
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        }
+      ]
+    },
+    "code": {
+      "frequency": 2,
+      "documentCount": 2,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        },
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        }
+      ]
+    },
+    "storage": {
+      "frequency": 2,
+      "documentCount": 2,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        },
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        }
+      ]
+    },
+    "ユーザーが": {
+      "frequency": 2,
+      "documentCount": 2,
+      "documents": [
+        {
+          "id": "cat-identity-001",
+          "topic": "ユーザーは猫である",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        },
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.0149030205422647
+        }
+      ]
+    },
+    "選択": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "段階では": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "選択で開発速度を優先": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "移行は段階的に検討": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "以降": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "現時点でのリスクは許容範囲内と判断": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "議論の背景": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "の実装において": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "のどちらを採用するかという技術選択について検討した": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "検討要素": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "選択の理由": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "開発期間": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "日という制約": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "のサンプルが": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "中心": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "依存関係とビルドプロセスの簡素化": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "起動時間の高速化": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "コンパイル不要": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "の利点": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "型安全性による品質向上": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "支援の充実": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "リファクタリング安全性": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "エンタープライズ開発での標準": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "意思決定": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "採用とし": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "以下の段階的移行パスを計画": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "による型ヒント追加": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "導入": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "型定義のみ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "厳密な型チェック有効化": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "根拠": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "プロトタイプとしては適切な技術選択": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "経験者には物足りないが": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "実用性を重視": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "後からの移行パスが明確に定義されている": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "typescript": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "javascript": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "poc": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "phase": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "sdk": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "tsc": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ide": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "jsdoc": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "java": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K7XAMPLE123456789ABCD",
+          "topic": "TypeScript vs JavaScript選択",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "二面対応": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "の二面対応で異なる": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "クライアントから統一アクセス": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "プロトコルアダプタパターンで実装の分離を実現": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "将来の拡張性と相互運用性を確保": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "設計方針の検討": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "複数の": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "クライアント": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "から同一のデータストアにアクセスする方法について検討": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "アーキテクチャ案": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "のみ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "シンプルな実装": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "で直接利用可能": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ただし": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "対応クライアントには非対応": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "標準プロトコル準拠": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "などで直接利用": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "には非対応": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "採用案": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "実装詳細": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ベースの軽量": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "をラップするプロトコルアダプタ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "共通契約": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "同じ保存・検索機能を両方で提供": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "利点": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "クライアント選択の自由度": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ユーザーが好きな": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ツールを選択可能": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "標準準拠": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "という業界標準に対応": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "段階的導入": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "から始めて": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "に移行も可能": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "保守性": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "核となるビジネスロジックは単一の": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "層に集約": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "技術的考慮点": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "サーバは": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "なプロキシとして実装": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "エラーハンドリングと監査ログは両面で統一": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "認証・認可は将来的に両面で対応予定": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "結論": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "二面対応により": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "エコシステムの多様性に対応しつつ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "実装の複雑さを最小限に抑えることができる": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "http": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "chatgpt": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "claude": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "cursor": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "actions": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "desktop": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "server": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "adapter": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "fastify": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "stateless": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01J8K8EXAMPLE456789ABCDEF",
+          "topic": "MCP vs HTTP API二面対応",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "によるサーバー起動の外部化": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "コマンドの": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "問題を解決": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "開発効率の大幅向上": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "機能を使って": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "サーバーを専用タスクで起動することで": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ターミナルの混在によるプロセス": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "問題を解決した": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "tasks": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "test": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "json": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "npm": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "kill": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "task": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+          "topic": "VS Code Tasks Test",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "テスト保存": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "test-note-001",
+          "topic": "テスト保存",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "これは": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "test-note-001",
+          "topic": "テスト保存",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "操作のテスト保存です": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "test-note-001",
+          "topic": "テスト保存",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "savenote": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "test-note-001",
+          "topic": "テスト保存",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "パス修正テスト": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "パス修正完了": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "絶対パスから相対パスへの修正が完了しました": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "修正箇所": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "設定ファイル": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "生成": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "のメタデータ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ドキュメント内の例": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "cloudflare": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "url": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "chunk": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "lunr": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "mjs": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+          "topic": "パス修正テスト",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ユーザーは猫である": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-identity-001",
+          "topic": "ユーザーは猫である",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "わたしは猫です": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-identity-001",
+          "topic": "ユーザーは猫である",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "と発言": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-identity-001",
+          "topic": "ユーザーは猫である",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "猫であることを自認している": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-identity-001",
+          "topic": "ユーザーは猫である",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "あなたはどんな猫タイプ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "診断": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "わたしはなんの猫なんだろう": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "と質問": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "質問と回答": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "性格": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "わからない": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "人との距離感": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ひとりの時間大事だが": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "仲良くなると依存傾向": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "好きなこと": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "考えること": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "こだわり": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "診断結果": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "黒猫タイプ": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "ミステリアスで落ち着いていて": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "自分の世界を大事にする": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "でも心を許した相手にはとても甘えん坊になる": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    },
+    "不思議で魅力的な存在感を持つ猫": {
+      "frequency": 1,
+      "documentCount": 1,
+      "documents": [
+        {
+          "id": "cat-type-diagnosis-001",
+          "topic": "あなたはどんな猫タイプ？診断",
+          "count": 1,
+          "relevance": 2.70805020110221
+        }
+      ]
+    }
+  },
+  "topics": {
+    "TypeScript vs JavaScript選択": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      }
+    ],
+    "MCP vs HTTP API二面対応": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "VS Code Tasks Test": [
+      {
+        "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+        "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+        "date": "2025-09-18T00:59:09.465Z"
+      }
+    ],
+    "テスト保存": [
+      {
+        "id": "test-note-001",
+        "path": "2025/09/2025-09-18-------test-note-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "スモークテスト_1758171696": [
+      {
+        "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+        "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+        "date": "2025-09-18T05:01:36.543Z"
+      }
+    ],
+    "スモークテスト_1758167582": [
+      {
+        "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+        "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+        "date": "2025-09-18T03:53:02.712Z"
+      }
+    ],
+    "スモークテスト_1758166924": [
+      {
+        "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+        "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+        "date": "2025-09-18T03:42:04.598Z"
+      }
+    ],
+    "スモークテスト_1758164915": [
+      {
+        "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+        "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+        "date": "2025-09-18T03:08:35.655Z"
+      }
+    ],
+    "パス修正テスト": [
+      {
+        "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+        "path": "2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+        "date": "2025-09-18T02:57:12.629Z"
+      }
+    ],
+    "ユーザーは猫である": [
+      {
+        "id": "cat-identity-001",
+        "path": "2025/09/2025-09-18-----------cat-identity-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "データフロー統合テスト_1758171697": [
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      }
+    ],
+    "データフロー統合テスト_1758167583": [
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      }
+    ],
+    "データフロー統合テスト_1758166925": [
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      }
+    ],
+    "データフロー統合テスト_1758164916": [
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "あなたはどんな猫タイプ？診断": [
+      {
+        "id": "cat-type-diagnosis-001",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ]
+  },
+  "tags": {
+    "smoke-test": [
+      {
+        "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+        "topic": "スモークテスト_1758171696",
+        "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+        "date": "2025-09-18T05:01:36.543Z"
+      },
+      {
+        "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+        "topic": "スモークテスト_1758167582",
+        "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+        "date": "2025-09-18T03:53:02.712Z"
+      },
+      {
+        "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+        "topic": "スモークテスト_1758166924",
+        "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+        "date": "2025-09-18T03:42:04.598Z"
+      },
+      {
+        "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+        "topic": "スモークテスト_1758164915",
+        "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+        "date": "2025-09-18T03:08:35.655Z"
+      }
+    ],
+    "automated": [
+      {
+        "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+        "topic": "スモークテスト_1758171696",
+        "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+        "date": "2025-09-18T05:01:36.543Z"
+      },
+      {
+        "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+        "topic": "スモークテスト_1758167582",
+        "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+        "date": "2025-09-18T03:53:02.712Z"
+      },
+      {
+        "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+        "topic": "スモークテスト_1758166924",
+        "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+        "date": "2025-09-18T03:42:04.598Z"
+      },
+      {
+        "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+        "topic": "スモークテスト_1758164915",
+        "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+        "date": "2025-09-18T03:08:35.655Z"
+      }
+    ],
+    "integration": [
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "topic": "データフロー統合テスト_1758171697",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      },
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "topic": "データフロー統合テスト_1758167583",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      },
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "topic": "データフロー統合テスト_1758166925",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      },
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "topic": "データフロー統合テスト_1758164916",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "data-flow": [
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "topic": "データフロー統合テスト_1758171697",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      },
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "topic": "データフロー統合テスト_1758167583",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      },
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "topic": "データフロー統合テスト_1758166925",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      },
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "topic": "データフロー統合テスト_1758164916",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "automated-test": [
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "topic": "データフロー統合テスト_1758171697",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      },
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "topic": "データフロー統合テスト_1758167583",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      },
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "topic": "データフロー統合テスト_1758166925",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      },
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "topic": "データフロー統合テスト_1758164916",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "test": [
+      {
+        "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+        "topic": "VS Code Tasks Test",
+        "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+        "date": "2025-09-18T00:59:09.465Z"
+      },
+      {
+        "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+        "topic": "パス修正テスト",
+        "path": "2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+        "date": "2025-09-18T02:57:12.629Z"
+      }
+    ],
+    "tech-decision": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "topic": "TypeScript vs JavaScript選択",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      }
+    ],
+    "poc": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "topic": "TypeScript vs JavaScript選択",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      }
+    ],
+    "language": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "topic": "TypeScript vs JavaScript選択",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      }
+    ],
+    "architecture": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "protocol": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "mcp": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "api": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "vscode": [
+      {
+        "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+        "topic": "VS Code Tasks Test",
+        "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+        "date": "2025-09-18T00:59:09.465Z"
+      }
+    ],
+    "テスト": [
+      {
+        "id": "test-note-001",
+        "topic": "テスト保存",
+        "path": "2025/09/2025-09-18-------test-note-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "保存": [
+      {
+        "id": "test-note-001",
+        "topic": "テスト保存",
+        "path": "2025/09/2025-09-18-------test-note-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "path-fix": [
+      {
+        "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+        "topic": "パス修正テスト",
+        "path": "2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+        "date": "2025-09-18T02:57:12.629Z"
+      }
+    ],
+    "猫": [
+      {
+        "id": "cat-identity-001",
+        "topic": "ユーザーは猫である",
+        "path": "2025/09/2025-09-18-----------cat-identity-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "アイデンティティ": [
+      {
+        "id": "cat-identity-001",
+        "topic": "ユーザーは猫である",
+        "path": "2025/09/2025-09-18-----------cat-identity-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "猫診断": [
+      {
+        "id": "cat-type-diagnosis-001",
+        "topic": "あなたはどんな猫タイプ？診断",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "性格タイプ": [
+      {
+        "id": "cat-type-diagnosis-001",
+        "topic": "あなたはどんな猫タイプ？診断",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "黒猫": [
+      {
+        "id": "cat-type-diagnosis-001",
+        "topic": "あなたはどんな猫タイプ？診断",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ]
+  },
+  "actors": {
+    "copilot": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "topic": "TypeScript vs JavaScript選択",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      },
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      },
+      {
+        "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+        "topic": "スモークテスト_1758171696",
+        "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+        "date": "2025-09-18T05:01:36.543Z"
+      },
+      {
+        "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+        "topic": "スモークテスト_1758167582",
+        "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+        "date": "2025-09-18T03:53:02.712Z"
+      },
+      {
+        "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+        "topic": "スモークテスト_1758166924",
+        "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+        "date": "2025-09-18T03:42:04.598Z"
+      },
+      {
+        "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+        "topic": "スモークテスト_1758164915",
+        "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+        "date": "2025-09-18T03:08:35.655Z"
+      },
+      {
+        "id": "01K5DC2ADM5GTKBPZ9Y7PZDDDT",
+        "topic": "パス修正テスト",
+        "path": "2025/09/2025-09-18---------01K5DC2ADM5GTKBPZ9Y7PZDDDT.md",
+        "date": "2025-09-18T02:57:12.629Z"
+      },
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "topic": "データフロー統合テスト_1758171697",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      },
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "topic": "データフロー統合テスト_1758167583",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      },
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "topic": "データフロー統合テスト_1758166925",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      },
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "topic": "データフロー統合テスト_1758164916",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "chatgpt": [
+      {
+        "id": "01J8K7XAMPLE123456789ABCD",
+        "topic": "TypeScript vs JavaScript選択",
+        "path": "2025/09/2025-09-18-typescript-decision-01J8K7XAMPLE123456789ABCD.md",
+        "date": "2025-09-18T12:00:00.000Z"
+      },
+      {
+        "id": "test-note-001",
+        "topic": "テスト保存",
+        "path": "2025/09/2025-09-18-------test-note-001.md",
+        "date": "2025-09-18"
+      },
+      {
+        "id": "cat-identity-001",
+        "topic": "ユーザーは猫である",
+        "path": "2025/09/2025-09-18-----------cat-identity-001.md",
+        "date": "2025-09-18"
+      },
+      {
+        "id": "cat-type-diagnosis-001",
+        "topic": "あなたはどんな猫タイプ？診断",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "test": [
+      {
+        "id": "01K5DK63CYNB1WYAN7M82WAFE3",
+        "topic": "スモークテスト_1758171696",
+        "path": "2025/09/2025-09-18---------1758171696-01K5DK63CYNB1WYAN7M82WAFE3.md",
+        "date": "2025-09-18T05:01:36.543Z"
+      },
+      {
+        "id": "01K5DF8HZR8RJ7BFY8T4MS3W1T",
+        "topic": "スモークテスト_1758167582",
+        "path": "2025/09/2025-09-18---------1758167582-01K5DF8HZR8RJ7BFY8T4MS3W1T.md",
+        "date": "2025-09-18T03:53:02.712Z"
+      },
+      {
+        "id": "01K5DEMF9ND9XCTCW9G0A7MN1F",
+        "topic": "スモークテスト_1758166924",
+        "path": "2025/09/2025-09-18---------1758166924-01K5DEMF9ND9XCTCW9G0A7MN1F.md",
+        "date": "2025-09-18T03:42:04.598Z"
+      },
+      {
+        "id": "01K5DCQ5E6FVPXSF10YT3KCS05",
+        "topic": "スモークテスト_1758164915",
+        "path": "2025/09/2025-09-18---------1758164915-01K5DCQ5E6FVPXSF10YT3KCS05.md",
+        "date": "2025-09-18T03:08:35.655Z"
+      }
+    ],
+    "integration-test": [
+      {
+        "id": "01K5DK64JXBQWP1W0RHCYKYRN0",
+        "topic": "データフロー統合テスト_1758171697",
+        "path": "2025/09/2025-09-18-------------1758171697-01K5DK64JXBQWP1W0RHCYKYRN0.md",
+        "date": "2025-09-18T05:01:37.757Z"
+      },
+      {
+        "id": "01K5DF8K5Z5Y6Y48QNWQVSMHW4",
+        "topic": "データフロー統合テスト_1758167583",
+        "path": "2025/09/2025-09-18-------------1758167583-01K5DF8K5Z5Y6Y48QNWQVSMHW4.md",
+        "date": "2025-09-18T03:53:03.935Z"
+      },
+      {
+        "id": "01K5DEMGHC8J62PV33NS3WG9RN",
+        "topic": "データフロー統合テスト_1758166925",
+        "path": "2025/09/2025-09-18-------------1758166925-01K5DEMGHC8J62PV33NS3WG9RN.md",
+        "date": "2025-09-18T03:42:05.868Z"
+      },
+      {
+        "id": "01K5DCQ6P1X6EB53QS0SKB7VQC",
+        "topic": "データフロー統合テスト_1758164916",
+        "path": "2025/09/2025-09-18-------------1758164916-01K5DCQ6P1X6EB53QS0SKB7VQC.md",
+        "date": "2025-09-18T03:08:36.929Z"
+      }
+    ],
+    "user": [
+      {
+        "id": "cat-identity-001",
+        "topic": "ユーザーは猫である",
+        "path": "2025/09/2025-09-18-----------cat-identity-001.md",
+        "date": "2025-09-18"
+      },
+      {
+        "id": "cat-type-diagnosis-001",
+        "topic": "あなたはどんな猫タイプ？診断",
+        "path": "2025/09/2025-09-18----------------cat-type-diagnosis-001.md",
+        "date": "2025-09-18"
+      }
+    ],
+    "claude": [
+      {
+        "id": "01J8K8EXAMPLE456789ABCDEF",
+        "topic": "MCP vs HTTP API二面対応",
+        "path": "2025/09/2025-09-18-mcp-dual-protocol-01J8K8EXAMPLE456789ABCDEF.md",
+        "date": "2025-09-18T13:30:00.000Z"
+      }
+    ],
+    "api": [
+      {
+        "id": "01K5D5A58RYN7PTVT9NZ0SB250",
+        "topic": "VS Code Tasks Test",
+        "path": "2025/09/2025-09-18-VS-Code-Tasks-Test-01K5D5A58RYN7PTVT9NZ0SB250.md",
+        "date": "2025-09-18T00:59:09.465Z"
+      }
+    ]
+  }
+}

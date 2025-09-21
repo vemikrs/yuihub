@@ -1,0 +1,538 @@
+{
+  "generatedAt": "2025-09-18T10:14:19.158Z",
+  "topTerms": [
+    {
+      "term": "ノート保存機能",
+      "frequency": 8,
+      "documentCount": 8
+    },
+    {
+      "term": "期待結果",
+      "frequency": 8,
+      "documentCount": 8
+    },
+    {
+      "term": "スモークテスト",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "スモークテスト実行",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "これは自動化されたスモークテストです",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "実行情報",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "タイムスタンプ",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "テスト対象",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "正常保存とパス生成",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "データフロー統合テスト",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "このノートは統合テストの一部です",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索対象キーワード",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "テスト内容",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "インデックス更新機能",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索機能",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "このノートが保存後",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "検索で発見できること",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "dataflowtest",
+      "frequency": 4,
+      "documentCount": 4
+    },
+    {
+      "term": "要点",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "本文",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "api",
+      "frequency": 3,
+      "documentCount": 3
+    },
+    {
+      "term": "yuihub",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "mcp",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "code",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "storage",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "ユーザーが",
+      "frequency": 2,
+      "documentCount": 2
+    },
+    {
+      "term": "選択",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "段階では",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "選択で開発速度を優先",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "移行は段階的に検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "以降",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "現時点でのリスクは許容範囲内と判断",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "議論の背景",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の実装において",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のどちらを採用するかという技術選択について検討した",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "検討要素",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "選択の理由",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "開発期間",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "日という制約",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のサンプルが",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "中心",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "依存関係とビルドプロセスの簡素化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "起動時間の高速化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "コンパイル不要",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の利点",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "型安全性による品質向上",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "支援の充実",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "リファクタリング安全性",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "エンタープライズ開発での標準",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "意思決定",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "採用とし",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "以下の段階的移行パスを計画",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "による型ヒント追加",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "導入",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "型定義のみ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "厳密な型チェック有効化",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "根拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "プロトタイプとしては適切な技術選択",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "経験者には物足りないが",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "実用性を重視",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "後からの移行パスが明確に定義されている",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "typescript",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "javascript",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "poc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "phase",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "sdk",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "tsc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ide",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "jsdoc",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "java",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "二面対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "の二面対応で異なる",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアントから統一アクセス",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "プロトコルアダプタパターンで実装の分離を実現",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "将来の拡張性と相互運用性を確保",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "設計方針の検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "複数の",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアント",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "から同一のデータストアにアクセスする方法について検討",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "アーキテクチャ案",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "のみ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "シンプルな実装",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "で直接利用可能",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ただし",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "対応クライアントには非対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "標準プロトコル準拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "などで直接利用",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "には非対応",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "採用案",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "実装詳細",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ベースの軽量",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "をラップするプロトコルアダプタ",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "共通契約",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "同じ保存・検索機能を両方で提供",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "利点",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "クライアント選択の自由度",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ユーザーが好きな",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "ツールを選択可能",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "標準準拠",
+      "frequency": 1,
+      "documentCount": 1
+    },
+    {
+      "term": "という業界標準に対応",
+      "frequency": 1,
+      "documentCount": 1
+    }
+  ],
+  "tags": {
+    "smoke-test": 4,
+    "automated": 4,
+    "integration": 4,
+    "data-flow": 4,
+    "automated-test": 4,
+    "test": 2,
+    "tech-decision": 1,
+    "poc": 1,
+    "language": 1,
+    "architecture": 1,
+    "protocol": 1,
+    "mcp": 1,
+    "api": 1,
+    "vscode": 1,
+    "テスト": 1,
+    "保存": 1,
+    "path-fix": 1,
+    "猫": 1,
+    "アイデンティティ": 1,
+    "猫診断": 1,
+    "性格タイプ": 1,
+    "黒猫": 1
+  },
+  "actors": {
+    "copilot": 11,
+    "chatgpt": 4,
+    "test": 4,
+    "integration-test": 4,
+    "user": 2,
+    "claude": 1,
+    "api": 1
+  }
+}
