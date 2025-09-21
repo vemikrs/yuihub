@@ -36,12 +36,23 @@ YuiHubは「**結（Yui）**」を核に据える。
 - **Shelter Mode（避難所）**  
   自分の安心と安定を守るモード。  
   Fragment→Knot→Threadに集中し、筋を切らさない。  
+  設計的には「内部に留める」ことを優先し、公開範囲は *internal* を既定とする。  
+  （将来は *detail=minimal, external_io=blocked* を既定とする予定）
 
 - **Signal Mode（発信）**  
   外に伝えるモード。  
   PacketやThreadを翻訳し、OSS貢献や協働へつなげる。  
+  設計的には「外に出す」ことを優先し、公開範囲は *partner / public* を既定とする。  
+  （将来は *detail=standard|rich, external_io=allowed* を既定とする予定）
 
-YuiHubは、思想を守る**避難所（Shelter）**であり、次の創造を開く**発信の場（Signal）**でもある。
+---
+
+YuiHubは、思想を守る **避難所（Shelter）** であると同時に、  
+次の創造を開く **発信の場（Signal）** でもある。  
+
+PoCでは Mode を“旗”として掲げつつ、制御は **公開範囲（visibility）** のみに絞る。  
+将来的には「情報の粒度（detail）」や「外部送信方針（external_io）」も組み込み、  
+安心のための二層的なモード設計へと拡張していく。
 
 ---
 
