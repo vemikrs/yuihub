@@ -4,6 +4,7 @@ status: draft
 owner: vemikrs
 created: 2025-09-20
 updated: 2025-09-21
+since: v0.2.0
 related:
   - meta/MANIFESTO.md
   - notes/manifesto.personal.md
@@ -11,7 +12,7 @@ related:
   - meta/ETHICS.md
 ---
 
-# YuiHub Lexicon v0.3
+# YuiHub Lexicon
 
 この辞書は、YuiHubにおける用語を正規化し、思想の膨張や比喩の乱立を防ぐための**ガードレール**である。  
 三層構造をとり、Public Manifestoで登場する語と、背景の語を明確に分ける。  
@@ -23,6 +24,19 @@ related:
 ---
 
 ## Core Terms（必須）
+### Framework / Dependent Terms
+#### YuiFlow Framework (YuiFlow)
+思想を「型」として翻訳する枠組み。Fragment / Knot / Thread を実装に落とし込む際の **I/Oスキーマ、ICD、契約（OpenAPI/Contract Tests）** を一次正として保持する。  
+Hub（具象の場）に対する Flow（思想の型）の関係を明示する。
+
+> Schema Hooks（YuiFlow→具象化の“ジャブ”）
+> - I/O 仕様の一次正を `docs/yuiflow/**` に置く（具象側に一次正を置かない）
+> - 変更は **Step2.5**（技術設計確定）でのみ合意し、契約テストを更新してから実装に反映
+> - 破壊変更が出たら実装は一旦停止し、YuiFlow側に差し戻す
+
+---
+
+### Core Terms
 
 ### Fragment（断片）
 即興的に生まれる気づきやアイデアの最小単位。  
@@ -40,10 +54,24 @@ Fragmentを選び取り、再訪や共有の起点になる。
 Fragment / Knot / Thread を実装に橋渡しする翻訳層。  
 Intent, Prior Decisions, Constraints, Evidence, Open Questions, Next Action で構成される。
 
+> Schema Hooks（Context Packet）
+> - 実装では **`input.message` の集合**や、`record.entry` の**抜粋バンドル**として表現する
+> - 受け渡し単位は YAML/JSON。**Thread を鍵**に部分集合を切り出せること
+
 ### Modes
 - **Shelter Mode（避難所）**: 思想を守り、安心と連続性を優先する。  
 - **Signal Mode（発信モード）**: 思想を翻訳し、他者に共有・協働することを優先する。  
   - 別名候補: 発信／灯火／共鳴（思想の開放性を強調するニュアンス）  
+
+---
+
+### Schema Hooks（Core Terms → I/O への写像規約）
+| Term | 必須フィールド/規約 | 備考 |
+|---|---|---|
+| Fragment | `record.entry.kind = "fragment"` / `thread` **必須** | 既定は fragment |
+| Knot | `record.entry.kind = "knot"` / `decision`（短文）任意 / `refs[]` 任意 | 意思決定のまとまり |
+| Thread | `thread` **必須**（Fragment/Knot共通） | 流れの識別子 |
+| Context Packet | `input.message[]` または `record.entry[]` の**部分集合** | Thread/タグで抽出可能 |
 
 ---
 
