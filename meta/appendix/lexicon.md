@@ -3,40 +3,25 @@ doc_type: appendix
 status: draft
 owner: vemikrs
 created: 2025-09-20
-updated: 2025-09-21
+updated: 2025-09-22
 since: v0.2.0
 related:
   - meta/MANIFESTO.md
   - notes/manifesto.personal.md
   - meta/FOCUS.md
   - meta/ETHICS.md
+  - meta/appendix/abstract.terms.md
 ---
 
-# YuiHub Lexicon
+# YuiHub Lexicon v0.2.0
 
 この辞書は、YuiHubにおける用語を正規化し、思想の膨張や比喩の乱立を防ぐための**ガードレール**である。  
-三層構造をとり、Public Manifestoで登場する語と、背景の語を明確に分ける。  
-
-- **Core Terms**: Public Manifestoにも必ず登場する最小セット。  
-- **Extended Terms**: Context理解に役立つが、Publicでは必須ではない。  
-- **Background Terms**: Personal Manifestoや内省で用いる。Publicには出さない。  
+用語は **Core / Principles / Extended / Background** の四区分で整理する。  
+抽象語（思想源泉）は `meta/appendix/abstract.terms.md` に分離し、本書から参照する。  
 
 ---
 
 ## Core Terms（必須）
-### Framework / Dependent Terms
-#### YuiFlow Framework (YuiFlow)
-思想を「型」として翻訳する枠組み。Fragment / Knot / Thread を実装に落とし込む際の **I/Oスキーマ、ICD、契約（OpenAPI/Contract Tests）** を一次正として保持する。  
-Hub（具象の場）に対する Flow（思想の型）の関係を明示する。
-
-> Schema Hooks（YuiFlow→具象化の“ジャブ”）
-> - I/O 仕様の一次正を `docs/yuiflow/**` に置く（具象側に一次正を置かない）
-> - 変更は **Step2.5**（技術設計確定）でのみ合意し、契約テストを更新してから実装に反映
-> - 破壊変更が出たら実装は一旦停止し、YuiFlow側に差し戻す
-
----
-
-### Core Terms
 
 ### Fragment（断片）
 即興的に生まれる気づきやアイデアの最小単位。  
@@ -54,41 +39,16 @@ Fragmentを選び取り、再訪や共有の起点になる。
 Fragment / Knot / Thread を実装に橋渡しする翻訳層。  
 Intent, Prior Decisions, Constraints, Evidence, Open Questions, Next Action で構成される。
 
-> Schema Hooks（Context Packet）
-> - 実装では **`input.message` の集合**や、`record.entry` の**抜粋バンドル**として表現する
-> - 受け渡し単位は YAML/JSON。**Thread を鍵**に部分集合を切り出せること
-
-### Modes
-- **Shelter Mode（避難所）**: 思想を守り、安心と連続性を優先する。  
-- **Signal Mode（発信モード）**: 思想を翻訳し、他者に共有・協働することを優先する。  
-  - 別名候補: 発信／灯火／共鳴（思想の開放性を強調するニュアンス）  
+### Modes（旗）
+- **Shelter Mode（避難所）**: 思想を守り、安心と連続性を優先する旗。  
+- **Signal Mode（発信）**: 思想を翻訳し、他者に共有・協働する旗。  
+  - Mode ＝ 安心のための「振る舞いの旗」。  
 
 ---
 
-### Schema Hooks（Core Terms → I/O への写像規約）
-| Term | 必須フィールド/規約 | 備考 |
-|---|---|---|
-| Fragment | `record.entry.kind = "fragment"` / `thread` **必須** | 既定は fragment |
-| Knot | `record.entry.kind = "knot"` / `decision`（短文）任意 / `refs[]` 任意 | 意思決定のまとまり |
-| Thread | `thread` **必須**（Fragment/Knot共通） | 流れの識別子 |
-| Context Packet | `input.message[]` または `record.entry[]` の**部分集合** | Thread/タグで抽出可能 |
+## Principles（原則）
+思想と実装をつなぐ基盤。Contractを導き、Specの調整に影響する。  
 
----
-
-## Extended Terms（拡張）
-
-### 思想ファースト（Idea-First）
-成果物よりも、思想の痕跡を外部に残すことを優先する方針。  
-YuiHubの根幹となる態度。
-
-### Intent Thread（意図の筋）
-Threadの中でも、選択理由が鎖のように連なり、意図が継続する状態を強調した表現。
-
-### DoD（Definition of Done／受け渡し規格）
-思想を成果物に確実に結びつけるための最低限のルール。  
-Context Packetを付与し、成果物と照合し、重要判断はKnot化する。
-
-### Principles関連
 - **Continuity over Velocity**: 速度よりも連続性を優先する。  
 - **Traceability by Design**: 辿れる形で記録を設計に組み込む。  
 - **Small-to-Stable**: 小さく残し、安定させてから広げる。  
@@ -96,14 +56,39 @@ Context Packetを付与し、成果物と照合し、重要判断はKnot化す�
 - **Revisit is a Feature**: 見返せることを機能価値とみなす。  
 
 ### Invariants（不変条件）
-- 判断は常に根拠に即時参照可能であること。  
-- 再訪によって結論が再現可能であること。  
-この二つが保たれない場合、思想の筋は途切れたと見なす。  
+Lexiconでは概要のみ記載し、具体は meta/ETHICS.md にて定義する。  
 
 ### Anti-Goals（アンチゴール）
-- 短期速度ハックによる思想の空洞化  
-- 完全自動化幻想（思想翻訳を介さないワークフロー）  
-- 意図や判断を欠いた成果物先行  
+Lexiconでは参照のみとし、具体は meta/FOCUS.md にて定義する。  
+
+---
+
+## Extended Terms（拡張）
+
+### Spec（仕様）
+- システムやAPI全体の設計図。  
+- 要件・機能・非機能・制約などを含む広い概念。  
+- 可変性が高く、開発の過程で更新される。  
+
+### Contract（コントラクト）
+- Specの中から「相互に守るべき最小単位」を抜き出したもの。  
+- API入出力形式や必須フィールド、返却ルールなどを含む。  
+- 不変性が高く、変更にはバージョニングが必要。  
+- Principlesに基づいて定義され、Specを導く基盤になる。  
+
+### Idea-First（思想ファースト）
+成果物よりも、思想の痕跡を外部に残すことを優先する方針。  
+
+### Intent Thread（意図の筋）
+Threadの中でも、選択理由が鎖のように連なり、意図が継続する状態を強調した表現。  
+
+### DoD（Definition of Done／受け渡し規格）
+思想を成果物に確実に結びつけるための最低限のルール。  
+Context Packetを付与し、成果物と照合し、重要判断はKnot化する。  
+
+### YuiFlow Framework（YuiFlow）
+思想を「型」として翻訳する枠組み。  
+Hub（具象の場）に対する Flow（思想の型）の関係を明示する。  
 
 ---
 
@@ -115,7 +100,7 @@ YuiHubの象徴的モチーフであり、KnotやThreadの背景にある世界�
 
 ### 思想の翻訳層
 会話（設計意図）と実装（成果物）の間に必要な媒介層。  
-Context Packetという具体的な仕組みで実現される。
+Context Packetという仕組みで実現される。
 
 ### 創造一般（General Creativity）
 プログラミングに限らず、絵・音楽・言葉など人間のあらゆる創造行為に拡張できるという視点。  
