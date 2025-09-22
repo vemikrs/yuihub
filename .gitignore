@@ -248,5 +248,8 @@ out/
 *.zip
 *.rar
 
+# History files
+.history/
+
 # Lock files (keep package-lock.json for reproducible builds)
 # yarn.lock
