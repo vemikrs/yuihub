@@ -60,7 +60,7 @@ related:
 
 1. `docs/yuiflow/00_min-spec.md`
 
-   * 語彙（Flow/Fragment/Step/Thread）
+   * 語彙（Flow/Fragment/Knot/Thread）
    * I/Oスキーマ初版：`input.message.yaml` / `record.entry.yaml` / `agent.trigger.yaml`
    * 非目標（UI/可視化は範囲外、検索高度化は簡易補正まで）
 
@@ -75,7 +75,7 @@ related:
 3. `docs/yuiflow/contracts/README.md`
 
    * 契約テストの位置づけ（**定義はFlow、実行はHub**）
-   * 契約の更新手順（差分Knot/Stepの戻り条件）
+   * 契約の更新手順（差分Knotの戻り条件）
 
 **テンプレ（貼付）**
 
@@ -295,7 +295,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 **差分**
 
-* 未達/保留は `docs/logdocs/Δ_Steps.md` に列挙（次Threadの起点）
+* 未達/保留は `docs/logdocs/Δ_Knots.md` に列挙（次Threadの起点）
 
 ---
 
@@ -305,14 +305,14 @@ Authorization: Bearer {{AUTH_TOKEN}}
 * [ ] **移植性**: ベンダ鍵は外だし＆最小権限。依存は疎
 * [ ] **安心**: 記録はユーザ側に帰属し、削除・閉鎖が容易
 * [ ] **膨張抑制**: 可視化/UIより**構造**（Flow/ICD/I/O）を優先
-* [ ] **語彙整合**: Fragment→Step→Thread で説明可能
+* [ ] **語彙整合**: Fragment→Knot→Thread で説明可能
 
 ---
 
 ## 作業の粒度（Issue化の指針／Agile・OSS尊重）
 
 * 1 Issue = 「最小の合意可能な変化」
-* ラベル例: `track/yuiflow` `track/poc` `type/spec` `type/impl` `Δ-step`
+* ラベル例: `track/yuiflow` `track/poc` `type/spec` `type/impl` `Δ-knot`
 * PRは**小さく**、`docs/logdocs/` に**検証ログを必ず残す**
 
 ---
