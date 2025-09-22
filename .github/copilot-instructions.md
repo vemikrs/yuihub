@@ -1,278 +1,201 @@
-# YuiHub - AI会話メモリ横断基盤
+# YuiHub with YuiFlow (Ph2b) — copilot-instructions.md
+version: v0.2.0
+status: PoC / Shelter-fixed
 
-YuiHubは、複数のAI（ChatGPT、Claude、GitHub Copilot等）での会話・意思決定を統一された外部記憶として管理するシステムです。
+## この文書の立ち位置
+- 本書は **GitHub Copilot（以下「Copilot」）** が **Ph2b** の開発を支援するための **行動規範と実装手順** を定義する。
+- **思想の参照は不要**：必要最小の思想要約を本書に **内包** する。
+- **非対称の原則**：**思想は上書きしない／実装は差し替え可能**。
 
-## ⚠️ 重要：開発作業時の必須ルール
+## アクターモデル（0⇒1の現実と将来）
+- **いま（Ph2b）**：
+  - **UXDL（ChatGPT＋vemikrs）** … 思想を守り、文脈を言語化。
+  - **vemikrs本人** … *橋渡し*（思想のコピペ／注入を手動で行う）。
+  - **Copilot（GitHub Copilot）** … *実装の手*（コード生成・差分編集・Lint）。
+- **将来（Hub完成後）**：
+  - **UXDL ⇄ YuiHub ⇄ Agent AI（含むCopilot）** で疎通。
+  - *橋渡し* は **YuiHub** が担い、**Copilotは実装の手**として指示を受ける。
 
-### プロセス管理の絶対原則
-- **APIサーバー起動は必ずVS Code Tasksを使用すること**
-  - ❌ 絶対禁止: `run_in_terminal`で直接`npm run`コマンド実行
-  - ✅ 必須: `run_task`でVS Code Tasks経由での起動
-  - 理由: 直接コマンド実行は割り込み停止でプロセスが残り、システム不安定化を招く
+---
 
-- **Node.jsプロセス終了は必ずPID特定方式を使用すること**
-  - ❌ 絶対禁止: `pkill -f node`や`killall node`等の全Node.js一括Kill
-  - ❌ 危険: WSL2のRemote Server（VS Code接続）プロセスも誤って終了する
-  - ✅ 必須: ポート→PID特定→PID指定Kill方式
-  - 安全手順: `lsof -ti:3000 | xargs kill` または `fuser -k 3000/tcp`
+## 🤖 Copilot Positioning（あなたは何者か）
+- あなたは **Copilot**（正式名称：GitHub Copilot）。**思想（UXDL）と橋渡し（現状はvemikrs／将来はHub）から渡された意図を、破らずに実装へ変換する補助AI**。
+- **役割**：コード生成／差分編集／Lint／最小テストの自動化。
+- **遵守**：本書の規範 ＞ リポジトリ過去慣習。
+- **禁止**：
+  - 外部公開・デプロイの独断実行。
+  - 思想語彙（Manifesto/Focus/Lexicon）の自己改変。
+  - 乱暴なプロセス殺傷（後述の禁止句に従う）。
 
-### 正しいプロセス管理手順
-1. **起動**: `run_task`を使用してバックグラウンドタスク実行
-2. **確認**: タスクのログ出力で正常起動を確認
-3. **テスト**: 別ターミナルで`curl`等によるエンドポイント確認
-4. **停止**: VS Code Task終了機能またはTask管理画面から適切に停止
+---
 
-### 安全なプロセス終了コマンド集
+## ⚠️ 必須ルール（継続・固定句）
+**起動**：VS Code **Tasks** を使う（`run_task`）。  
+**禁止**：`run_in_terminal` での直接 `npm run`。
+
+**停止**：**Port→PID→Kill**。例：`fuser -k 3000/tcp`  
+**禁止**：`pkill -f node` / `killall node` / `kill $(pgrep node)`
+
+補助コマンド：
 ```bash
-# ✅ 推奨: ポート3000で動作するプロセスのみ終了
+# 推奨: ポート3000のプロセスのみ終了
 lsof -ti:3000 | xargs kill
-
-# ✅ 推奨: fuser使用版（よりシンプル）
+# 代替: よりシンプル
 fuser -k 3000/tcp
-
-# ✅ 推奨: 特定プロセス名での安全終了
+# 特定パス指定での安全Kill
 pgrep -f "yuihub_api/src/server.js" | xargs kill
-
-# ❌ 危険: 全Node.jsプロセス終了（Remote Server含む）
-# pkill -f node          # 絶対禁止
-# killall node           # 絶対禁止
-# kill $(pgrep node)     # 絶対禁止
-
-# 📋 プロセス確認用コマンド
-lsof -i:3000           # ポート使用状況確認
-ps aux | grep node     # Node.jsプロセス一覧
-netstat -tlnp | grep 3000  # ポート詳細情報
 ```
 
-### Cloudflare Tunnel統合
-- 新しいNode.js統合システムを使用
-- ENABLE_TUNNEL=true環境変数でAPI統合動作
-- バックグラウンド実行とライフサイクル管理を重視
-
-## アーキテクチャ
-
-### コンポーネント構成
-- **yuihub_api/**: Fastify HTTP API サーバー（メインAPI）
-- **yuihub_mcp/**: Model Context Protocol サーバー（プロトコルアダプタ）  
-- **scripts/**: 検索インデックス構築、要約生成スクリプト
-- **chatlogs/**: Markdownファイル保存場所（YAML Front-Matter付き）
-
-### プロトコル二面対応
-```
-ChatGPT Actions → HTTP API → Storage
-Claude Desktop → MCP Server → HTTP API → Storage
-```
-
-### データフォーマット
-```yaml
 ---
-id: ulid()                    # ULID形式の一意ID
-date: 2025-09-18T21:00+09:00  # ISO8601タイムスタンプ
-actors: [chatgpt, claude]     # 参加AI一覧
-topic: "API設計検討"          # 会話トピック
-tags: [architecture, api]    # 分類タグ
-decision: 採用               # 意思決定（採用/保留/却下）
-links: [https://...]         # 参考URL
----
-## 要点（3行）
-- ポイント1
-- ポイント2
-- ポイント3
 
-## 本文
-詳細な会話内容や根拠
+## 🏗️ アーキテクチャ（YuiHub＝場 / YuiFlow＝型）
+- **YuiHub**：ランタイム／HTTP API／保存・検索の「場」
+- **YuiFlow**：語彙・スキーマ・契約の「型」
+
+**コンポーネント**
+- `yuihub_api/` … Fastify HTTP API（Hub実装）
+- `yuihub_mcp/` … MCP Server（プロトコルアダプタ）
+- `docs/yuiflow/**` … 語彙・スキーマ・契約（一次正）
+- `data/chatlogs/` … YAML Front-Matter付きMD保存
+
+**目標となる疎通（Ph2b）**
+```
+UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
+                ↓                  ↓
+         Context Packet       YuiFlow Schema
 ```
 
-## 技術スタック
+---
 
-### Backend
-- **Node.js 18+** with ES Modules
-- **Fastify 4.x** - 高性能HTTPサーバー
-- **@modelcontextprotocol/sdk** - MCP実装
-- **Lunr.js** - 軽量全文検索
-- **gray-matter** - YAML Front-Matter処理
-- **ulid** - 一意ID生成
+## 🏷️ YuiFlow語彙（開発への重ね方）
+- **Fragment** … 粒。短い出来事／断片。保存の最小単位。  
+- **Knot** … 束。断片を結ぶ要点／差分の節。  
+- **Thread** … 筋。目的に沿う時系列。  
+- **Context Packet** … Fragment/Knot/Threadを実装へ橋渡しする翻訳層。
 
-### 検索・インデックス
-- **Lunr** - クライアント側全文検索
-- **チャンク化** - 長文を1000文字単位で分割
-- **TF-IDF** - 用語重要度計算
-- **日英対応** - 日本語・英語混在検索
+**Git運用への適用（必須）**
+- Issue/PR ラベル：`fragment` / `knot` / `thread`
+- ブランチ：`feat/k-<slug>`（Knot中心）
+- PRテンプレ：**目的(Knot) → 背景(Fragments要約) → 反映範囲(Thread)**
 
-### ストレージアダプタパターン
-- **Local**: ローカルファイルシステム
-- **GitHub**: GitHub API経由の自動コミット
-- **Notion**: 将来拡張予定
+---
 
-## 開発環境
+## 🛡️ Shelter Mode（固定と例外手順）
+**唯一のモードフラグ**：`MODE=shelter`  
+**外部IO**：`EXTERNAL_IO=blocked` を既定。例外時のみ `unsafe`。
 
-### VS Code統合
-- **launch.json**: デバッグ設定（API:9229、MCP:9230）
-- **tasks.json**: ビルド・実行・テストタスク
-- **compounds**: フルスタック同時起動
-
-### 環境変数
 ```bash
-# API Server
+# 必須（PoC）
+MODE=shelter
+EXTERNAL_IO=blocked   # blocked | unsafe
+
 PORT=3000
 HOST=localhost
-STORAGE_ADAPTER=local|github|notion
-LOCAL_STORAGE_PATH=./chatlogs
-LUNR_INDEX_PATH=./index/lunr.idx.json
-
-# GitHub Storage
-GITHUB_TOKEN=ghp_xxx
-GITHUB_OWNER=username
-GITHUB_REPO=repository
-GITHUB_BRANCH=main
-
-# MCP Server  
-YUIHUB_API=http://localhost:3000
+STORAGE_ADAPTER=local
+LOCAL_STORAGE_PATH=./data/chatlogs
+LUNR_INDEX_PATH=./data/index/lunr.idx.json
 ```
 
-## API仕様
+**外部連携の既定**
+- GitHub Actions：CI（lint/test）のみ。デプロイ系は無効。
+- Cloudflare Tunnel：**手動**かつ例外時のみ。
+- 外部API：アダプタ層で一括停止。例外は `EXTERNAL_IO=unsafe` を明示。
 
-### HTTP Endpoints
-- `GET /health` - ヘルスチェック
-- `POST /save` - ノート保存
-- `GET /search?q=query` - 全文検索
-- `GET /recent?n=20` - 最近の決定事項
-- `GET /openapi.yml` - OpenAPI仕様
-
-### MCP Tools
-- `save_note(frontmatter, body)` - ノート保存
-- `search_notes(query, limit)` - 検索実行
-- `get_recent_decisions(limit)` - 最近の決定取得
-
-## コーディング規約
-
-### JavaScript/Node.js
-- **ES Modules** - `import/export`使用
-- **async/await** - Promise処理
-- **エラーハンドリング** - try-catch必須
-- **ログ出力** - Fastify logger使用
-- **環境変数** - process.env経由
-
-### ファイル命名
-- **kebab-case** - スクリプト・設定ファイル
-- **camelCase** - JavaScript変数・関数
-- **PascalCase** - クラス名
-- **UPPER_CASE** - 定数・環境変数
-
-### APIレスポンス形式
-```javascript
-// 成功レスポンス
-{ ok: true, data: {...}, timestamp: "..." }
-
-// エラーレスポンス  
-{ ok: false, error: "message", code: "ERROR_CODE" }
-```
-
-## プロジェクト固有パターン
-
-### ストレージアダプタ実装
-```javascript
-export class StorageAdapter {
-  constructor(type, config) { ... }
-  async save(frontmatter, body) { ... }
-  async _saveLocal(path, content) { ... }
-  async _saveGithub(path, content) { ... }
-}
-```
-
-### 検索サービス
-```javascript
-export class SearchService {
-  async loadIndex(indexPath) { ... }
-  async search(query, limit) { ... }
-  _generateSnippet(text, query) { ... }
-}
-```
-
-### MCP Server構造
-```javascript
-server.setRequestHandler(ListToolsRequestSchema, async () => {...});
-server.setRequestHandler(CallToolRequestSchema, async (request) => {...});
-```
-
-## セキュリティ要件
-
-### 機密情報管理
-- `.env` ファイルは git ignore
-- `chatlogs/` は実データ除外
-- GitHub Token は最小権限
-- Cloudflare認証情報は暗号化
-
-### データ検証
-- YAML Front-Matter検証
-- ULID形式チェック
-- 文字エンコーディング（UTF-8）
-- ファイルサイズ制限
-
-## パフォーマンス最適化
-
-### 検索性能
-- Lunrインデックス事前構築
-- チャンクサイズ最適化（1000文字）
-- スニペット生成の効率化
-
-### メモリ使用量
-- 大量ファイル処理時のストリーミング
-- インデックス分割読み込み
-- ガベージコレクション考慮
-
-## テスト戦略
-
-### API テスト
-```bash
-curl -X POST http://localhost:3000/save \
-  -H "Content-Type: application/json" \
-  -d '{"frontmatter": {...}, "body": "..."}'
-```
-
-### MCP テスト
-- stdio通信テスト
-- Tools呼び出し検証
-- エラーハンドリング確認
-
-## デプロイメント
-
-### Cloudflare Tunnel
-- 開発環境外部公開
-- ChatGPT Actions統合
-- 一時URL自動生成
-
-### GitHub Actions
-- 自動インデックス更新
-- 週次要約生成
-- CI/CDパイプライン
-
-## トラブルシューティング
-
-### よくある問題
-1. **ポート競合**: `lsof -i :3000` で確認
-2. **インデックス未読み込み**: パス設定確認  
-3. **MCP接続エラー**: stdio通信確認
-4. **Cloudflare DNS**: 伝播待ち（数分）
-
-### デバッグ方法
-- VS Code デバッガー利用
-- ログレベル調整
-- ネットワーク通信確認
-
-## 将来拡張
-
-### Phase 2
-- TypeScript段階的導入
-- Vector検索（sqlite-vec）
-- Web UI（Astro/React）
-
-### Enterprise機能
-- RBAC（Role-Based Access Control）
-- データ暗号化
-- 監査ログ
-- マルチテナント
+**例外手順（Signalが要るとき）**
+1) Knot発行 → 2) レビュー承認 → 3) `EXTERNAL_IO=unsafe` 一時解放 → 4) 作業終了後ただちに `blocked` へ回復。
 
 ---
 
-このinstructionに基づいて、YuiHubプロジェクトの一貫した開発を支援してください。
+## 🔧 技術スタック（Ph2b固定）
+- Node.js 18+ / ES Modules
+- Fastify 4.x（HTTP）
+- MCP SDK（stdio）
+- Lunr.js（検索）
+- gray-matter（Front-Matter）
+- ulid（ID）
+- **スキーマ検証：`zod`（固定。`ajv`は未採用）**
+- **プロトコル：HTTP / MCP のみ（SSEは未採用）**
+- **状態管理：FS（YAML/MD）のみ（DB未採用）**
+
+---
+
+## 📋 コントラクトテスト（優先度）
+**MUST（マージブロッカー）**
+- Hub ↔ Flow の公開I/O（OpenAPI / スキーマ）
+- MCPエンドポイント（Agent依存点）
+- Context Packet の後方互換（バージョン整合）
+
+**SHOULD**
+- 内部ユーティリティ／変換器（スナップショット活用）
+
+**実装**：Jest + zod。Pact 等の重装備は見送り。
+
+---
+
+## 📡 API（PoC最小）
+- `GET /health`
+- `POST /save`   … YuiFlowスキーマ準拠で保存
+- `GET /search?q=&thread=&tag=`
+- `POST /trigger`… Agent起動の最小フック
+- `GET /openapi.yml` … OpenAPI参照（一次正は `docs/yuiflow/openapi/poc.yaml`）
+
+**スキーマの一次正**：`docs/yuiflow/00_min-spec.md` に従い、本書では**重複定義しない**。
+
+---
+
+## 🧪 テスト
+**Contract**
+```bash
+npm run test:contract     # スキーマ検証
+npm run test:api:compat   # I/O互換
+```
+**Smoke**
+```bash
+curl -s http://localhost:3000/health
+curl -X POST http://localhost:3000/save -H "Content-Type: application/json"   -d '{"id":"msg-test","when":"2025-09-22T14:00:00+09:00","source":"gpts","thread":"th-test","author":"user","text":"テスト保存","tags":["test"]}'
+curl -X POST http://localhost:3000/trigger -H "Content-Type: application/json"   -d '{"id":"trg-test","when":"2025-09-22T14:00:05+09:00","type":"echo","payload":{"text":"hello"},"reply_to":"th-test"}'
+```
+
+---
+
+## 🔒 セキュリティ（Shelter強化要点）
+- PII最小化（脱感度）／外部送信禁止（既定）
+- ローカル保存原則。クラウド同期は明示オプトイン。
+- API認証：Bearer Token（最小）。
+- Front-Matter検証／ULID／UTF-8／サイズ上限／バージョン互換チェック。
+
+---
+
+## 🔄 開発フロー（Ph2b推奨）
+1) **設計（Flow）**：`docs/yuiflow/` で仕様更新  
+2) **契約**：スキーマ・OpenAPIを更新（一次正）  
+3) **実装（Hub）**：`yuihub_api/` に反映  
+4) **テスト**：Contract → Smoke  
+5) **検証**：疎通確認 → DoD評価
+
+**Fragment → Knot → Thread**
+- 収集（Fragment）→ 要点化（Knot）→ 連結（Thread）→ Context Packet 生成。
+
+---
+
+## 🎯 DoD（Ph2b）
+**MSC**
+1. GPTs→YuiHub の保存/検索が通る  
+2. YuiHub→Agent の最小トリガが通る  
+3. すべての痕跡が YAML/Markdown に残り再現可能  
+
+**FSC**
+- MCP/HTTP の両経路で再現
+- 日本語検索の軽微な補正（terms補正 等）
+
+---
+
+## Later（将来拡張・非PoC）
+- TypeScript 段階導入
+- Vector検索（sqlite-vec）
+- Web UI（Astro/React）
+- Enterprise（RBAC／暗号化／監査／マルチテナント）
+
+---
+
+この instruction に基づいて、**Copilot** は Ph2b（YuiFlow Framework PoC）の一貫した開発を支援する。
