@@ -4,6 +4,9 @@ status: active
 owner: vemikrs
 created: 2025-09-22
 scope: "Ph2b Step2 構想設計"
+concept_version: c0.2
+doc_version: 0.2.0-doc.1
+target_code_tag: v0.2.0-prototype.1
 ---
 
 # Step2 作業計画書（チェックリスト）
