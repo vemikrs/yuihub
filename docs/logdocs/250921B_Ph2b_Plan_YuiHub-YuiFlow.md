@@ -66,7 +66,7 @@ related:
 
 2. `docs/yuiflow/02_hub-vs-flow-separation.md`  ← **新概念の一次正**
 
-   * 一行定義：**YuiHub＝場（実装・API・保存/検索）／YuiFlow＝型（語彙・スキーマ・契約）**
+   * 一行定義：**YuiHub＝場（実装・API・保存/検索）／YuiFlow＝型（語彙・スキーマ・コントラクト）**
    * 責務マトリクス（何をどちらに置くか）
    * 依存の向き（FlowなしでHubは動くが、**Flow準拠**で使うと思想保証）
    * 置き場所（ディレクトリ分割規範）
@@ -74,8 +74,8 @@ related:
 
 3. `docs/yuiflow/contracts/README.md`
 
-   * 契約テストの位置づけ（**定義はFlow、実行はHub**）
-   * 契約の更新手順（差分Knotの戻り条件）
+   * コントラクトテストの位置づけ（**定義はFlow、実行はHub**）
+   * コントラクトの更新手順（差分Knotの戻り条件）
 
 **テンプレ（貼付）**
 
@@ -91,10 +91,10 @@ created: 2025-09-21
 
 ## 一行定義
 - **YuiHub**: 実体（ランタイム／API／保存・検索の“場”）
-- **YuiFlow**: 型（思想→仕様→契約の“流れ”）
+- **YuiFlow**: 型（思想→仕様→コントラクトの“流れ”）
 
 ## 責務マトリクス（抜粋）
-- スキーマ・ICD・契約テストの**定義** … **Flow**
+- スキーマ・ICD・コントラクトテストの**定義** … **Flow**
 - 保存/検索の**実装**・永続化・API … **Hub**
 - 日本語 terms 抽出の**規範** … **Flow**（擬似コード）
 - 同抽出の**実装** … **Hub**（Flow準拠）
@@ -114,11 +114,11 @@ created: 2025-09-21
 
 ---
 
-## Step 2.5: 技術設計確定（ICD / OpenAPI / 契約テスト雛形）
+## Step 2.5: 技術設計確定（ICD / OpenAPI / コントラクトテスト雛形）
 
 **目的**
 
-* Step2 の概念を\*\*実装契約（機械可読）\*\*に落とす。以降の実装はこの契約に従う。
+* Step2 の概念を\*\*実装コントラクト（機械可読）\*\*に落とす。以降の実装はこのコントラクトに従う。
 
 **新規アウトプット（必須）**
 
@@ -147,7 +147,7 @@ created: 2025-09-21
 
 * [ ] `02_hub-vs-flow-separation.md` がレビュー済み（役割分離の合意）
 * [ ] OpenAPI `poc.yaml` の 3エンドポイントが揃い、例が最小2ケースずつ
-* [ ] 契約 JSON Schema が存在し、**例が Schema で validate OK**
+* [ ] コントラクト JSON Schema が存在し、**例が Schema で validate OK**
 * [ ] I/O スキーマ（YAML）と OpenAPI（JSON）が**矛盾しない**
 * [ ] セキュリティ最小原則とログ出力ルールが記述済み
 
@@ -247,7 +247,7 @@ components:
         reply_to: { type: string }
 ```
 
-**契約テスト例（雛形：`.http` でも可）**
+**コントラクトテスト例（雛形：`.http` でも可）**
 
 ```http
 ### save returns RecordEntry
@@ -273,7 +273,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 **実装最小単位**
 
-* HTTP: `/save` `/search` `/trigger` を **Step2.5 の契約**どおり実装
+* HTTP: `/save` `/search` `/trigger` を **Step2.5 のコントラクト**どおり実装
 * Agent: **Echo**（payload受→即ログ）
 * 記録: `docs/logdocs/flow-runs/` に 1実験=1ファイルの痕跡
 
@@ -321,7 +321,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 * [x] **T0（09/21）**: Step1 残（マニフェスト・ログ・スキャン）
 * [ ] **T1（～09/22）**: Step2 `00_min-spec.md`
-* [ ] **T1.5（～09/22）**: Step2.5 `01_technical-design.md`（ICD/契約テスト雛形含む）＋ `openapi/poc.yaml`
+* [ ] **T1.5（～09/22）**: Step2.5 `01_technical-design.md`（ICD/コントラクトテスト雛形含む）＋ `openapi/poc.yaml`
 * [ ] **T2（～09/24）**: Step3 実装・スモーク合格
 * [ ] **T3（～09/25）**: Step4 DoD & 差分整理
 
