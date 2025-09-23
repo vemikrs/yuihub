@@ -23,14 +23,14 @@ target_code_tag: v0.2.0-prototype.1
 - [x] 日本語処理規範 `ja-terms-guideline.md` を追加し擬似コード＋ストップワード例
 
 ## P2: 橋渡し（Step2→2.5）
-- [ ] `contracts/README.md` を新規作成（Flow定義／Hub実行の順序、Δ-Knot戻り条件）
-- [ ] OpenAPI整合表 `CONSISTENCY.md` を作成（差分⚠をΔ-Knot化）
+- [x] `contracts/README.md` を新規作成（Flow定義／Hub実行の順序、Δ-Knot戻り条件）
+- [x] OpenAPI整合表 `CONSISTENCY.md` を作成（差分⚠をΔ-Knot化）
 
 ## P3: 差分記録
-- [ ] `Δ_Knots.md` に mode固定／controls仮置き／検索AND既定／OpenAPI差分を記録
+- [x] `Δ_Knots.md` に mode固定／controls仮置き／検索AND既定／OpenAPI差分を記録
 
 ## 完了条件 (DoR準備OK)
-- [ ] 00_min-spec / 02_hub-vs-flow-separation がレビュー済み
-- [ ] ja-terms-guideline が存在
-- [ ] contracts/README.md が存在
-- [ ] CONSISTENCY.md が存在し、差分がΔ-Knotsに反映
+- [x] 00_min-spec / 02_hub-vs-flow-separation がレビュー済み
+- [x] ja-terms-guideline が存在
+- [x] contracts/README.md が存在
+- [x] CONSISTENCY.md が存在し、差分がΔ-Knotsに反映
