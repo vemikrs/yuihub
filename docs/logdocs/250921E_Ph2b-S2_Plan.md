@@ -5,14 +5,14 @@ owner: vemikrs
 created: 2025-09-22
 scope: "Ph2b Step2 構想設計"
 concept_version: c0.2
-doc_version: 0.2.0-doc.1
+doc_version: 0.2.0-doc.2
 target_code_tag: v0.2.0-prototype.1
 ---
 
 # Step2 作業計画書（チェックリスト）
 
 ## P1: 一次正を固める
-- [ ] `02_hub-vs-flow-separation.md` レビュー観点追記（責務/依存/アンチゴール/思想対応表）
+- [x] `02_hub-vs-flow-separation.md` レビュー観点追記（責務/依存/アンチゴール/思想対応表）
 - [ ] `00_min-spec.md` 更新:  
   - mode 固定必須  
   - record.entry.controls 仮置き  

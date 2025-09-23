@@ -4,7 +4,7 @@ status: draft
 owner: vemikrs
 created: 2025-09-21
 concept_version: c0.2
-doc_version: 0.2.0-doc.1
+doc_version: 0.2.0-doc.2
 target_code_tag: v0.2.0-prototype.1
 ---
 
@@ -34,3 +34,17 @@ target_code_tag: v0.2.0-prototype.1
 - Flow に実装依存の最適化を持ち込まない
 - Flow 一次定義はHubへ持ち込まない
 - Hub に仕様の一次定義を置かない
+
+## 思想対応表
+
+| 思想／約束（Flow起点） | 仕様要素（Flow側） | 実装の置き場所（Hub側） | 検証／運用フロー |
+|------------------------|--------------------|--------------------------|------------------|
+| Mode は必須で固定      | `00_min-spec.md`   | request/record のバリデーション | コントラクトテスト（Flow）＋APIテスト（Hub） |
+| Thread を必須化        | `00_min-spec.md`   | 保存時の必須フィールド   | `CONSISTENCY.md` に差分記録／Δ-Knot連携 |
+| JA terms 規範          | `ja-terms-guideline.md` | terms 抽出ロジック     | 規範に基づく抽出テスト（Flow） |
+| 検索は AND 既定        | `02_hub-vs-flow-separation.md` | クエリビルダ実装    | Δ-Knot に例外条件を記録 |
+| Context Packet の定義  | `00_min-spec.md`   | request/response パケット設計 | contracts/README.md に順序記述 |
+
+> 運用メモ  
+> - 一次正は常に Flow 起点。Hub が先に最適化を求める場合は Δ-Knot で戻し、`CONSISTENCY.md` を経由して Flow に反映する。  
+> - Flow に実装依存の最適化を持ち込まない／Hub に仕様の一次定義を置かない、をアンチゴールとして維持する。
