@@ -183,11 +183,6 @@ data/index/*.json
 # Generated summaries (can be regenerated)
 summaries/*.json
 
-# Chat logs (user data - NEVER commit actual user conversations)
-chatlogs/
-# Keep directory structure
-!chatlogs/.gitkeep
-
 # Temporary files
 *.tmp
 *.temp
