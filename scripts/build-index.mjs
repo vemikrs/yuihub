@@ -20,7 +20,7 @@ const argv = minimist(process.argv.slice(2), {
 });
 const roots = (Array.isArray(argv.paths) ? argv.paths : [argv.paths]).filter(Boolean);
 if (roots.length === 0) {
-  roots.push('notes', 'docs/logdocs');
+  roots.push('notes', 'chatlogs');
 }
 const modeFilter = new Set((argv.mode || '').split(',').filter(Boolean));
 const visibilityFilter = new Set((argv.visibility || '').split(',').filter(Boolean));

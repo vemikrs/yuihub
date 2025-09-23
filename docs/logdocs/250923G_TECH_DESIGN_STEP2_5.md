@@ -34,7 +34,7 @@ VS Code (GH Copilot) ──(編集)──┘
 ## 2. ディレクトリとFREEZE（PoC）
 
 ```
-/meta /docs /notes /logdocs /scripts /index /.vscode /.github
+/meta /docs /notes /chatlogs /scripts /index /.vscode /.github
 FREEZE … コード・構成凍結フラグファイル
 ```
 
@@ -70,7 +70,7 @@ related: []
 ## 6. API/サーバ骨子 & 索引
 
 - OpenAPI は `docs/openapi.yml` を参照
-- `scripts/build-index.js` は notes/logdocs を走査し `index/lunr.idx.json` を生成
+- `scripts/build-index.js` は notes, chatlogs を走査し `index/lunr.idx.json` を生成
 
 ## 7. GitHub連携（段階的）
 

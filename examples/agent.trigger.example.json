@@ -5,7 +5,7 @@
   "scope": {
     "paths": [
       "notes",
-      "docs/logdocs"
+      "chatlogs"
     ],
     "mode_filter": [
       "Shelter"

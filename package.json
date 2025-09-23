@@ -8,7 +8,7 @@
     "yuihub_mcp"
   ],
   "scripts": {
-    "reindex": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
+    "reindex": "node scripts/build-index.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
     "schema:check": "node scripts/validate-schemas.mjs",
     "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.js",
     "dev:api": "node --env-file=.env -w yuihub_api src/server.mjs",
