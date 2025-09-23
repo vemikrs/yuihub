@@ -1,6 +1,6 @@
 {
   "name": "yuihub-workspace",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "private": true,
   "workspaces": [
@@ -8,6 +8,8 @@
     "yuihub_mcp"
   ],
   "scripts": {
+    "reindex": "node scripts/build-index.js",
+    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.js",
     "dev:api": "cd yuihub_api && npm run dev",
     "dev:tunnel": "cd yuihub_api && ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev",
     "start:api": "cd yuihub_api && npm start",
@@ -25,12 +27,15 @@
     "tunnel:named": "node .cloudflare/tunnel-cli.js named",
     "tunnel:status": "node .cloudflare/tunnel-cli.js status",
     "tunnel:stop": "node .cloudflare/tunnel-cli.js stop",
-    "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'"
+    "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'",
+    "smoke": "curl -s http://127.0.0.1:3000/health | node -e \"process.stdin.pipe(require('stream').Writable({write(c,_,n){try{JSON.parse(c)}catch(e){process.exit(1)}n()}}))\""
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "dependencies": {
-    "tiny-segmenter": "^0.2.0"
+  "devDependencies": {
+    "tiny-segmenter": "^0.2.0",
+    "js-yaml": "^4.1.0",
+    "lunr": "^2.3.9"
   }
 }
