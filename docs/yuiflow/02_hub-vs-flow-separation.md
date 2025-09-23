@@ -20,6 +20,8 @@ target_code_tag: v0.2.0-prototype.1
 - 日本語 terms 抽出規範 … Flow
 - terms 抽出実装 … Hub
 
+> 注記: 上記は現時点の整理であり、責務の追加・修正はPoC進行に応じて随時追記される。
+
 ## 依存の向き
 - Hub は Flow なしでも最小動作可
 - Flow は Hub 非依存
