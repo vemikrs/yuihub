@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "message_id": "msg-001",
+  "mode": "Shelter",
+  "intent": "record",
+  "actor": "user",
+  "payload": {
+    "text": "PoC保存テスト。こんにちは。",
+    "meta": {
+      "audience": "self",
+      "topic": [
+        "poc",
+        "memo"
+      ],
+      "sensitivity": "normal"
+    }
+  }
+}

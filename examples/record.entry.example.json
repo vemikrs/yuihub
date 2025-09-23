@@ -1,0 +1,10 @@
+{
+  "version": "0.2.0",
+  "entry_id": "rec-001",
+  "source_message_id": "msg-001",
+  "front_matter": {
+    "mode": "Shelter",
+    "visibility": "private"
+  },
+  "content_path": "docs/logdocs/250923A_hello.md"
+}

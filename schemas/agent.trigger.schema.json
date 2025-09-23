@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yuihub.vemi.jp/schemas/agent.trigger.schema.json",
+  "title": "Agent Trigger",
+  "description": "Trigger contract for operational actions like reindex/validate/publish.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Contract version string, e.g. 0.2.0"
+    },
+    "trigger_id": {
+      "type": "string",
+      "description": "Client-provided unique ID for traceability"
+    },
+    "action": {
+      "description": "Operational action",
+      "enum": [
+        "reindex",
+        "validate",
+        "publish"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Targeting scope for the action",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "File/dir paths"
+        },
+        "mode_filter": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "Shelter",
+              "Signal"
+            ]
+          },
+          "description": "Filter by Mode flag"
+        },
+        "visibility_filter": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "private",
+              "internal",
+              "public"
+            ]
+          },
+          "description": "Filter by visibility front-matter"
+        }
+      }
+    }
+  },
+  "required": [
+    "version",
+    "trigger_id",
+    "action"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "trigger_id": "tri-001",
+  "action": "reindex",
+  "scope": {
+    "paths": [
+      "notes",
+      "docs/logdocs"
+    ],
+    "mode_filter": [
+      "Shelter"
+    ],
+    "visibility_filter": [
+      "private",
+      "internal"
+    ]
+  }
+}

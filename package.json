@@ -8,9 +8,10 @@
     "yuihub_mcp"
   ],
   "scripts": {
-    "reindex": "node scripts/build-index.js",
+    "reindex": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
+    "schema:check": "node scripts/validate-schemas.mjs",
     "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.js",
-    "dev:api": "npm run dev -w yuihub_api",
+    "dev:api": "node --env-file=.env -w yuihub_api src/server.mjs",
     "dev:tunnel": "ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev -w yuihub_api",
     "start:api": "npm start -w yuihub_api",
     "start:prod": "ENABLE_TUNNEL=true TUNNEL_MODE=named npm start -w yuihub_api",
@@ -30,11 +31,14 @@
     "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'",
     "smoke": "curl -s http://127.0.0.1:3000/health | node -e \"process.stdin.pipe(require('stream').Writable({write(c,_,n){try{JSON.parse(c)}catch(e){process.exit(1)}n()}}))\""
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "devDependencies": {
     "tiny-segmenter": "^0.2.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "minimist": "^1.2.8"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
     "js-yaml": "^4.1.0",
     "lunr": "^2.3.9"
   }

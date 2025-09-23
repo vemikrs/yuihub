@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yuihub.vemi.jp/schemas/input.message.schema.json",
+  "title": "Input Message",
+  "description": "Inbound message contract (UXDL input) for save/search/publish flows.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Contract version, e.g. 0.2.0"
+    },
+    "message_id": {
+      "type": "string",
+      "description": "Unique message ID from client"
+    },
+    "mode": {
+      "enum": [
+        "Shelter",
+        "Signal"
+      ],
+      "description": "Ideological flag (shelter or signal)"
+    },
+    "intent": {
+      "enum": [
+        "record",
+        "search",
+        "summarize",
+        "publish"
+      ],
+      "description": "Intended operation for the message"
+    },
+    "actor": {
+      "type": "string",
+      "description": "Human/agent identifier"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Raw text content to store or process"
+        },
+        "meta": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "audience": {
+              "type": "string",
+              "description": "Who is this for (self/team/public)"
+            },
+            "topic": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Topics (tags)"
+            },
+            "sensitivity": {
+              "enum": [
+                "low",
+                "normal",
+                "high"
+              ],
+              "description": "Sensitivity hint"
+            }
+          },
+          "required": [
+            "audience"
+          ]
+        }
+      },
+      "required": [
+        "text"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "message_id",
+    "mode",
+    "intent",
+    "actor",
+    "payload"
+  ]
+}

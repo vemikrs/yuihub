@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yuihub.vemi.jp/schemas/record.entry.schema.json",
+  "title": "Record Entry",
+  "description": "Internal record pointer generated after save, referencing a content file with front-matter.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Contract version, e.g. 0.2.0"
+    },
+    "entry_id": {
+      "type": "string",
+      "description": "Server-generated entry ID"
+    },
+    "source_message_id": {
+      "type": "string",
+      "description": "Original input.message message_id"
+    },
+    "front_matter": {
+      "type": "object",
+      "description": "Captured front-matter key/values"
+    },
+    "content_path": {
+      "type": "string",
+      "description": "Relative path to the markdown content file"
+    }
+  },
+  "required": [
+    "version",
+    "entry_id",
+    "source_message_id",
+    "front_matter",
+    "content_path"
+  ]
+}
