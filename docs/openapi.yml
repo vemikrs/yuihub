@@ -1,0 +1,49 @@
+openapi: 3.1.1
+info:
+  title: YuiHub/YuiFlow PoC API
+  version: 0.2.0
+servers:
+  - url: http://127.0.0.1:3000
+paths:
+  /health:
+    get:
+      operationId: health
+      responses:
+        '200':
+          description: OK
+  /ops/reindex:
+    post:
+      summary: Rebuild local search index (Shelter-only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paths:
+                  type: array
+                  items: { type: string }
+                filters:
+                  type: object
+                  properties:
+                    mode:
+                      type: array
+                      items: { type: string }
+                    visibility:
+                      type: array
+                      items: { type: string }
+                dryRun:
+                  type: boolean
+                  default: false
+      responses:
+        '200': { description: Index built }
+        '401': { description: Unauthorized }
+        '423': { description: Locked by FREEZE or policy }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
