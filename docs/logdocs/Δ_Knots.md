@@ -28,4 +28,11 @@ target_code_tag: v0.2.0-prototype.1
 
 ## Ph2b-S2-P1 構想設計
 
-[PARK] TODO Commit前に計画書に基づいて要記入
+## 2025-09-23 (Ph2b-S2 Step2-P1)
+- 00_min-spec: Mode を必須・固定（Shelter/Signal）として追記
+- 00_min-spec: `record.entry.controls` を暫定導入（プレースホルダ、厳格化は後続）
+- 00_min-spec: Thread 必須化（thread_id 無し保存不可）
+- 00_min-spec: `kind = fragment|knot` と JA/EN 例を明記
+- 00_min-spec: Context Packet を定義（I/O は Packet 経由）
+- 修正: `ja-terms-guideline.md` GAP対応（適用範囲／正規化指針／役割分担／テスト観点／更新注記）
+

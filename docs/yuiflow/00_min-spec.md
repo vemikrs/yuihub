@@ -74,3 +74,26 @@ payload:
   text: "hello agent"
 reply_to: th-<ulid>
 ```
+
+## Mode 固定必須
+- すべての `record.entry` は **Mode** を必須とする。
+- 許可値は `Shelter` / `Signal` のみ。将来の拡張は Δ-Knot で検討し、一次正（Flow）に先行させない。
+
+## Controls（仮置き）
+- `record.entry.controls` を **暫定**に導入する（プレースホルダ）。
+- 具体項目は未確定。利用は**任意**、検証は**緩和**。正式決定は Δ-Knot → Flow 反映後に厳格化する。
+
+## Thread 必須化
+- すべての記録は **Thread** に属さなければならない。
+- `thread_id` が無い `fragment` は保存不可（Hub 側バリデーション対象）。
+
+## Kind の規定
+- `kind` は必須。許可値は `fragment` / `knot`。
+- 例:
+  - JA: `kind: fragment` → 「これは試験的なメモです」
+  - EN: `kind: knot` → "This entry represents a consolidated knot."
+
+## Context Packet の定義
+- **Context Packet** ＝ Mode / Thread / Entry 群を束ねる最小の交換単位。
+- Hub 側 I/O は Context Packet を介して受け渡しする（個別 Entry の**直交送受信を禁止**）。
+- Flow（一次正）は Context Packet の構造を規定し、Hub はそれを**満たす**実装に徹する。

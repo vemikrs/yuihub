@@ -13,14 +13,14 @@ target_code_tag: v0.2.0-prototype.1
 
 ## P1: 一次正を固める
 - [x] `02_hub-vs-flow-separation.md` レビュー観点追記（責務/依存/アンチゴール/思想対応表）
-- [ ] `00_min-spec.md` 更新:  
+- [x] `00_min-spec.md` 更新:  
   - mode 固定必須  
   - record.entry.controls 仮置き  
   - thread 必須化  
   - kind: fragment|knot の規定と例追加  
   - JA/EN 2例に拡張
-- [ ] Context Packet の定義文を追記
-- [ ] 日本語処理規範 `ja-terms-guideline.md` を追加し擬似コード＋ストップワード例
+- [x] Context Packet の定義文を追記
+- [x] 日本語処理規範 `ja-terms-guideline.md` を追加し擬似コード＋ストップワード例
 
 ## P2: 橋渡し（Step2→2.5）
 - [ ] `contracts/README.md` を新規作成（Flow定義／Hub実行の順序、Δ-Knot戻り条件）

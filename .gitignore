@@ -251,5 +251,9 @@ out/
 # History files
 .history/
 
+# Diff files (root level only)
+*.diff
+!**/*.diff
+
 # Lock files (keep package-lock.json for reproducible builds)
 # yarn.lock
