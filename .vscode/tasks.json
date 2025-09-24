@@ -272,7 +272,80 @@
                 "showReuseMessage": false,
                 "clear": true
             },
-      "problemMatcher": []
-    }
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Run YuiFlow Tests",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "test:yuiflow"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: E2E Workflow Test", 
+            "type": "shell",
+            "command": "./run-tests.sh",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Full Development Stack",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "dev:full"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "NODE_ENV": "development",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "YUIHUB_API": "http://localhost:3000"
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Validate YuiFlow Compliance",
+            "type": "shell",
+            "command": "npm", 
+            "args": ["run", "validate:yuiflow"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
   ]
 }
