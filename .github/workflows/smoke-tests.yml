@@ -2,7 +2,7 @@ name: Smoke Tests
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [ready_for_review]
     paths:
       - 'yuihub_api/**'
       - 'yuihub_mcp/**'
@@ -12,7 +12,7 @@ on:
     types: [submitted]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
 
 jobs:
   smoke-tests:
@@ -30,13 +30,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           
-      - name: Install root dependencies
+      - name: Install all dependencies (workspace-aware)
         run: npm ci
-        
-      - name: Install workspace dependencies
-        run: |
-          npm ci -w yuihub_api
-          npm ci -w yuihub_mcp
           
       - name: Setup environment files
         run: |
@@ -44,13 +39,15 @@ jobs:
           mkdir -p yuihub_api/data/chatlogs
           mkdir -p yuihub_api/data/index
           
-      - name: Start API server in background
+      - name: Start API server in background (workspace context)
         run: |
-          cd yuihub_api
-          timeout 60s npm start &
+          timeout 30s npm run start:api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
           sleep 10  # Give server time to start
+        env:
+          NODE_ENV: production
+          DATA_ROOT: ${{ github.workspace }}/yuihub_api/data
           
       - name: Wait for API server to be ready
         run: |
