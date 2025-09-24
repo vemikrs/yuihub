@@ -8,10 +8,10 @@
     "yuihub_mcp"
   ],
   "scripts": {
-    "reindex": "node scripts/build-index.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
-    "schema:check": "node scripts/validate-schemas.mjs",
-    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.js",
-    "dev:api": "node --env-file=.env -w yuihub_api src/server.mjs",
+    "reindex": "node scripts/chunk_and_lunr.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
+    "schema:check": "node scripts/validate-schemas-simple.mjs",
+    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.mjs",
+    "dev:api": "node --env-file=yuihub_api/.env --watch yuihub_api/src/server.js",
     "dev:tunnel": "ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev -w yuihub_api",
     "start:api": "npm start -w yuihub_api",
     "start:prod": "ENABLE_TUNNEL=true TUNNEL_MODE=named npm start -w yuihub_api",

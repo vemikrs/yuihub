@@ -230,10 +230,10 @@ app.post('/save', async (req, reply) => {
       return { 
         ok: false, 
         error: 'Invalid InputMessage format', 
-        details: validationResult.error.errors.map(e => ({
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
           field: e.path.join('.'),
           message: e.message
-        }))
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
       };
     }
     
@@ -295,10 +295,10 @@ app.get('/search', async (req, reply) => {
       return { 
         ok: false, 
         error: 'Invalid search parameters', 
-        details: validationResult.error.errors.map(e => ({
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
           field: e.path.join('.'),
           message: e.message
-        }))
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
       };
     }
     
@@ -384,10 +384,10 @@ app.post('/trigger', async (req, reply) => {
       return { 
         ok: false, 
         error: 'Invalid AgentTrigger format', 
-        details: validationResult.error.errors.map(e => ({
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
           field: e.path.join('.'),
           message: e.message
-        }))
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
       };
     }
     

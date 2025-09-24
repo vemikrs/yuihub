@@ -4,13 +4,13 @@
     {
         "label": "YuiHub: Reindex (dryRun)",
         "type": "shell",
-        "command": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal --dryRun",
+        "command": "node scripts/chunk_and_lunr.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal --dryRun",
         "problemMatcher": []
         },
         {
         "label": "YuiHub: Reindex",
         "type": "shell",
-        "command": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
+        "command": "node scripts/chunk_and_lunr.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
         "problemMatcher": []
     },
     {
@@ -346,6 +346,4 @@
             "problemMatcher": []
         }
     ]
-}
-  ]
 }
