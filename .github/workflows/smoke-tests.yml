@@ -1,0 +1,118 @@
+name: Smoke Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'yuihub_api/**'
+      - 'yuihub_mcp/**'
+      - 'tests/smoke/**'
+      - '.github/workflows/smoke-tests.yml'
+  pull_request_review:
+    types: [submitted]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  smoke-tests:
+    name: Run Smoke Tests
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install root dependencies
+        run: npm ci
+        
+      - name: Install workspace dependencies
+        run: |
+          npm ci -w yuihub_api
+          npm ci -w yuihub_mcp
+          
+      - name: Setup environment files
+        run: |
+          cp yuihub_api/.env.example yuihub_api/.env
+          mkdir -p yuihub_api/data/chatlogs
+          mkdir -p yuihub_api/data/index
+          
+      - name: Start API server in background
+        run: |
+          cd yuihub_api
+          timeout 60s npm start &
+          API_PID=$!
+          echo "API_PID=$API_PID" >> $GITHUB_ENV
+          sleep 10  # Give server time to start
+          
+      - name: Wait for API server to be ready
+        run: |
+          timeout 30s bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done' || {
+            echo "API server failed to start"
+            curl -s http://localhost:3000/health || echo "Health check failed"
+            exit 1
+          }
+          
+      - name: Run smoke tests
+        id: smoke_tests
+        run: |
+          cd tests/smoke
+          chmod +x *.sh
+          ./run-all-tests-ci.sh
+        continue-on-error: false
+        
+      - name: Stop API server
+        if: always()
+        run: |
+          if [ ! -z "$API_PID" ]; then
+            kill $API_PID 2>/dev/null || true
+          fi
+          pkill -f "yuihub_api/src/server.js" 2>/dev/null || true
+          
+      - name: Upload smoke test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: tests/smoke/
+          retention-days: 7
+          
+      - name: Comment PR with results
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Read smoke test results if available
+            let testResults = 'Smoke tests execution completed.';
+            
+            // Create comment body
+            const body = `## 🧪 Smoke Test Results
+            
+            The smoke tests have been executed for this PR.
+            
+            ${testResults}
+            
+            📊 **Test Summary:**
+            - Test suite executed on: ${new Date().toISOString()}
+            - Runner: GitHub Actions
+            - Node.js version: ${{ env.NODE_VERSION }}
+            
+            For detailed results, check the [workflow run](${context.payload.pull_request.html_url}/checks) and downloaded artifacts.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

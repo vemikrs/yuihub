@@ -22,17 +22,15 @@ echo "   Unique Keyword: $UNIQUE_KEYWORD"
 echo "   Test Topic: $TEST_TOPIC"
 echo
 
-# ステップ1: 新しいノートの保存
+# ステップ1: 新しいノートの保存 (YuiFlow format)
 echo "📝 Step 1: Saving new note with unique content..."
 TEST_PAYLOAD=$(cat << EOF
 {
-  "frontmatter": {
-    "topic": "$TEST_TOPIC",
-    "actors": ["copilot", "integration-test"],
-    "tags": ["integration", "data-flow", "automated-test"],
-    "decision": "採用"
-  },
-  "body": "## データフロー統合テスト\n\nこのノートは統合テストの一部です。\n\n### 検索対象キーワード\n$UNIQUE_KEYWORD\n\n### テスト内容\n- ノート保存機能\n- インデックス更新機能\n- 検索機能\n\n### 期待結果\nこのノートが保存後、検索で発見できること。"
+  "source": "gpts",
+  "thread": "th-01234567890123456789012345",
+  "author": "integration-test-user",
+  "text": "## データフロー統合テスト\n\nこのノートは統合テストの一部です。\n\n### 検索対象キーワード\n$UNIQUE_KEYWORD\n\n### テスト内容\n- ノート保存機能\n- インデックス更新機能\n- 検索機能\n\n### 期待結果\nこのノートが保存後、検索で発見できること。",
+  "tags": ["integration", "data-flow", "automated-test"]
 }
 EOF
 )
