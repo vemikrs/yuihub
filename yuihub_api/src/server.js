@@ -10,6 +10,7 @@ import { SearchService } from './search.js';
 import { EnhancedSearchService } from './enhanced-search.js';
 import { IndexManager } from './index-manager.js';
 import { ConfigManager } from './config.js';
+import { ContextBuilder } from './context-builder.js';
 import { 
   InputMessageSchema, 
   AgentTriggerSchema, 
@@ -79,6 +80,9 @@ app.addHook('onRequest', authMiddleware);
 // サービス初期化
 const storageAdapter = createStorageAdapter();
 const searchService = new EnhancedSearchService();
+
+// ContextBuilder初期化
+const contextBuilder = new ContextBuilder(storageAdapter, searchService);
 
 // IndexManager初期化
 const indexManager = new IndexManager({
@@ -450,6 +454,125 @@ ${JSON.stringify(trigger.payload, null, 2)}
     
   } catch (error) {
     app.log.error('Agent trigger failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// Context Packet export endpoint
+app.get('/export/context/:thread', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const { intent = 'export' } = req.query;
+    
+    const packet = await contextBuilder.buildPacket(thread, intent);
+    
+    reply.type('application/json');
+    reply.header('Content-Disposition', `attachment; filename="${thread}-context.json"`);
+    return packet;
+    
+  } catch (error) {
+    app.log.error('Context export failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// Copilot markdown export endpoint
+app.get('/export/markdown/:thread', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const includeMetadata = req.query.metadata !== 'false';
+    const includeKnots = req.query.knots !== 'false';
+    
+    const markdown = await contextBuilder.generateCopilotMarkdown(thread, {
+      includeMetadata,
+      includeKnots
+    });
+    
+    reply.type('text/markdown');
+    reply.header('Content-Disposition', `attachment; filename="${thread}.md"`);
+    return markdown;
+    
+  } catch (error) {
+    app.log.error('Markdown export failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// VS Code Extension preparation endpoints
+app.get('/vscode/threads', async (req, reply) => {
+  try {
+    // This is a simple implementation - in a real system we'd have better thread management
+    // For now, we'll return a placeholder response
+    return {
+      ok: true,
+      threads: [
+        {
+          id: 'th-example',
+          title: 'Example Thread',
+          lastActivity: new Date().toISOString(),
+          fragmentCount: 0
+        }
+      ],
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('VS Code threads request failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+app.get('/vscode/context/:thread/compact', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const summary = await contextBuilder.getThreadSummary(thread);
+    
+    return {
+      ok: true,
+      data: summary,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('VS Code context request failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+app.post('/vscode/copilot/context', async (req, reply) => {
+  try {
+    const { thread, format = 'markdown' } = req.body;
+    
+    if (!thread) {
+      reply.code(400);
+      return { ok: false, error: 'thread parameter is required' };
+    }
+    
+    if (format === 'markdown') {
+      const markdown = await contextBuilder.generateCopilotMarkdown(thread);
+      return {
+        ok: true,
+        format: 'markdown',
+        content: markdown,
+        timestamp: new Date().toISOString()
+      };
+    } else if (format === 'json') {
+      const packet = await contextBuilder.buildPacket(thread, 'copilot-context');
+      return {
+        ok: true,
+        format: 'json',
+        content: packet,
+        timestamp: new Date().toISOString()
+      };
+    } else {
+      reply.code(400);
+      return { ok: false, error: 'format must be either "markdown" or "json"' };
+    }
+  } catch (error) {
+    app.log.error('VS Code Copilot context request failed:', error);
     reply.code(500);
     return { ok: false, error: error.message };
   }

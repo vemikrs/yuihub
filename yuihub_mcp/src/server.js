@@ -7,6 +7,8 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ListToolsRequestSchema, CallToolRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import fetch from "node-fetch";
+import { ulid } from "ulid";
+import { MCPValidators } from "./schemas.js";
 
 // Configuration
 const API_BASE = process.env.YUIHUB_API || "http://localhost:3000";
@@ -26,66 +28,124 @@ const server = new Server(
   }
 );
 
-// Tool definitions following the plan
+// Tool definitions following YuiFlow specification
 const TOOLS = [
   {
     name: "save_note",
-    description: "Save a chat conversation or decision to YuiHub with structured frontmatter and markdown content",
+    description: "Save a message fragment to YuiHub using YuiFlow InputMessage format",
     inputSchema: {
       type: "object",
       properties: {
-        frontmatter: {
+        id: { 
+          type: "string", 
+          pattern: "^msg-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$",
+          description: "Message ID (auto-generated if not provided)"
+        },
+        when: { 
+          type: "string", 
+          format: "date-time",
+          description: "ISO8601 timestamp (defaults to now)"
+        },
+        source: { 
+          type: "string", 
+          enum: ["gpts", "copilot", "claude", "human"],
+          description: "Source of the message"
+        },
+        thread: { 
+          type: "string", 
+          pattern: "^th-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$",
+          description: "Thread ID that this message belongs to"
+        },
+        author: { 
+          type: "string", 
+          description: "Author of the message"
+        },
+        text: { 
+          type: "string", 
+          description: "Message content"
+        },
+        tags: { 
+          type: "array", 
+          items: { type: "string" },
+          description: "Classification tags"
+        },
+        meta: {
           type: "object",
           properties: {
-            id: { type: "string", description: "ULID identifier (auto-generated if not provided)" },
-            date: { type: "string", description: "ISO8601 timestamp (defaults to now)" },
-            actors: { 
-              type: "array", 
-              items: { type: "string" },
-              description: "AI actors involved (chatgpt, claude, copilot, etc.)"
-            },
-            topic: { type: "string", description: "Brief topic or title" },
-            tags: { 
-              type: "array", 
-              items: { type: "string" },
-              description: "Classification tags"
-            },
-            decision: { 
-              type: "string", 
-              enum: ["採用", "保留", "却下"], 
-              description: "Decision status" 
-            },
-            links: { 
-              type: "array", 
-              items: { type: "string" },
-              description: "Reference URLs"
-            }
+            intent: { type: "string", description: "Intent description" },
+            ref: { type: "string", description: "Reference to other messages" }
           },
-          required: ["topic"]
-        },
-        body: { 
-          type: "string", 
-          description: "Markdown content with conversation details and rationale"
+          description: "Additional metadata"
         }
       },
-      required: ["frontmatter", "body"]
+      required: ["source", "thread", "author", "text"]
     }
   },
   {
     name: "search_notes",
-    description: "Full-text search across all saved notes using Lunr indexing",
+    description: "Search notes with optional filters for tag and thread",
     inputSchema: {
       type: "object",
       properties: {
-        query: { type: "string", description: "Search query" },
-        limit: { type: "integer", minimum: 1, maximum: 50, default: 10, description: "Maximum results" }
+        query: { 
+          type: "string", 
+          description: "Text search query (optional if using filters)"
+        },
+        tag: { 
+          type: "string", 
+          description: "Filter by specific tag"
+        },
+        thread: { 
+          type: "string", 
+          pattern: "^th-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$",
+          description: "Filter by specific thread"
+        },
+        limit: { 
+          type: "integer", 
+          minimum: 1, 
+          maximum: 100, 
+          default: 10, 
+          description: "Maximum results"
+        }
+      }
+    }
+  },
+  {
+    name: "trigger_agent",
+    description: "Trigger an AI agent action with specified payload",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { 
+          type: "string", 
+          pattern: "^trg-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$",
+          description: "Trigger ID (auto-generated if not provided)"
+        },
+        when: { 
+          type: "string", 
+          format: "date-time",
+          description: "ISO8601 timestamp (defaults to now)"
+        },
+        type: { 
+          type: "string", 
+          description: "Type of agent action (e.g., 'echo', 'summarize', 'analyze')"
+        },
+        payload: { 
+          type: "object", 
+          description: "Data to pass to the agent"
+        },
+        reply_to: { 
+          type: "string", 
+          pattern: "^th-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$",
+          description: "Thread to reply to"
+        }
       },
-      required: ["query"]
+      required: ["type", "payload", "reply_to"]
     }
   },
   {
     name: "get_recent_decisions",
-    description: "Get recently saved decisions and discussions",
+    description: "Get recently saved decisions and discussions (legacy compatibility)",
     inputSchema: {
       type: "object",
       properties: {
@@ -147,19 +207,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   switch (name) {
     case "save_note": {
       try {
+        // Validate InputMessage format
+        const validation = MCPValidators.inputMessage(args);
+        
+        if (!validation.success) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `❌ Invalid InputMessage format:\n${validation.error.errors.map(e => `- ${e.path.join('.')}: ${e.message}`).join('\n')}`
+              }
+            ],
+            isError: true
+          };
+        }
+
+        // Call YuiHub API with YuiFlow InputMessage format
         const result = await callYuiHubAPI("/save", {
           method: "POST",
-          body: JSON.stringify({
-            frontmatter: args.frontmatter,
-            body: args.body
-          })
+          body: JSON.stringify(validation.data)
         });
 
         return {
           content: [
             {
               type: "text",
-              text: `✅ Note saved successfully!\n\nID: ${result.path}\nURL: ${result.url}\n\n${JSON.stringify(result, null, 2)}`
+              text: `✅ Message saved successfully!\n\nID: ${result.data.id}\nThread: ${result.data.thread}\nTimestamp: ${result.data.when}\n\n${JSON.stringify(result, null, 2)}`
             }
           ]
         };
@@ -168,7 +241,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [
             {
               type: "text",
-              text: `❌ Failed to save note: ${error.message}`
+              text: `❌ Failed to save message: ${error.message}`
             }
           ],
           isError: true
@@ -178,12 +251,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     case "search_notes": {
       try {
-        const searchParams = new URLSearchParams({
-          q: args.query
-        });
-        if (args.limit) {
-          searchParams.set("limit", args.limit.toString());
+        // Validate search query
+        const validation = MCPValidators.searchQuery(args);
+        
+        if (!validation.success) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `❌ Invalid search parameters:\n${validation.error.errors.map(e => `- ${e.path.join('.')}: ${e.message}`).join('\n')}`
+              }
+            ],
+            isError: true
+          };
         }
+
+        const validArgs = validation.data;
+        const searchParams = new URLSearchParams();
+        
+        if (validArgs.query) searchParams.set("q", validArgs.query);
+        if (validArgs.tag) searchParams.set("tag", validArgs.tag);
+        if (validArgs.thread) searchParams.set("thread", validArgs.thread);
+        if (validArgs.limit) searchParams.set("limit", validArgs.limit.toString());
 
         const result = await callYuiHubAPI(`/search?${searchParams}`);
         
@@ -268,6 +357,50 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: "text",
               text: `❌ Failed to get recent decisions: ${error.message}`
+            }
+          ],
+          isError: true
+        };
+      }
+    }
+
+    case "trigger_agent": {
+      try {
+        // Validate AgentTrigger format
+        const validation = MCPValidators.agentTrigger(args);
+        
+        if (!validation.success) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `❌ Invalid AgentTrigger format:\n${validation.error.errors.map(e => `- ${e.path.join('.')}: ${e.message}`).join('\n')}`
+              }
+            ],
+            isError: true
+          };
+        }
+
+        // Call YuiHub API with AgentTrigger format
+        const result = await callYuiHubAPI("/trigger", {
+          method: "POST",
+          body: JSON.stringify(validation.data)
+        });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `⚡ Agent trigger ${result.mode === 'shelter' ? 'recorded' : 'executed'} successfully!\n\nRef: ${result.ref}\nMode: ${result.mode}\nMessage: ${result.message}\n\n${JSON.stringify(result, null, 2)}`
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Failed to trigger agent: ${error.message}`
             }
           ],
           isError: true
