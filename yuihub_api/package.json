@@ -7,8 +7,8 @@
     "node": "^22.0.0"
   },
   "scripts": {
-    "dev": "node --env-file=.env --watch src/server.js",
-    "start": "node --env-file=.env src/server.js",
+    "dev": "node --env-file=../.env --watch src/server.js",
+    "start": "node --env-file=../.env src/server.js",
     "build-index": "node ../scripts/chunk_and_lunr.mjs"
   },
   "dependencies": {

@@ -16,8 +16,9 @@ cd yuihub_min_bundle
 npm run install-all
 
 # 環境変数設定（初回のみ）
-cp yuihub_api/.env.example yuihub_api/.env
-# .envファイルを編集（必要に応じて）
+cp .env.example .env
+# ルートの.envファイルを編集（統合管理）
+# 本番環境: NODE_ENV=production, TUNNEL_TOKEN等
 ```
 
 ### 2. 開発サーバー起動

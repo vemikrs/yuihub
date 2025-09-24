@@ -35,7 +35,8 @@ jobs:
           
       - name: Setup environment files
         run: |
-          cp yuihub_api/.env.example yuihub_api/.env
+          # 統合環境設定ファイル（Ph2b: 全モジュール共通）
+          cp .env.example .env
           mkdir -p yuihub_api/data/chatlogs
           mkdir -p yuihub_api/data/index
           
