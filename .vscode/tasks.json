@@ -31,11 +31,11 @@
             "options": {
                 "env": {
                     "NODE_ENV": "production",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/yuihub_api/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local"
@@ -70,11 +70,11 @@
             "options": {
                 "env": {
                     "NODE_ENV": "development",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/yuihub_api/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local"
@@ -109,11 +109,11 @@
             "options": {
                 "env": {
                     "NODE_ENV": "development",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/yuihub_api/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local",
@@ -150,11 +150,11 @@
             "options": {
                 "env": {
                     "NODE_ENV": "production",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs",
+                    "LUNR_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/lunr.idx.json",
+                    "TERMS_INDEX_PATH": "${workspaceFolder}/yuihub_api/data/index/terms.json",
+                    "STATS_PATH": "${workspaceFolder}/yuihub_api/data/index/stats.json",
                     "PORT": "3000",
                     "HOST": "localhost",
                     "STORAGE_ADAPTER": "local",
@@ -220,8 +220,8 @@
             },
             "options": {
                 "env": {
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs"
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs"
                 }
             },
             "problemMatcher": []

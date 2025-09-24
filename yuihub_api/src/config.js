@@ -213,6 +213,11 @@ export class ConfigManager {
       if (req.method === 'GET' && req.url.startsWith('/health')) {
         return;
       }
+      
+      // OpenAPI schema is public for GPTs Actions integration
+      if (req.method === 'GET' && req.url.startsWith('/openapi.yml')) {
+        return;
+      }
 
       const apiToken = config.apiToken;
       const authHeader = req.headers['x-yuihub-token'];

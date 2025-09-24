@@ -757,11 +757,11 @@ npm run test:api:compat  # I/O互換性
 6. **現在のコードベース** (`yuihub_api/`, `yuihub_mcp/`)
 
 ### Claude Code確認事項
-- [ ] **GAP理解**: 8つの主要GAPの認識
-- [ ] **Phase依存関係**: A→B→Cの実装順序
-- [ ] **Shelter Mode制約**: 外部IO遮断の徹底
-- [ ] **YuiFlow語彙**: Fragment/Knot/Thread/ContextPacketの理解
-- [ ] **手動橋渡し**: 自動化しない方針の確認
+- [x] **GAP分析**: 8つの主要GAPの認識
+- [x] **Phase依存関係**: A→B→Cの実装順序
+- [x] **Shelter Mode制約**: 外部IO遮断の徹底
+- [x] **YuiFlow語彙**: Fragment/Knot/Thread/ContextPacketの咀嚼
+- [x] **手動橋渡し**: 自動化しない方針の確認
 
 ---
 
