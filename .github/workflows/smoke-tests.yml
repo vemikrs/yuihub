@@ -8,11 +8,14 @@ on:
       - 'yuihub_mcp/**'
       - 'tests/smoke/**'
       - '.github/workflows/smoke-tests.yml'
-  pull_request_review:
-    types: [submitted]
 
 env:
   NODE_VERSION: '22'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
   smoke-tests:
@@ -86,6 +89,7 @@ jobs:
         if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = require('path');
@@ -108,9 +112,15 @@ jobs:
             For detailed results, check the [workflow run](${context.payload.pull_request.html_url}/checks) and downloaded artifacts.
             `;
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+              console.log('Successfully posted comment to PR');
+            } catch (error) {
+              console.error('Failed to post comment to PR:', error);
+              // Don't fail the workflow if commenting fails
+            }
