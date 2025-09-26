@@ -67,6 +67,25 @@ UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
 
 ---
 
+## 🚦 運用方針（Devはスモーク、Prod前提）
+- GPTs との疎通テストは「Prod（Cloudflare Named Tunnel）」を前提とする。
+- Dev 環境は最小スモークのみ（/health OK、最低限のAPI疎通）。GPTs接続は原則しない。
+- VS Code Tasks を使用：
+  - 停止: 「YuiHub: Complete Server Stop」
+  - Prod起動: 「YuiHub: Start Prod Server (with Named Tunnel)」
+  - Dev起動（スモーク時のみ）: 「YuiHub: Start API Server (Dev)」
+  - 再索引: 「YuiHub: Reindex」
+
+確認の最小手順（Prod）
+1) Prodサーバ起動 → /health が 200（searchIndex: ready|building|missing）
+2) Reindex 実行 → /health の lastIndexBuild 更新
+3) GPTs の Actions で OpenAPI を https://poc-yuihub.vemi.jp/openapi.yml に設定/再読込
+4) /threads/new → /save → /search の順で疎通確認
+
+---
+
+---
+
 ## 🏷️ YuiFlow語彙（開発への重ね方）
 - **Fragment** … 粒。短い出来事／断片。保存の最小単位。  
 - **Knot** … 束。断片を結ぶ要点／差分の節。  
@@ -138,6 +157,42 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
 - `GET /search?q=&thread=&tag=`
 - `POST /trigger`… Agent起動の最小フック
 - `GET /openapi.yml` … OpenAPI参照（一次正は `docs/yuiflow/openapi/poc.yaml`）
+
+補足（GPTs最適化）
+- `/save` は `x-openai-isConsequential: false`（承認ダイアログを避ける）
+- `/vscode/*` と `/recent` は `x-openai-hidden: true`（GPTsからは非表示）
+- 空クエリ `/search?q=` は「最近順の上位」を返す（ゼロ件回避のUX）
+
+---
+
+## 📁 保存場所と再索引（ファイル→検索の流れ）
+- 保存先（Local/PoC）: `yuihub_api/data/chatlogs/YYYY/MM/*.md`
+  - Front-Matter（gray-matter）＋ Body（Markdown）
+  - ファイル名例: `2025-09-26-rec-01K62... .md`（topic未指定時は日付＋ID）
+- 再索引: Lunr 形式
+  - 生成先: `yuihub_api/data/index/lunr.idx.json`（documents.json, stats.json も）
+  - 実行: VS Code タスク「YuiHub: Reindex」
+  - 反映: サーバ起動時に読み込み／必要に応じて `/index/reload`（内部エンドポイント）
+
+よくある未ヒット原因（例: 猫/「にゃーん」）
+1) そもそも保存されていない（GPTs側の承認ガードで /save が実行されていない）
+   - 対策: OpenAPI再読込（`x-openai-isConsequential:false`を反映）、承認ダイアログをOFF
+   - 検証: `yuihub_api/data/chatlogs/YYYY/MM` に当日のMDが増えているか確認
+2) 再索引未反映
+   - 対策: 「YuiHub: Reindex」を実行 → /health の `lastIndexBuild` 更新を確認
+3) 短文の除外（過去の閾値）
+   - 対策: 閾値を緩和済み（短文もインデックス化）。最新ビルドで再実行
+
+---
+
+## 🪲 GPTsデバッグ表示（Builder画面）
+- GPTsのUI更新により、リクエスト/レスポンスの「詳細表示/デバッグ表示」トグルが一時的に非表示/移動することがある。
+- 対処:
+  - Actions再設定後に「Preview」→「Logs/Details」等のタブを確認
+  - それでも見えない場合は、サーバ側ログで受信を確認（Fastifyのリクエストログ）
+  - ローカル検証時は VS Code タスクの curl スモークも併用
+
+---
 
 **スキーマの一次正**：`docs/yuiflow/00_min-spec.md` に従い、本書では**重複定義しない**。
 
