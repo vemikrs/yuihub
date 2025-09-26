@@ -1,5 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
+import matter from 'gray-matter';
+import { glob } from 'glob';
 import { Octokit } from '@octokit/rest';
 import { ulid } from 'ulid';
 
@@ -21,8 +23,10 @@ export class StorageAdapter {
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
-    
-    const filename = `${year}-${month}-${day}-${frontmatter.topic?.replace(/[^a-zA-Z0-9-]/g, '-')}-${id}.md`;
+    const safeTopic = typeof frontmatter.topic === 'string' && frontmatter.topic.trim().length > 0
+      ? frontmatter.topic.replace(/[^a-zA-Z0-9-]/g, '-')
+      : undefined;
+    const filename = `${year}-${month}-${day}${safeTopic ? '-' + safeTopic : ''}-${id}.md`;
     const relativePath = `${year}/${month}/${filename}`;
     
     const content = this._buildMarkdown(frontmatter, body);
@@ -88,12 +92,65 @@ export class StorageAdapter {
     
     return yamlLines.join('\n') + '\n\n' + body;
   }
+
+  /**
+   * 最近のノートを取得（local adapterのみ）
+   * @param {number} limit 最大件数（既定20）
+   * @returns {Promise<Array<{id:string,title?:string,path:string,date?:string,tags?:string[],decision?:string,actors?:string[]}>>}
+   */
+  async getRecent(limit = 20) {
+    if (this.type !== 'local') {
+      // PoC: github/other adaptersは未対応
+      return [];
+    }
+
+    const base = this.config.basePath;
+    const pattern = path.join(base, '**/*.md').replaceAll('\\','/');
+    const files = await glob(pattern, { nodir: true });
+
+    // mtime降順でソート
+    const withStat = await Promise.all(files.map(async (f) => ({
+      file: f,
+      stat: await fs.stat(f).catch(() => null)
+    })));
+    const sorted = withStat
+      .filter(x => x.stat)
+      .sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs)
+      .slice(0, limit);
+
+    const items = [];
+    for (const { file } of sorted) {
+      try {
+        const raw = await fs.readFile(file, 'utf8');
+        const parsed = matter(raw);
+        const fm = parsed.data || {};
+        const rel = path.relative(base, file).replaceAll('\\','/');
+        // タイトル: 先頭の見出しか1行目
+        let title;
+        const lines = (parsed.content || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        const h1 = lines.find(l => l.startsWith('# '));
+        if (h1) title = h1.replace(/^#\s+/, ''); else title = lines[0] || rel;
+
+        items.push({
+          id: String(fm.id || ''),
+          title,
+          path: rel,
+          date: fm.date ? String(fm.date) : undefined,
+          tags: Array.isArray(fm.tags) ? fm.tags : undefined,
+          decision: fm.decision,
+          actors: Array.isArray(fm.actors) ? fm.actors : undefined
+        });
+      } catch {
+        // 読み込み失敗はスキップ
+      }
+    }
+    return items;
+  }
 }
 
-export function createStorageAdapter() {
-  const type = process.env.STORAGE_ADAPTER || 'local';
-  
-  const config = {
+export function createStorageAdapter(overrides = {}) {
+  const type = overrides.type || process.env.STORAGE_ADAPTER || 'local';
+  const envConfig = {
     local: {
       basePath: process.env.LOCAL_STORAGE_PATH || './chatlogs'
     },
@@ -106,5 +163,6 @@ export function createStorageAdapter() {
     }
   };
 
-  return new StorageAdapter(type, config[type]);
+  const conf = { ...envConfig[type], ...(overrides[type] || {}) };
+  return new StorageAdapter(type, conf);
 }

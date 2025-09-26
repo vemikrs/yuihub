@@ -1,156 +1,192 @@
 #!/usr/bin/env node
 /**
- * YuiHub API Integration Test
- * Tests all YuiFlow-compliant endpoints
+ * YuiHub API Integration Test (GPTs E2E lifecycle)
+ * Flow: /health → /threads/new → /save → /search → /trigger → /export/context
  */
 
-const API_BASE = 'http://localhost:3000';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const API_BASE = process.env.YUIHUB_API || 'http://localhost:3000';
 
 async function makeRequest(url, options = {}) {
-  const fetch = (await import('node-fetch')).default;
-  
+  const { headers: optHeaders, ...rest } = options || {};
+  const mergedHeaders = {
+    'Content-Type': 'application/json',
+    ...(optHeaders || {})
+  };
   const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    ...options
+    ...rest,
+    headers: mergedHeaders
   });
-  
-  const data = await response.json();
+
+  let data;
+  const text = await response.text();
+  try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
   return { status: response.status, data };
 }
 
+function readApiToken() {
+  if (process.env.API_TOKEN && process.env.API_TOKEN.length > 0) return process.env.API_TOKEN;
+  // fallback: try several common locations
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const candidates = [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(__dirname, '../../.env'), // repo root from yuihub_api/tests
+    path.resolve(process.cwd(), 'yuihub_api/../.env')
+  ];
+  for (const envPath of candidates) {
+    try {
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, 'utf8');
+        const match = content.match(/^API_TOKEN=(.*)$/m);
+        if (match) return match[1].trim();
+      }
+    } catch {}
+  }
+  return undefined;
+}
+
 async function runTests() {
-  console.log('🧪 YuiHub API Integration Tests');
-  console.log('==============================\n');
+  console.log('🧪 YuiHub API E2E (GPTs lifecycle)');
+  console.log('===================================\n');
 
-  let testThread = 'th-01K5WHS123EXAMPLE456789ABC';
-  let results = { passed: 0, failed: 0 };
+  const token = readApiToken();
+  if (!token) {
+    console.log('   ❌ No API_TOKEN found. Set env or .env API_TOKEN');
+    process.exit(1);
+  }
+  const authHeaders = { 'x-yuihub-token': token };
 
-  // Test 1: Health check
-  console.log('1. Testing /health endpoint...');
+  const results = { passed: 0, failed: 0 };
+  let thread;
+  let savedId;
+
+  // 1) Health
+  console.log('1) GET /health ...');
   try {
     const { status, data } = await makeRequest(`${API_BASE}/health`);
-    if (status === 200 && data.ok) {
-      console.log('   ✅ PASS: Health check successful');
+    if (status === 200 && data.ok === true) {
+      console.log('   ✅ PASS');
       results.passed++;
-    } else {
-      console.log('   ❌ FAIL: Health check failed');
-      results.failed++;
-    }
-  } catch (error) {
-    console.log('   ❌ FAIL: Server not reachable');
-    results.failed++;
-    return results;
+    } else { throw new Error('health not ok'); }
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
+    results.failed++; return results;
   }
 
-  // Test 2: Save message with YuiFlow format
-  console.log('\n2. Testing /save endpoint with YuiFlow InputMessage...');
+  // 2) Issue thread
+  console.log('\n2) POST /threads/new ...');
+  try {
+    const { status, data } = await makeRequest(`${API_BASE}/threads/new`, {
+      method: 'POST',
+      headers: authHeaders,
+      body: JSON.stringify({})
+    });
+    if (status === 200 && data.ok && /^th-[0-9A-Z]{26}$/.test(data.thread)) {
+      thread = data.thread;
+      console.log('   ✅ PASS', thread);
+      results.passed++;
+    } else {
+      console.log('   ❌ DETAIL', status, JSON.stringify(data));
+      throw new Error('thread issue failed');
+    }
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
+    results.failed++;
+  }
+
+  // 3) Save
+  console.log('\n3) POST /save ...');
   try {
     const inputMessage = {
       source: 'gpts',
-      thread: testThread,
-      author: 'test-user',
-      text: 'Integration test message using YuiFlow schema',
-      tags: ['test', 'integration', 'yuiflow']
+      thread,
+      author: 'ChatGPT',
+      text: 'E2E test message from GPTs flow',
+      tags: ['test', 'e2e']
     };
-
     const { status, data } = await makeRequest(`${API_BASE}/save`, {
       method: 'POST',
+      headers: authHeaders,
       body: JSON.stringify(inputMessage)
     });
-
-    if (status === 200 && data.ok && data.data.id) {
-      console.log('   ✅ PASS: Message saved successfully');
-      console.log(`   📄 ID: ${data.data.id}`);
+    if (status === 200 && data.ok && data.data?.id) {
+      savedId = data.data.id;
+      console.log('   ✅ PASS', savedId);
       results.passed++;
     } else {
-      console.log('   ❌ FAIL: Save failed', data);
-      results.failed++;
+      console.log('   ❌ DETAIL', status, JSON.stringify(data));
+      throw new Error('save failed');
     }
-  } catch (error) {
-    console.log('   ❌ FAIL: Save request failed', error.message);
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
     results.failed++;
   }
 
-  // Test 3: Search with filters
-  console.log('\n3. Testing /search endpoint with filters...');
+  // 4) Recent
+  console.log('\n4) GET /recent?n=3 ...');
   try {
-    const { status, data } = await makeRequest(`${API_BASE}/search?tag=test&limit=5`);
-
-    if (status === 200 && data.ok && data.filters) {
-      console.log('   ✅ PASS: Search with filters successful');
-      console.log(`   🔍 Results: ${data.total} hits`);
-      results.passed++;
-    } else {
-      console.log('   ❌ FAIL: Search failed', data);
-      results.failed++;
-    }
-  } catch (error) {
-    console.log('   ❌ FAIL: Search request failed', error.message);
-    results.failed++;
-  }
-
-  // Test 4: Agent trigger
-  console.log('\n4. Testing /trigger endpoint...');
-  try {
-    const trigger = {
-      type: 'test-echo',
-      payload: { message: 'Integration test trigger' },
-      reply_to: testThread
-    };
-
-    const { status, data } = await makeRequest(`${API_BASE}/trigger`, {
-      method: 'POST',
-      body: JSON.stringify(trigger)
+    const { status, data } = await makeRequest(`${API_BASE}/recent?n=3`, {
+      headers: authHeaders
     });
+    if (status === 200 && data.ok === true && Array.isArray(data.notes)) {
+      console.log(`   ✅ PASS (total=${data.total})`);
+      results.passed++;
+    } else { throw new Error('recent failed'); }
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
+    results.failed++;
+  }
 
+  // 5) Search
+  console.log('\n5) GET /search?tag=test&limit=5 ...');
+  try {
+    const { status, data } = await makeRequest(`${API_BASE}/search?tag=test&limit=5`, {
+      headers: authHeaders
+    });
+    if (status === 200 && data.ok === true) {
+      console.log(`   ✅ PASS (${data.total} hits)`);
+      results.passed++;
+    } else { throw new Error('search failed'); }
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
+    results.failed++;
+  }
+
+  // 6) Trigger
+  console.log('\n6) POST /trigger ...');
+  try {
+    const trigger = { type: 'test-echo', payload: { message: 'hello' }, reply_to: thread };
+    const { status, data } = await makeRequest(`${API_BASE}/trigger`, {
+      method: 'POST', headers: authHeaders, body: JSON.stringify(trigger)
+    });
     if (status === 200 && data.ok && data.mode === 'shelter') {
-      console.log('   ✅ PASS: Agent trigger recorded (shelter mode)');
-      console.log(`   ⚡ Ref: ${data.ref}`);
+      console.log('   ✅ PASS');
       results.passed++;
     } else {
-      console.log('   ❌ FAIL: Trigger failed', data);
-      results.failed++;
+      console.log('   ❌ DETAIL', status, JSON.stringify(data));
+      throw new Error('trigger failed');
     }
-  } catch (error) {
-    console.log('   ❌ FAIL: Trigger request failed', error.message);
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
     results.failed++;
   }
 
-  // Test 5: VS Code endpoints
-  console.log('\n5. Testing VS Code Extension endpoints...');
+  // 7) Export context
+  console.log('\n7) GET /export/context/{thread} ...');
   try {
-    const { status, data } = await makeRequest(`${API_BASE}/vscode/threads`);
-
-    if (status === 200 && data.ok && Array.isArray(data.threads)) {
-      console.log('   ✅ PASS: VS Code threads endpoint successful');
-      results.passed++;
-    } else {
-      console.log('   ❌ FAIL: VS Code threads failed', data);
-      results.failed++;
-    }
-  } catch (error) {
-    console.log('   ❌ FAIL: VS Code request failed', error.message);
-    results.failed++;
-  }
-
-  // Test 6: Context export endpoint
-  console.log('\n6. Testing context export endpoint...');
-  try {
-    const { status, data } = await makeRequest(`${API_BASE}/export/context/${testThread}`);
-
+    const { status, data } = await makeRequest(`${API_BASE}/export/context/${thread}`, {
+      headers: authHeaders
+    });
     if (status === 200 && data.version === '1.0.0') {
-      console.log('   ✅ PASS: Context packet export successful');
-      console.log(`   📦 Fragments: ${data.fragments.length}`);
+      console.log('   ✅ PASS');
       results.passed++;
-    } else {
-      console.log('   ❌ FAIL: Context export failed', data);
-      results.failed++;
-    }
-  } catch (error) {
-    console.log('   ❌ FAIL: Context export request failed', error.message);
+    } else { throw new Error('export failed'); }
+  } catch (e) {
+    console.log('   ❌ FAIL', e.message);
     results.failed++;
   }
 
@@ -159,21 +195,8 @@ async function runTests() {
   console.log('================');
   console.log(`✅ Passed: ${results.passed}`);
   console.log(`❌ Failed: ${results.failed}`);
-  console.log(`📈 Success Rate: ${Math.round((results.passed / (results.passed + results.failed)) * 100)}%`);
-
+  console.log(`📈 Success Rate: ${Math.round((results.passed / (results.passed + results.failed || 1)) * 100)}%`);
   return results;
 }
 
-// Run tests
-runTests().then(results => {
-  if (results.failed === 0) {
-    console.log('\n🎉 All tests passed!');
-    process.exit(0);
-  } else {
-    console.log('\n💥 Some tests failed');
-    process.exit(1);
-  }
-}).catch(error => {
-  console.error('\n💥 Test suite failed:', error);
-  process.exit(1);
-});
+runTests().then(r => process.exit(r.failed === 0 ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });

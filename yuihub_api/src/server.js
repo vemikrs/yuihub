@@ -63,7 +63,7 @@ const app = Fastify({
 await app.register(cors, {
   origin: config.corsOrigins,
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-yuihub-token'],
+  allowedHeaders: ['Content-Type', 'x-yuihub-token', 'Authorization'],
 });
 
 // Rate limiting
@@ -77,8 +77,18 @@ await app.register(rateLimit, {
 const authMiddleware = configManager.createAuthMiddleware();
 app.addHook('onRequest', authMiddleware);
 
-// サービス初期化
-const storageAdapter = createStorageAdapter();
+// サービス初期化（ストレージは絶対パスを渡す）
+const storageAdapter = createStorageAdapter({
+  type: config.storageAdapter,
+  local: { basePath: config.localStoragePath },
+  github: {
+    token: process.env.GITHUB_TOKEN,
+    owner: process.env.GITHUB_OWNER,
+    repo: process.env.GITHUB_REPO,
+    branch: process.env.GITHUB_BRANCH,
+    basePath: process.env.GITHUB_PATH
+  }
+});
 const searchService = new EnhancedSearchService();
 
 // ContextBuilder初期化
@@ -110,6 +120,23 @@ if (!indexInitialized && config.indexAutoRebuild) {
 }
 
 // === API ENDPOINTS ===
+
+// Thread ID issue endpoint
+app.post('/threads/new', async (req, reply) => {
+  try {
+    const threadId = `th-${ulid()}`;
+    app.log.info(`🧵 New thread issued: ${threadId}`);
+    return {
+      ok: true,
+      thread: threadId,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('Thread issue failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
 
 // Health check endpoint (enhanced)
 app.get('/health', async (req, reply) => {

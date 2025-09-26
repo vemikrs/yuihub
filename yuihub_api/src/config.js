@@ -9,6 +9,7 @@
 
 import path from 'path';
 import fs from 'fs';
+import { timingSafeEqual } from 'crypto';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -99,29 +100,34 @@ export class ConfigManager {
     const profile = this.profiles[this.env] || this.profiles.development;
     
     // ワークスペースルートベースのデフォルトパス構築
-    const defaultDataRoot = path.join(this.workspaceRoot, 'yuihub_api/data');
+  const defaultDataRoot = path.resolve(this.workspaceRoot, 'yuihub_api', 'data');
     
     return {
       ...profile,
       env: this.env,
+      workspaceRoot: this.workspaceRoot,
       // パス設定（環境変数から取得、デフォルトは自動検出したyuihub_api/data）
-      dataRoot: process.env.DATA_ROOT || defaultDataRoot,
+  dataRoot: path.resolve(this.workspaceRoot, process.env.DATA_ROOT || defaultDataRoot),
       port: parseInt(process.env.PORT) || 3000,
       host: process.env.HOST || (this.env === 'production' ? '0.0.0.0' : 'localhost'),
       storageAdapter: process.env.STORAGE_ADAPTER || 'local',
       
       // パス構築
       get localStoragePath() {
-        return process.env.LOCAL_STORAGE_PATH || `${this.dataRoot}/chatlogs`;
+        const p = process.env.LOCAL_STORAGE_PATH || path.join(this.dataRoot, 'chatlogs');
+        return path.resolve(this.workspaceRoot, p);
       },
       get lunrIndexPath() {
-        return process.env.LUNR_INDEX_PATH || `${this.dataRoot}/index/lunr.idx.json`;
+        const p = process.env.LUNR_INDEX_PATH || path.join(this.dataRoot, 'index', 'lunr.idx.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       get termsIndexPath() {
-        return process.env.TERMS_INDEX_PATH || `${this.dataRoot}/index/terms.json`;
+        const p = process.env.TERMS_INDEX_PATH || path.join(this.dataRoot, 'index', 'terms.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       get statsPath() {
-        return process.env.STATS_PATH || `${this.dataRoot}/index/stats.json`;
+        const p = process.env.STATS_PATH || path.join(this.dataRoot, 'index', 'stats.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       
       // API設定
@@ -266,7 +272,11 @@ export class ConfigManager {
       }
 
       const apiToken = config.apiToken;
-      const authHeader = req.headers['x-yuihub-token'];
+      const headerToken = req.headers['x-yuihub-token'];
+      const bearer = req.headers['authorization'];
+      const bearerToken = (typeof bearer === 'string' && bearer.toLowerCase().startsWith('bearer '))
+        ? bearer.slice(7).trim()
+        : undefined;
       
       if (!apiToken) {
         reply.code(500).send({ 
@@ -276,27 +286,28 @@ export class ConfigManager {
         return;
       }
 
-      if (!authHeader) {
+      if (!headerToken && !bearerToken) {
         reply.code(401).send({ 
           ok: false, 
-          error: 'Missing x-yuihub-token header' 
+          error: 'Missing authentication: x-yuihub-token or Authorization: Bearer' 
         });
         return;
       }
 
-      // タイミング攻撃対策の安全な比較
+      // タイミング攻撃対策の安全な比較（ESM対応）
       const safeEquals = (a, b) => {
-        const A = Buffer.from(String(a ?? ''));
-        const B = Buffer.from(String(b ?? ''));
+        const A = Buffer.from(String(a ?? ''), 'utf8');
+        const B = Buffer.from(String(b ?? ''), 'utf8');
         if (A.length !== B.length) return false;
-        try { 
-          return require('crypto').timingSafeEqual(A, B); 
-        } catch { 
-          return false; 
+        try {
+          return timingSafeEqual(A, B);
+        } catch {
+          return false;
         }
       };
 
-      if (!safeEquals(authHeader, apiToken)) {
+      const provided = headerToken ?? bearerToken;
+      if (!safeEquals(provided, apiToken)) {
         req.log.warn({ 
           ip: req.ip, 
           url: req.url 
