@@ -22,6 +22,30 @@ security:
   - ApiKeyAuth: []
 
 paths:
+  /threads/new:
+    post:
+      summary: Issue a new Thread ID
+      description: Generates a new YuiFlow-compliant thread ID (th-ULID)
+      operationId: issueThread
+      tags:
+        - YuiFlow
+      responses:
+        '200':
+          description: Thread ID issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  thread:
+                    type: string
+                    pattern: '^th-[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+                  timestamp:
+                    type: string
+                    format: date-time
   /health:
     get:
       summary: Health check endpoint
