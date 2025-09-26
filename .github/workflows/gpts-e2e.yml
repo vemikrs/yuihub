@@ -1,0 +1,63 @@
+name: YuiHub GPTs E2E
+
+on:
+  push:
+    branches: [ feature/**, fix/**, chore/**, main ]
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build search assets (optional)
+        run: npm run build-all
+
+      - name: Start API server
+        env:
+          NODE_ENV: production
+          PORT: 3000
+          HOST: 127.0.0.1
+          ENABLE_TUNNEL: 'false'
+          MODE: shelter
+          EXTERNAL_IO: blocked
+          API_TOKEN: test-ci-token-1234567890abcd
+        run: |
+          node yuihub_api/src/server.js &
+          echo $! > server.pid
+          # wait for health
+          for i in {1..30}; do
+            curl -sf http://127.0.0.1:3000/health && break
+            sleep 1
+          done
+
+      - name: Run GPTs E2E tests
+        env:
+          API_TOKEN: test-ci-token-1234567890abcd
+          YUIHUB_API: http://127.0.0.1:3000
+        run: node yuihub_api/tests/api-integration.test.js
+
+      - name: Upload logs on failure
+        if: failure()
+        run: |
+          echo '--- server logs (if any) ---'
+          ls -la yuihub_api/data || true
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
