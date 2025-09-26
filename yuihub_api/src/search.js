@@ -43,7 +43,27 @@ export class SearchService {
         return { hits: [] };
       }
 
-      const results = this.index.search(processedQuery);
+      // 後方ワイルドカード（TRAILING）を各トークンに適用してクエリ発行
+      const tokens = processedQuery
+        .split(/\s+/)
+        .map(t => t.trim())
+        .filter(t => t.length > 0 && /[\p{L}\p{N}]/u.test(t));
+
+      if (tokens.length === 0) {
+        return { hits: [] };
+      }
+
+      const results = this.index.query(q => {
+        tokens.forEach(tok => {
+          try {
+            // 後方一致は title/body に限定（タグや他メタには適用しない）
+            q.term(tok, { fields: ['title', 'body'], wildcard: lunr.Query.wildcard.TRAILING });
+          } catch (e) {
+            // 不正なトークンはスキップ
+          }
+        });
+      });
+
       const hits = results
         .slice(0, limit)
         .map(result => {
@@ -191,5 +211,12 @@ export class SearchService {
       console.warn('fallbackByTag failed:', e.message);
       return { hits: [] };
     }
+  }
+
+  getStats() {
+    return {
+      indexLoaded: !!this.index,
+      documents: this.documents.size
+    };
   }
 }

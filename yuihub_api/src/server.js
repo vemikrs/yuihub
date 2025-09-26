@@ -104,6 +104,11 @@ const indexManager = new IndexManager({
   logger: app.log
 });
 
+// デバウンス遅延（環境変数で調整可能）
+if (process.env.REINDEX_DEBOUNCE_MS) {
+  try { indexManager.setDebounceDelay(parseInt(process.env.REINDEX_DEBOUNCE_MS)); } catch {}
+}
+
 // Tunnel manager instance (if enabled)
 let tunnelManager = null;
 
@@ -141,7 +146,7 @@ app.post('/threads/new', async (req, reply) => {
 // Health check endpoint (enhanced)
 app.get('/health', async (req, reply) => {
   const indexStatus = await indexManager.getStatus();
-  
+  const stats = searchService.getStats();
   return { 
     ok: true, 
     timestamp: new Date().toISOString(),
@@ -149,6 +154,9 @@ app.get('/health', async (req, reply) => {
     storage: storageAdapter.type,
     searchIndex: indexStatus.status,
     lastIndexBuild: indexStatus.lastBuildAt,
+    lastFullRebuildAt: indexStatus.lastFullRebuildAt || null,
+    deltaDocs: stats.deltaDocs ?? 0,
+    lastDeltaAdd: stats.lastDeltaAdd ?? null,
     auth: config.auth ? 'enabled' : 'disabled',
     version: process.env.npm_package_version || '1.0.0'
   };
@@ -156,7 +164,13 @@ app.get('/health', async (req, reply) => {
 
 // Index management endpoints
 app.get('/index/status', async (req, reply) => {
-  return await indexManager.getStatus();
+  const s = await indexManager.getStatus();
+  const stats = searchService.getStats();
+  return {
+    ...s,
+    deltaDocs: stats.deltaDocs ?? 0,
+    lastDeltaAdd: stats.lastDeltaAdd ?? null
+  };
 });
 
 app.post('/index/rebuild', async (req, reply) => {
@@ -397,11 +411,15 @@ app.post('/save', async (req, reply) => {
     // Save to storage (existing storage adapter expects frontmatter/body format)
     const result = await storageAdapter.save(frontmatter, fragment.text);
     
-    // Trigger background index rebuild if enabled
-    if (config.indexAutoRebuild) {
-      app.log.info('🔄 Triggering background index rebuild...');
-      indexManager.scheduleRebuild();
+    // 即時検索反映（delta overlay）
+    const added = searchService.addDeltaFromSave(frontmatter, fragment.text);
+    if (added) {
+      app.log.info(`🧩 Delta added for ${frontmatter.id}`);
     }
+
+    // Prodでもデバウンスでバックグラウンド再索引をスケジュール
+    app.log.info('🔄 Scheduling debounced index rebuild');
+    indexManager.scheduleRebuild();
     
     return {
       ok: true,

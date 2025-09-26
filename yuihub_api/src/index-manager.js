@@ -26,6 +26,15 @@ export class IndexManager {
     this.lastBuildAt = null;
     this.buildPromise = null;
     this.logger = config.logger || console;
+    // Debounce scheduling
+    this._debounceTimer = null;
+    this._debounceDelayMs = 60000; // default 60s
+    this._debounceScheduledAt = null;
+    this._lastFullRebuildAt = null;
+    this._rebuilding = false;
+    this._backoffAttempt = 0;
+    this._lastRebuildResult = null; // { status: 'success'|'failed', reason?: string }
+    this._searchServiceRef = this.searchService; // for delta clear
   }
 
   /**
@@ -60,7 +69,13 @@ export class IndexManager {
 
     return { 
       status: 'ready', 
-      lastBuildAt: this.lastBuildAt 
+      lastBuildAt: this.lastBuildAt,
+      lastFullRebuildAt: this._lastFullRebuildAt,
+      debounce: this._debounceTimer ? {
+        scheduledAt: this._debounceScheduledAt,
+        etaSeconds: Math.max(0, Math.ceil((this._debounceScheduledAt + this._debounceDelayMs - Date.now())/1000))
+      } : null,
+      lastRebuildResult: this._lastRebuildResult
     };
   }
 
@@ -82,7 +97,7 @@ export class IndexManager {
    * @returns {Promise<boolean>} 再構築成功の可否
    */
   async rebuild() {
-    if (this.buildPromise) {
+    if (this.buildPromise || this._rebuilding) {
       this.logger.info('Index rebuild already in progress, returning existing promise');
       return this.buildPromise;
     }
@@ -90,21 +105,35 @@ export class IndexManager {
     this.logger.info('🔄 Starting index rebuild...');
     this.status = 'building';
     this._buildStartTime = new Date().toISOString();
-    this.buildPromise = this._performRebuild();
+  this._rebuilding = true;
+  this.buildPromise = this._performRebuild();
     
     try {
       const result = await this.buildPromise;
       this.status = 'ready';
       this.lastBuildAt = new Date().toISOString();
+      this._lastFullRebuildAt = this.lastBuildAt;
+      // フル再索引成功→deltaクリア（原子的に差替え後）
+      try {
+        if (typeof this._searchServiceRef.clearDelta === 'function') {
+          this._searchServiceRef.clearDelta();
+        }
+      } catch (e) {
+        this.logger.warn('Delta clear failed:', e.message);
+      }
+      this._backoffAttempt = 0;
+      this._lastRebuildResult = { status: 'success' };
       this.logger.info('✅ Index rebuild completed successfully');
       return result;
     } catch (error) {
       this.status = 'missing';
+      this._lastRebuildResult = { status: 'failed', reason: error.message };
       this.logger.error('❌ Index rebuild failed:', error.message);
       throw error;
     } finally {
       this.buildPromise = null;
       this._buildStartTime = null;
+      this._rebuilding = false;
     }
   }
 
@@ -184,15 +213,33 @@ export class IndexManager {
    * バックグラウンドでの索引再構築（非同期、エラーは警告ログのみ）
    */
   scheduleRebuild() {
-    // setImmediateを使用してノンブロッキング実行
-    setImmediate(async () => {
+    // Debounce: leading=false, trailing=true, maxBurst=1
+    if (this._debounceTimer) return;
+    this._debounceScheduledAt = Date.now();
+    const delay = this._computeBackoffDelay();
+    this._debounceTimer = setTimeout(async () => {
+      this._debounceTimer = null;
       try {
         await this.rebuild();
-        this.logger.info('📚 Background index rebuild completed');
+        this.logger.info('📚 Debounced index rebuild completed');
       } catch (error) {
-        this.logger.warn('⚠️ Background index rebuild failed:', error.message);
+        this._backoffAttempt = Math.min(this._backoffAttempt + 1, 5);
+        this.logger.warn('⚠️ Debounced index rebuild failed:', error.message);
+        // 次回を自動スケジュール（バックオフ）
+        this.scheduleRebuild();
       }
-    });
+    }, delay);
+  }
+
+  setDebounceDelay(ms) {
+    this._debounceDelayMs = Math.max(0, parseInt(ms) || 0);
+  }
+
+  _computeBackoffDelay() {
+    // 失敗回数に応じた指数バックオフ（1x,2x,4x,8x,15x上限）
+    const base = this._debounceDelayMs || 60000;
+    const factor = Math.min(2 ** this._backoffAttempt, 15);
+    return base * factor;
   }
 
   /**
