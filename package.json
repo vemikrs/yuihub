@@ -3,15 +3,18 @@
   "version": "0.2.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": "^22.0.0"
+  },
   "workspaces": [
     "yuihub_api",
     "yuihub_mcp"
   ],
   "scripts": {
-    "reindex": "node scripts/build-index.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
-    "schema:check": "node scripts/validate-schemas.mjs",
-    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.js",
-    "dev:api": "node --env-file=.env -w yuihub_api src/server.mjs",
+    "reindex": "node scripts/chunk_and_lunr.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
+    "schema:check": "node scripts/validate-schemas-simple.mjs",
+    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.mjs",
+    "dev:api": "node --env-file=.env --watch yuihub_api/src/server.js",
     "dev:tunnel": "ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev -w yuihub_api",
     "start:api": "npm start -w yuihub_api",
     "start:prod": "ENABLE_TUNNEL=true TUNNEL_MODE=named npm start -w yuihub_api",
@@ -22,6 +25,14 @@
     "build-summaries": "node scripts/summarize_weekly.mjs",
     "build-all": "npm run build-index && npm run build-terms && npm run build-summaries",
     "install-all": "npm install && npm install -w yuihub_api && npm install -w yuihub_mcp",
+    "test:yuiflow": "npm run test:schema && npm run test:api && npm run test:mcp",
+    "test:schema": "npm test -w yuihub_api -- --testNamePattern=schema",
+    "test:api": "npm run test:integration -w yuihub_api",
+    "test:mcp": "npm test -w yuihub_mcp",
+    "test:e2e": "./run-tests.sh",
+    "validate:yuiflow": "npm run schema:check && npm run test:yuiflow",
+    "dev:full": "concurrently \"npm run dev:api\" \"npm run start:mcp\"",
+    "debug:yuiflow": "node --env-file=.env --inspect yuihub_api/src/server.js",
     "tunnel:setup": "bash .cloudflare/setup-tunnel.sh",
     "tunnel:start": "bash .cloudflare/start-tunnel.sh",
     "tunnel:quick": "node .cloudflare/tunnel-cli.js quick",
@@ -32,10 +43,11 @@
     "smoke": "curl -s http://127.0.0.1:3000/health | node -e \"process.stdin.pipe(require('stream').Writable({write(c,_,n){try{JSON.parse(c)}catch(e){process.exit(1)}n()}}))\""
   },
   "devDependencies": {
-    "tiny-segmenter": "^0.2.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "minimist": "^1.2.8"
+    "concurrently": "^8.2.2",
+    "minimist": "^1.2.8",
+    "tiny-segmenter": "^0.2.0"
   },
   "dependencies": {
     "express": "^4.19.2",

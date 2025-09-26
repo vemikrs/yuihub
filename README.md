@@ -20,7 +20,10 @@ node scripts/build-index.cjs --paths notes --paths chatlogs --mode=Shelter --vis
 
 ## Run API
 ```bash
-export LOCAL_OPS_TOKEN=changeme
+# 環境設定（初回のみ）
+cp .env.example .env
+# .envファイルを編集してAPI_TOKENを設定
+
 npm run dev -w yuihub_api
 # then:
 curl -s -H "Authorization: Bearer $LOCAL_OPS_TOKEN" -H "Content-Type: application/json"   -d '{"paths":["notes/","chatlogs/"],"filters":{"mode":["Shelter"],"visibility":["private","internal"]},"dryRun":true}'   http://127.0.0.1:3000/ops/reindex | jq .

@@ -4,13 +4,13 @@
     {
         "label": "YuiHub: Reindex (dryRun)",
         "type": "shell",
-        "command": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal --dryRun",
+        "command": "node scripts/chunk_and_lunr.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal --dryRun",
         "problemMatcher": []
         },
         {
         "label": "YuiHub: Reindex",
         "type": "shell",
-        "command": "node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
+        "command": "node scripts/chunk_and_lunr.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal",
         "problemMatcher": []
     },
     {
@@ -28,19 +28,7 @@
                 "clear": false
             },
             "isBackground": true,
-            "options": {
-                "env": {
-                    "NODE_ENV": "production",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
-                    "PORT": "3000",
-                    "HOST": "localhost",
-                    "STORAGE_ADAPTER": "local"
-                }
-            },
+
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*)$"
@@ -67,19 +55,7 @@
                 "clear": false
             },
             "isBackground": true,
-            "options": {
-                "env": {
-                    "NODE_ENV": "development",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
-                    "PORT": "3000",
-                    "HOST": "localhost",
-                    "STORAGE_ADAPTER": "local"
-                }
-            },
+
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*)$"
@@ -108,15 +84,6 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "NODE_ENV": "development",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
-                    "PORT": "3000",
-                    "HOST": "localhost",
-                    "STORAGE_ADAPTER": "local",
                     "ENABLE_TUNNEL": "true",
                     "TUNNEL_MODE": "quick"
                 }
@@ -136,7 +103,7 @@
             "label": "YuiHub: Start Prod Server (with Named Tunnel)",
             "type": "shell",
             "command": "bash",
-            "args": ["-c", "source yuihub_api/.env && npm run start:prod-tunnel"],
+            "args": ["-c", "source .env && npm run start:prod-tunnel"],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -149,15 +116,6 @@
             "isBackground": true,
             "options": {
                 "env": {
-                    "NODE_ENV": "production",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs",
-                    "LUNR_INDEX_PATH": "${workspaceFolder}/data/index/lunr.idx.json",
-                    "TERMS_INDEX_PATH": "${workspaceFolder}/data/index/terms.json",
-                    "STATS_PATH": "${workspaceFolder}/data/index/stats.json",
-                    "PORT": "3000",
-                    "HOST": "localhost",
-                    "STORAGE_ADAPTER": "local",
                     "ENABLE_TUNNEL": "true",
                     "TUNNEL_MODE": "named"
                 }
@@ -220,8 +178,8 @@
             },
             "options": {
                 "env": {
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/data/chatlogs"
+                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
+                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs"
                 }
             },
             "problemMatcher": []
@@ -272,7 +230,110 @@
                 "showReuseMessage": false,
                 "clear": true
             },
-      "problemMatcher": []
-    }
-  ]
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Force Stop Port 3000",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "fuser -k 3000/tcp 2>/dev/null && echo '✓ Port 3000 processes killed' || echo 'ℹ No processes found on port 3000'"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Complete Server Stop",
+            "type": "shell",
+            "command": "bash",
+            "args": ["-c", "echo '🛑 Stopping all YuiHub processes...' && pkill -f 'node.*yuihub_api/src/server.js' 2>/dev/null; fuser -k 3000/tcp 2>/dev/null; echo '✅ All processes stopped'"],
+            "group": "build", 
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Run YuiFlow Tests",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "test:yuiflow"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: E2E Workflow Test", 
+            "type": "shell",
+            "command": "./run-tests.sh",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Full Development Stack",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "dev:full"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "NODE_ENV": "development",
+                    "DATA_ROOT": "${workspaceFolder}/data",
+                    "YUIHUB_API": "http://localhost:3000"
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "YuiHub: Validate YuiFlow Compliance",
+            "type": "shell",
+            "command": "npm", 
+            "args": ["run", "validate:yuiflow"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
 }

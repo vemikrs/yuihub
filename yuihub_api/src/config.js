@@ -7,9 +7,17 @@
  * - test: 認証OFF、固定シード、テスト最適化
  */
 
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export class ConfigManager {
   constructor() {
     this.env = process.env.NODE_ENV || 'development';
+    this.workspaceRoot = this._findWorkspaceRoot();
     
     this.profiles = {
       development: {
@@ -50,17 +58,54 @@ export class ConfigManager {
   }
 
   /**
+   * ワークスペースルートを自動検出
+   * yuihub_apiフォルダが存在するディレクトリを探索
+   * @returns {string} ワークスペースルートの絶対パス
+   * @private
+   */
+  _findWorkspaceRoot() {
+    let current = process.cwd();
+    
+    // 現在のディレクトリがyuihub_api配下の場合は親を探す
+    if (current.endsWith('/yuihub_api') || current.includes('/yuihub_api/')) {
+      current = path.resolve(current, '../');
+    }
+    
+    // yuihub_apiフォルダが存在するまで上位ディレクトリを探索
+    while (current !== '/' && current !== path.parse(current).root) {
+      const yuihubApiPath = path.join(current, 'yuihub_api');
+      if (fs.existsSync(yuihubApiPath) && fs.statSync(yuihubApiPath).isDirectory()) {
+        return current;
+      }
+      current = path.dirname(current);
+    }
+    
+    // 見つからない場合は現在のディレクトリから相対的に推測
+    console.warn('⚠️  Workspace root not found, falling back to relative path detection');
+    const fallback = path.resolve(__dirname, '../../..');
+    if (fs.existsSync(path.join(fallback, 'yuihub_api'))) {
+      return fallback;
+    }
+    
+    // 最後の手段として現在のcwdを返す
+    return process.cwd();
+  }
+
+  /**
    * 現在の環境設定を取得
    * @returns {object} 環境設定オブジェクト
    */
   get current() {
     const profile = this.profiles[this.env] || this.profiles.development;
     
+    // ワークスペースルートベースのデフォルトパス構築
+    const defaultDataRoot = path.join(this.workspaceRoot, 'yuihub_api/data');
+    
     return {
       ...profile,
       env: this.env,
-      // パス設定（環境変数から取得、デフォルトはdata/配下）
-      dataRoot: process.env.DATA_ROOT || './data',
+      // パス設定（環境変数から取得、デフォルトは自動検出したyuihub_api/data）
+      dataRoot: process.env.DATA_ROOT || defaultDataRoot,
       port: parseInt(process.env.PORT) || 3000,
       host: process.env.HOST || (this.env === 'production' ? '0.0.0.0' : 'localhost'),
       storageAdapter: process.env.STORAGE_ADAPTER || 'local',
@@ -156,6 +201,7 @@ export class ConfigManager {
     const config = this.current;
     return {
       environment: config.env,
+      workspaceRoot: this.workspaceRoot,
       auth: config.auth ? 'enabled' : 'disabled',
       cors: Array.isArray(config.corsOrigins) ? config.corsOrigins : config.corsOrigins,
       indexAutoRebuild: config.indexAutoRebuild,
@@ -211,6 +257,11 @@ export class ConfigManager {
       
       // /health エンドポイントはスキップ
       if (req.method === 'GET' && req.url.startsWith('/health')) {
+        return;
+      }
+      
+      // OpenAPI schema is public for GPTs Actions integration
+      if (req.method === 'GET' && req.url.startsWith('/openapi.yml')) {
         return;
       }
 
