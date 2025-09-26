@@ -10,6 +10,8 @@ info:
     name: YuiHub Support
   license:
     name: MIT
+  termsOfService: https://poc-yuihub.vemi.jp/privacy
+  x-privacy-policy: https://poc-yuihub.vemi.jp/privacy
 
 servers:
   - url: https://poc-yuihub.vemi.jp

@@ -291,12 +291,17 @@ export class ConfigManager {
       }
 
       // /health エンドポイントはスキップ
-      if (req.method === 'GET' && req.url.startsWith('/health')) {
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/health')) {
         return;
       }
       
       // OpenAPI schema is public for GPTs Actions integration
-      if (req.method === 'GET' && req.url.startsWith('/openapi.yml')) {
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/openapi.yml')) {
+        return;
+      }
+      
+      // Privacy policy is public for OpenAPI compliance
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/privacy')) {
         return;
       }
 

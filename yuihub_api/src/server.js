@@ -331,6 +331,30 @@ app.get('/openapi.yml', async (req, reply) => {
   }
 });
 
+// Privacy policy endpoint
+app.get('/privacy', async (req, reply) => {
+  try {
+    const fs = await import('fs/promises');
+    const privacyPath = path.join(__dirname, '../openapi-privacy.html');
+    app.log.info(`Attempting to load privacy policy from: ${privacyPath}`);
+    
+    // Read HTML file
+    const htmlContent = await fs.readFile(privacyPath, 'utf8');
+    
+    // Set response headers
+    reply.type('text/html; charset=utf-8');
+    reply.header('Cache-Control', 'public, max-age=300');
+    
+    return htmlContent;
+    
+  } catch (error) {
+    app.log.error(`Failed to load privacy policy: ${error.message}`);
+    reply.code(404);
+    reply.type('text/plain');
+    return 'Privacy policy not found';
+  }
+});
+
 // Save note endpoint (YuiFlow InputMessage format)
 app.post('/save', async (req, reply) => {
   try {
