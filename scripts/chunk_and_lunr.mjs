@@ -110,7 +110,7 @@ async function buildIndex() {
         const docId = `${frontmatter.id}-${i}`;
         const chunk = chunks[i];
         
-        if (chunk.length < 50) continue; // Skip very short chunks
+  if (chunk.length < 10) continue; // Skip very short chunks (allow short notes)
         
         documents.push({
           id: docId,
