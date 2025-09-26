@@ -261,6 +261,35 @@ export class ConfigManager {
         return;
       }
       
+      // /ops/* はローカル限定・別トークン（LOCAL_OPS_TOKEN）
+      if (req.url.startsWith('/ops/')) {
+        const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.hostname === 'localhost';
+        if (!isLocal) {
+          reply.code(403).send({ ok: false, error: 'Forbidden: local only' });
+          return;
+        }
+        const bearer = req.headers['authorization'];
+        const bearerToken = (typeof bearer === 'string' && bearer.toLowerCase().startsWith('bearer '))
+          ? bearer.slice(7).trim()
+          : undefined;
+        const opsToken = process.env.LOCAL_OPS_TOKEN || '';
+        if (!opsToken || !bearerToken) {
+          reply.code(401).send({ ok: false, error: 'Unauthorized: missing ops token' });
+          return;
+        }
+        const safeEquals = (a, b) => {
+          const A = Buffer.from(String(a ?? ''), 'utf8');
+          const B = Buffer.from(String(b ?? ''), 'utf8');
+          if (A.length !== B.length) return false;
+          try { return timingSafeEqual(A, B); } catch { return false; }
+        };
+        if (!safeEquals(bearerToken, opsToken)) {
+          reply.code(401).send({ ok: false, error: 'Unauthorized: invalid ops token' });
+          return;
+        }
+        return; // /ops/* はここで認証完了
+      }
+
       // /health エンドポイントはスキップ
       if (req.method === 'GET' && req.url.startsWith('/health')) {
         return;
