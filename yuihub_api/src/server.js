@@ -291,6 +291,35 @@ app.get('/openapi.yml', async (req, reply) => {
     schemaObj.servers = [{ url: serverUrl, description }];
     schemaObj.info = schemaObj.info || {};
     schemaObj.info['x-generated-at'] = new Date().toISOString();
+
+    // Inject OpenAI approval toggles dynamically
+    // OPENAPI_CONFIRM_WRITES: 'true' | 'false' (default: prod=true, dev/test=false)
+    const confirmWritesEnv = process.env.OPENAPI_CONFIRM_WRITES;
+    const confirmWritesDefault = config.env === 'production' ? 'true' : 'false';
+    const confirmWrites = String(confirmWritesEnv ?? confirmWritesDefault).toLowerCase() === 'true';
+
+    const confirmTriggersEnv = process.env.OPENAPI_CONFIRM_TRIGGERS;
+    const confirmTriggers = String(confirmTriggersEnv ?? confirmWritesEnv ?? confirmWritesDefault).toLowerCase() === 'true';
+
+    const ensureFlag = (node, flag) => {
+      if (!node) return;
+      node['x-openai-isConsequential'] = !!flag;
+    };
+
+    try {
+      // Apply to write-like operations
+      ensureFlag(schemaObj?.paths?.['/threads/new']?.post, confirmWrites);
+      ensureFlag(schemaObj?.paths?.['/save']?.post, confirmWrites);
+      ensureFlag(schemaObj?.paths?.['/trigger']?.post, confirmTriggers);
+      // Expose current mode in info for debugging
+      schemaObj.info['x-openai-approval'] = {
+        writes: confirmWrites,
+        triggers: confirmTriggers,
+        env: config.env
+      };
+    } catch (e) {
+      app.log.warn('Failed to inject OpenAI approval flags into OpenAPI schema:', e.message);
+    }
     
     reply.type('application/x-yaml');
     return yaml.dump(schemaObj);
@@ -390,7 +419,12 @@ app.get('/search', async (req, reply) => {
     // Start with text search if query provided
     let hits = [];
     if (query) {
-      hits = await searchService.search(query, limit * 2); // Get more results for filtering
+      const primary = await searchService.search(query, limit * 2); // Get more results for filtering
+      hits = primary;
+      if (!hits || hits.length === 0) {
+        const fb = searchService.fallbackByTag(query, limit * 2);
+        hits = fb?.hits || [];
+      }
     } else {
       // 空クエリ時は最近のドキュメント上位を返す
       if (typeof searchService.getTopDocuments === 'function') {
@@ -414,8 +448,8 @@ app.get('/search', async (req, reply) => {
       });
     }
     
-    // Limit results
-    hits = hits.slice(0, limit);
+  // Limit results
+  hits = (Array.isArray(hits) ? hits : (hits?.hits || [])).slice(0, limit);
     
     app.log.info(`🔍 Search (q:"${query || '*'}", tag:"${tag || ''}", thread:"${thread || ''}") returned ${hits.length} results`);
     

@@ -59,7 +59,8 @@ export class SearchService {
             url: doc.url,
             date: doc.date,
             tags: doc.tags || [],
-            decision: doc.decision
+            decision: doc.decision,
+            thread: doc.thread || null
           };
         })
         .filter(Boolean);
@@ -152,6 +153,43 @@ export class SearchService {
     } catch (error) {
       console.error('Failed to get recent notes:', error);
       return [];
+    }
+  }
+
+  /**
+   * タグ由来のフォールバック検索（ゼロ件時補助）
+   * @param {string} query 
+   * @param {number} limit 
+   * @returns {{hits: Array}}
+   */
+  fallbackByTag(query, limit = 10) {
+    const q = (query || '').toString().trim();
+    if (!q) return { hits: [] };
+    try {
+      const docs = Array.from(this.documents.values());
+      const matches = [];
+      for (const doc of docs) {
+        const tags = Array.isArray(doc.tags) ? doc.tags : [];
+        if (tags.some(t => typeof t === 'string' && t.includes(q))) {
+          matches.push({
+            id: doc.id,
+            score: 0.05,
+            title: doc.title || doc.topic,
+            path: doc.path,
+            snippet: '',
+            url: doc.url,
+            date: doc.date,
+            tags: doc.tags || [],
+            decision: doc.decision,
+            thread: doc.thread || null
+          });
+        }
+        if (matches.length >= limit) break;
+      }
+      return { hits: matches.slice(0, limit) };
+    } catch (e) {
+      console.warn('fallbackByTag failed:', e.message);
+      return { hits: [] };
     }
   }
 }

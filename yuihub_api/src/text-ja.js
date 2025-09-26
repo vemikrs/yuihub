@@ -40,6 +40,8 @@ export function normalizeJa(text = '') {
     return String(text ?? '')
         .trim()
         .normalize('NFKC')
+    // ひらがな→カタカナ（検索時とインデックス時の表記ゆれを吸収）
+    .replace(/[ぁ-ゖ]/g, (s) => String.fromCharCode(s.charCodeAt(0) + 0x60))
         .replace(/\s+/g, ' ');  // 複数の空白文字を1つの半角スペースに統一
 }
 

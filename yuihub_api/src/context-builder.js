@@ -24,37 +24,53 @@ export class ContextBuilder {
     } = options;
 
     try {
-      // Search for all fragments in the thread
-      const searchResults = await this.searchService.search(`thread:${thread}`, maxFragments);
-      
-      // If no results from search, try to get from storage directly
-      let fragments = [];
-      if (searchResults && searchResults.length > 0) {
-        fragments = searchResults;
-      } else {
-        // Fallback: get recent notes and filter by thread
-        // This is a workaround since our search might not have thread filtering fully implemented
-        console.warn(`No search results for thread ${thread}, using fallback method`);
+      // 1) インデックスのメタデータから該当threadのドキュメント群を抽出
+      const allDocs = Array.from(this.searchService.documents.values());
+      const byThread = allDocs.filter(doc => doc.thread === thread);
+
+      // 2) originalId（1レコード=複数チャンク）でグルーピング
+      const groups = new Map();
+      for (const d of byThread) {
+        const key = d.originalId || d.id;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(d);
       }
 
-      // Convert search results to Fragment format
-      const yuiflowFragments = fragments.map(hit => ({
-        id: `rec-${hit.id || Date.now()}`,
-        when: hit.date || new Date().toISOString(),
-        mode: 'shelter',
-        controls: {
-          visibility: 'internal',
-          detail: 'minimal',
-          external_io: 'blocked'
-        },
-        thread: thread,
-        source: hit.source || 'unknown',
-        text: hit.body || hit.snippet || '',
-        terms: hit.terms || [],
-        tags: hit.tags || [],
-        links: hit.links || [],
-        kind: 'fragment'
-      }));
+      // 3) 各レコードごとにフラグメントを生成（チャンク本文は結合、上限を適用）
+      const yuiflowFragments = Array.from(groups.entries())
+        .sort((a, b) => {
+          const da = a[1][0]?.date ? new Date(a[1][0].date).getTime() : 0;
+          const db = b[1][0]?.date ? new Date(b[1][0].date).getTime() : 0;
+          return da - db; // 古い順→新しい順
+        })
+        .slice(0, maxFragments)
+        .map(([origId, docs]) => {
+          const sortedChunks = docs
+            .slice()
+            .sort((x, y) => (x.chunkIndex ?? 0) - (y.chunkIndex ?? 0));
+          const combinedText = sortedChunks.map(c => c.body || '').join('\n\n');
+          const first = sortedChunks[0] || {};
+          const tags = Array.isArray(first.tags) ? first.tags : [];
+          const source = ['gpts','copilot','claude','human'].includes(first.source) ? first.source : 'gpts';
+
+          return {
+            id: String(origId),
+            when: first.date || new Date().toISOString(),
+            mode: 'shelter',
+            controls: {
+              visibility: 'internal',
+              detail: 'minimal',
+              external_io: 'blocked'
+            },
+            thread,
+            source,
+            text: combinedText,
+            terms: [],
+            tags,
+            links: [],
+            kind: 'fragment'
+          };
+        });
 
       // Extract knots (key points) if requested
       let knots = [];

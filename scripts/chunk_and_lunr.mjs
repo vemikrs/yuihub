@@ -131,6 +131,8 @@ async function buildIndex() {
           tags: frontmatter.tags || [],
           decision: frontmatter.decision,
           actors: frontmatter.actors || [],
+          source: frontmatter.source || null,
+          thread: frontmatter.thread || null,
           body: chunk.substring(0, 500) // Store first 500 chars for snippets
         });
         

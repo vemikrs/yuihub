@@ -126,7 +126,8 @@ export class EnhancedSearchService extends SearchService {
         url: doc.url,
         date: doc.date,
         tags: doc.tags || [],
-        decision: doc.decision
+        decision: doc.decision,
+        thread: doc.thread || null
       }));
     } catch (e) {
       console.warn('getTopDocuments failed:', e.message);
