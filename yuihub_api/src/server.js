@@ -392,9 +392,12 @@ app.get('/search', async (req, reply) => {
     if (query) {
       hits = await searchService.search(query, limit * 2); // Get more results for filtering
     } else {
-      // If no query, we need to get all documents for filtering
-      // This is a simple implementation - in production, we'd want better indexing
-      hits = await searchService.search('*', 1000); // Get many results for filtering
+      // 空クエリ時は最近のドキュメント上位を返す
+      if (typeof searchService.getTopDocuments === 'function') {
+        hits = searchService.getTopDocuments(limit * 2);
+      } else {
+        hits = [];
+      }
     }
     
     // Apply tag filter

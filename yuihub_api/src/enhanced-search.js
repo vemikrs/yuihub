@@ -76,8 +76,9 @@ export class EnhancedSearchService extends SearchService {
     const startTime = Date.now();
     
     try {
-      // Phase 1: Lunr検索
-      const lunrHits = await super.search(normalizedQuery, limit);
+      // Phase 1: Lunr検索（ベース実装は { hits: [] } を返す）
+      const baseResult = await super.search(normalizedQuery, limit);
+      const lunrHits = Array.isArray(baseResult) ? baseResult : (baseResult?.hits || []);
       
       // Phase 2: Terms逆引き検索（Lunr結果が少ない場合のみ）
       let combinedHits = lunrHits || [];
@@ -99,6 +100,36 @@ export class EnhancedSearchService extends SearchService {
       return results;
     } catch (error) {
       console.error('Enhanced search error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * クエリなしの場合のトップドキュメント（最近順）
+   * @param {number} limit 
+   * @returns {Array}
+   */
+  getTopDocuments(limit = 10) {
+    try {
+      const docs = Array.from(this.documents.values());
+      const sorted = docs.sort((a, b) => {
+        const da = a.date ? new Date(a.date).getTime() : 0;
+        const db = b.date ? new Date(b.date).getTime() : 0;
+        return db - da;
+      });
+      return sorted.slice(0, limit).map(doc => ({
+        id: doc.id,
+        score: 0.1,
+        title: doc.title || doc.topic,
+        path: doc.path,
+        snippet: '',
+        url: doc.url,
+        date: doc.date,
+        tags: doc.tags || [],
+        decision: doc.decision
+      }));
+    } catch (e) {
+      console.warn('getTopDocuments failed:', e.message);
       return [];
     }
   }
