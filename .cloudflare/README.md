@@ -4,13 +4,13 @@
 
 ## 🎯 Quick Mode (開発用)
 
-YuiHubは **Quick Tunnel** を使用してHTTPS外部公開を行います。
+YuiHubは **Quick Tunnel** を使用したセキュアな一次公開が可能です。
 
 ### 特徴
 - ✅ 認証不要、即座に使用可能  
 - ✅ 毎回新しい一時URL生成（セキュア）
 - ✅ 開発・テスト用途に最適
-- ❌ URLが毎回変わる（ChatGPT Actionsで再設定が必要）
+- ✅ 固定URLを設定したい場合はNamed Tunnelを使用可能 (Cloudflareでのドメイン設定が必要)
 
 ## 📋 使用方法
 
