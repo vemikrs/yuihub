@@ -191,6 +191,62 @@ app.post('/index/reload', async (req, reply) => {
   }
 });
 
+// OPS: Reindex endpoint (local-only, bearer via middleware)
+app.post('/ops/reindex', async (req, reply) => {
+  try {
+    const body = req.body || {};
+    const paths = Array.isArray(body.paths) ? body.paths : (body.paths ? [body.paths] : []);
+    const filters = body.filters || {};
+    const mode = Array.isArray(filters.mode) ? filters.mode.join(',') : (filters.mode || '');
+    const visibility = Array.isArray(filters.visibility) ? filters.visibility.join(',') : (filters.visibility || '');
+    const dryRun = !!body.dryRun;
+
+    // デフォルトパス: notes, docs/logdocs, data/chatlogs
+    const defaultPaths = ['notes', 'docs/logdocs', path.join(config.dataRoot, 'chatlogs')];
+    const roots = paths.length > 0 ? paths : defaultPaths;
+
+    // dryRunは scripts/build-index.mjs を --dryRun で呼び出し、JSONをそのまま返す
+    if (dryRun) {
+      const scriptPath = path.resolve(process.cwd(), '../scripts/build-index.mjs');
+      const args = ['--dryRun'];
+      for (const r of roots) { args.push('--paths', r); }
+      if (mode) args.push(`--mode=${mode}`);
+      if (visibility) args.push(`--visibility=${visibility}`);
+
+      const { execFile } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(execFile);
+
+      const { stdout } = await execAsync('node', [scriptPath, ...args], {
+        cwd: path.resolve(process.cwd(), '..'),
+        timeout: 120000
+      });
+
+      try {
+        const json = JSON.parse(stdout.trim());
+        return json;
+      } catch (e) {
+        app.log.warn('DryRun output was not JSON, wrapping');
+        return { ok: true, raw: stdout };
+      }
+    }
+
+    // 実実行は IndexManager.rebuild() を使って再構築し、簡易サマリを返す
+    await indexManager.rebuild();
+    const status = await indexManager.getStatus();
+    return {
+      ok: true,
+      status: 'rebuilt',
+      lastBuildAt: status.lastBuildAt,
+      artifact: path.relative(config.workspaceRoot, config.lunrIndexPath)
+    };
+  } catch (error) {
+    app.log.error('OPS reindex failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
 // OpenAPI schema endpoint for ChatGPT Actions
 app.get('/openapi.yml', async (req, reply) => {
   try {
