@@ -1,9 +1,8 @@
 name: YuiHub GPTs E2E
 
 on:
-  push:
-    branches: [ feature/**, fix/**, chore/**, main ]
   pull_request:
+    types: [ready_for_review]
 
 jobs:
   e2e:
