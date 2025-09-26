@@ -27,6 +27,7 @@ paths:
       summary: Issue a new Thread ID
       description: Generates a new YuiFlow-compliant thread ID (th-ULID)
       operationId: issueThread
+      x-openai-isConsequential: false
       tags:
         - YuiFlow
       responses:
