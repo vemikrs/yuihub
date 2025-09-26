@@ -10,6 +10,14 @@ import { SearchService } from './search.js';
 import { EnhancedSearchService } from './enhanced-search.js';
 import { IndexManager } from './index-manager.js';
 import { ConfigManager } from './config.js';
+import { ContextBuilder } from './context-builder.js';
+import { 
+  InputMessageSchema, 
+  AgentTriggerSchema, 
+  SearchQuerySchema,
+  inputMessageToFragment,
+  Validators 
+} from './schemas/yuiflow.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,7 +63,7 @@ const app = Fastify({
 await app.register(cors, {
   origin: config.corsOrigins,
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-yuihub-token'],
+  allowedHeaders: ['Content-Type', 'x-yuihub-token', 'Authorization'],
 });
 
 // Rate limiting
@@ -69,9 +77,22 @@ await app.register(rateLimit, {
 const authMiddleware = configManager.createAuthMiddleware();
 app.addHook('onRequest', authMiddleware);
 
-// サービス初期化
-const storageAdapter = createStorageAdapter();
+// サービス初期化（ストレージは絶対パスを渡す）
+const storageAdapter = createStorageAdapter({
+  type: config.storageAdapter,
+  local: { basePath: config.localStoragePath },
+  github: {
+    token: process.env.GITHUB_TOKEN,
+    owner: process.env.GITHUB_OWNER,
+    repo: process.env.GITHUB_REPO,
+    branch: process.env.GITHUB_BRANCH,
+    basePath: process.env.GITHUB_PATH
+  }
+});
 const searchService = new EnhancedSearchService();
+
+// ContextBuilder初期化
+const contextBuilder = new ContextBuilder(storageAdapter, searchService);
 
 // IndexManager初期化
 const indexManager = new IndexManager({
@@ -82,6 +103,11 @@ const indexManager = new IndexManager({
   dataRoot: config.dataRoot,
   logger: app.log
 });
+
+// デバウンス遅延（環境変数で調整可能）
+if (process.env.REINDEX_DEBOUNCE_MS) {
+  try { indexManager.setDebounceDelay(parseInt(process.env.REINDEX_DEBOUNCE_MS)); } catch {}
+}
 
 // Tunnel manager instance (if enabled)
 let tunnelManager = null;
@@ -100,10 +126,27 @@ if (!indexInitialized && config.indexAutoRebuild) {
 
 // === API ENDPOINTS ===
 
+// Thread ID issue endpoint
+app.post('/threads/new', async (req, reply) => {
+  try {
+    const threadId = `th-${ulid()}`;
+    app.log.info(`🧵 New thread issued: ${threadId}`);
+    return {
+      ok: true,
+      thread: threadId,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('Thread issue failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
 // Health check endpoint (enhanced)
 app.get('/health', async (req, reply) => {
   const indexStatus = await indexManager.getStatus();
-  
+  const stats = searchService.getStats();
   return { 
     ok: true, 
     timestamp: new Date().toISOString(),
@@ -111,6 +154,9 @@ app.get('/health', async (req, reply) => {
     storage: storageAdapter.type,
     searchIndex: indexStatus.status,
     lastIndexBuild: indexStatus.lastBuildAt,
+    lastFullRebuildAt: indexStatus.lastFullRebuildAt || null,
+    deltaDocs: stats.deltaDocs ?? 0,
+    lastDeltaAdd: stats.lastDeltaAdd ?? null,
     auth: config.auth ? 'enabled' : 'disabled',
     version: process.env.npm_package_version || '1.0.0'
   };
@@ -118,7 +164,13 @@ app.get('/health', async (req, reply) => {
 
 // Index management endpoints
 app.get('/index/status', async (req, reply) => {
-  return await indexManager.getStatus();
+  const s = await indexManager.getStatus();
+  const stats = searchService.getStats();
+  return {
+    ...s,
+    deltaDocs: stats.deltaDocs ?? 0,
+    lastDeltaAdd: stats.lastDeltaAdd ?? null
+  };
 });
 
 app.post('/index/rebuild', async (req, reply) => {
@@ -148,6 +200,62 @@ app.post('/index/reload', async (req, reply) => {
     };
   } catch (error) {
     app.log.error('Index reload failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// OPS: Reindex endpoint (local-only, bearer via middleware)
+app.post('/ops/reindex', async (req, reply) => {
+  try {
+    const body = req.body || {};
+    const paths = Array.isArray(body.paths) ? body.paths : (body.paths ? [body.paths] : []);
+    const filters = body.filters || {};
+    const mode = Array.isArray(filters.mode) ? filters.mode.join(',') : (filters.mode || '');
+    const visibility = Array.isArray(filters.visibility) ? filters.visibility.join(',') : (filters.visibility || '');
+    const dryRun = !!body.dryRun;
+
+    // デフォルトパス: notes, docs/logdocs, data/chatlogs
+    const defaultPaths = ['notes', 'docs/logdocs', path.join(config.dataRoot, 'chatlogs')];
+    const roots = paths.length > 0 ? paths : defaultPaths;
+
+    // dryRunは scripts/build-index.mjs を --dryRun で呼び出し、JSONをそのまま返す
+    if (dryRun) {
+      const scriptPath = path.resolve(process.cwd(), '../scripts/build-index.mjs');
+      const args = ['--dryRun'];
+      for (const r of roots) { args.push('--paths', r); }
+      if (mode) args.push(`--mode=${mode}`);
+      if (visibility) args.push(`--visibility=${visibility}`);
+
+      const { execFile } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(execFile);
+
+      const { stdout } = await execAsync('node', [scriptPath, ...args], {
+        cwd: path.resolve(process.cwd(), '..'),
+        timeout: 120000
+      });
+
+      try {
+        const json = JSON.parse(stdout.trim());
+        return json;
+      } catch (e) {
+        app.log.warn('DryRun output was not JSON, wrapping');
+        return { ok: true, raw: stdout };
+      }
+    }
+
+    // 実実行は IndexManager.rebuild() を使って再構築し、簡易サマリを返す
+    await indexManager.rebuild();
+    const status = await indexManager.getStatus();
+    return {
+      ok: true,
+      status: 'rebuilt',
+      lastBuildAt: status.lastBuildAt,
+      artifact: path.relative(config.workspaceRoot, config.lunrIndexPath)
+    };
+  } catch (error) {
+    app.log.error('OPS reindex failed:', error);
     reply.code(500);
     return { ok: false, error: error.message };
   }
@@ -197,6 +305,35 @@ app.get('/openapi.yml', async (req, reply) => {
     schemaObj.servers = [{ url: serverUrl, description }];
     schemaObj.info = schemaObj.info || {};
     schemaObj.info['x-generated-at'] = new Date().toISOString();
+
+    // Inject OpenAI approval toggles dynamically
+    // OPENAPI_CONFIRM_WRITES: 'true' | 'false' (default: prod=true, dev/test=false)
+    const confirmWritesEnv = process.env.OPENAPI_CONFIRM_WRITES;
+    const confirmWritesDefault = config.env === 'production' ? 'true' : 'false';
+    const confirmWrites = String(confirmWritesEnv ?? confirmWritesDefault).toLowerCase() === 'true';
+
+    const confirmTriggersEnv = process.env.OPENAPI_CONFIRM_TRIGGERS;
+    const confirmTriggers = String(confirmTriggersEnv ?? confirmWritesEnv ?? confirmWritesDefault).toLowerCase() === 'true';
+
+    const ensureFlag = (node, flag) => {
+      if (!node) return;
+      node['x-openai-isConsequential'] = !!flag;
+    };
+
+    try {
+      // Apply to write-like operations
+      ensureFlag(schemaObj?.paths?.['/threads/new']?.post, confirmWrites);
+      ensureFlag(schemaObj?.paths?.['/save']?.post, confirmWrites);
+      ensureFlag(schemaObj?.paths?.['/trigger']?.post, confirmTriggers);
+      // Expose current mode in info for debugging
+      schemaObj.info['x-openai-approval'] = {
+        writes: confirmWrites,
+        triggers: confirmTriggers,
+        env: config.env
+      };
+    } catch (e) {
+      app.log.warn('Failed to inject OpenAI approval flags into OpenAPI schema:', e.message);
+    }
     
     reply.type('application/x-yaml');
     return yaml.dump(schemaObj);
@@ -208,36 +345,91 @@ app.get('/openapi.yml', async (req, reply) => {
   }
 });
 
-// Save note endpoint (enhanced with index auto-rebuild)
+// Privacy policy endpoint
+app.get('/privacy', async (req, reply) => {
+  try {
+    const fs = await import('fs/promises');
+    const privacyPath = path.join(__dirname, '../openapi-privacy.html');
+    app.log.info(`Attempting to load privacy policy from: ${privacyPath}`);
+    
+    // Read HTML file
+    const htmlContent = await fs.readFile(privacyPath, 'utf8');
+    
+    // Set response headers
+    reply.type('text/html; charset=utf-8');
+    reply.header('Cache-Control', 'public, max-age=300');
+    
+    return htmlContent;
+    
+  } catch (error) {
+    app.log.error(`Failed to load privacy policy: ${error.message}`);
+    reply.code(404);
+    reply.type('text/plain');
+    return 'Privacy policy not found';
+  }
+});
+
+// Save note endpoint (YuiFlow InputMessage format)
 app.post('/save', async (req, reply) => {
   try {
-    const { frontmatter, body } = req.body;
+    // Validate InputMessage schema
+    const validationResult = Validators.inputMessage(req.body);
     
-    // Validation
-    if (!frontmatter || !body) {
+    if (!validationResult.success) {
       reply.code(400);
-      return { ok: false, error: 'frontmatter and body are required' };
+      return { 
+        ok: false, 
+        error: 'Invalid InputMessage format', 
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
+      };
     }
     
-    // Ensure required frontmatter fields
-    const enrichedFrontmatter = {
-      id: ulid(),
-      date: new Date().toISOString(),
-      ...frontmatter
+    const inputMessage = validationResult.data;
+    
+    // Convert InputMessage to Fragment format for storage
+    const fragment = inputMessageToFragment(inputMessage);
+    
+    app.log.info(`💾 Saving note with ID: ${fragment.id}`);
+    
+    // Convert fragment back to frontmatter/body format for storage adapter
+    const frontmatter = {
+      id: fragment.id,
+      date: fragment.when,
+      mode: fragment.mode,
+      controls: fragment.controls,
+      thread: fragment.thread,
+      source: fragment.source,
+      tags: fragment.tags,
+      terms: fragment.terms,
+      links: fragment.links,
+      kind: fragment.kind
     };
     
-    app.log.info(`💾 Saving note with ID: ${enrichedFrontmatter.id}`);
+    // Save to storage (existing storage adapter expects frontmatter/body format)
+    const result = await storageAdapter.save(frontmatter, fragment.text);
     
-    // Save to storage
-    const result = await storageAdapter.save(enrichedFrontmatter, body);
-    
-    // Trigger background index rebuild if enabled
-    if (config.indexAutoRebuild) {
-      app.log.info('🔄 Triggering background index rebuild...');
-      indexManager.scheduleRebuild();
+    // 即時検索反映（delta overlay）
+    const added = searchService.addDeltaFromSave(frontmatter, fragment.text);
+    if (added) {
+      app.log.info(`🧩 Delta added for ${frontmatter.id}`);
     }
+
+    // Prodでもデバウンスでバックグラウンド再索引をスケジュール
+    app.log.info('🔄 Scheduling debounced index rebuild');
+    indexManager.scheduleRebuild();
     
-    return result;
+    return {
+      ok: true,
+      data: {
+        id: fragment.id,
+        thread: fragment.thread,
+        when: fragment.when
+      },
+      timestamp: new Date().toISOString()
+    };
     
   } catch (error) {
     app.log.error('Save operation failed:', error);
@@ -246,23 +438,67 @@ app.post('/save', async (req, reply) => {
   }
 });
 
-// Search endpoint
+// Search endpoint (with tag/thread filtering)
 app.get('/search', async (req, reply) => {
   try {
-    const { q: query, limit = 10 } = req.query;
+    // Validate search query parameters
+    const validationResult = Validators.searchQuery(req.query);
     
-    if (!query) {
+    if (!validationResult.success) {
       reply.code(400);
-      return { ok: false, error: 'Query parameter q is required' };
+      return { 
+        ok: false, 
+        error: 'Invalid search parameters', 
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
+      };
     }
     
-    const hits = await searchService.search(query, parseInt(limit));
+    const { q: query, tag, thread, limit } = validationResult.data;
     
-    app.log.info(`🔍 Search for "${query}" returned ${hits.length} results`);
+    // Start with text search if query provided
+    let hits = [];
+    if (query) {
+      const primary = await searchService.search(query, limit * 2); // Get more results for filtering
+      hits = primary;
+      if (!hits || hits.length === 0) {
+        const fb = searchService.fallbackByTag(query, limit * 2);
+        hits = fb?.hits || [];
+      }
+    } else {
+      // 空クエリ時は最近のドキュメント上位を返す
+      if (typeof searchService.getTopDocuments === 'function') {
+        hits = searchService.getTopDocuments(limit * 2);
+      } else {
+        hits = [];
+      }
+    }
+    
+    // Apply tag filter
+    if (tag) {
+      hits = hits.filter(hit => {
+        return hit.tags && Array.isArray(hit.tags) && hit.tags.includes(tag);
+      });
+    }
+    
+    // Apply thread filter
+    if (thread) {
+      hits = hits.filter(hit => {
+        return hit.thread === thread;
+      });
+    }
+    
+  // Limit results
+  hits = (Array.isArray(hits) ? hits : (hits?.hits || [])).slice(0, limit);
+    
+    app.log.info(`🔍 Search (q:"${query || '*'}", tag:"${tag || ''}", thread:"${thread || ''}") returned ${hits.length} results`);
     
     return {
       ok: true,
-      query,
+      query: query || null,
+      filters: { tag: tag || null, thread: thread || null },
       total: hits.length,
       hits,
       timestamp: new Date().toISOString()
@@ -294,6 +530,211 @@ app.get('/recent', async (req, reply) => {
     
   } catch (error) {
     app.log.error('Recent notes retrieval failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// Agent trigger endpoint (Shelter mode implementation)
+app.post('/trigger', async (req, reply) => {
+  try {
+    // Validate AgentTrigger schema
+    const validationResult = Validators.agentTrigger(req.body);
+    
+    if (!validationResult.success) {
+      reply.code(400);
+      return { 
+        ok: false, 
+        error: 'Invalid AgentTrigger format', 
+        details: validationResult.error.errors ? validationResult.error.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message
+        })) : [{ field: 'unknown', message: validationResult.error.message || 'Validation failed' }]
+      };
+    }
+    
+    const trigger = validationResult.data;
+    
+    // Generate ID and timestamp if not provided
+    const triggerId = trigger.id || `trg-${ulid()}`;  
+    const when = trigger.when || new Date().toISOString();
+    
+    app.log.info(`⚡ Agent trigger received: ${trigger.type} (ID: ${triggerId})`);
+    
+    // In Shelter mode, record the trigger but don't execute
+    if (process.env.MODE === 'shelter' && process.env.EXTERNAL_IO === 'blocked') {
+      // Save trigger record for audit trail
+      const triggerRecord = {
+        frontmatter: {
+          id: triggerId,
+          date: when,
+          type: 'agent_trigger',
+          trigger_type: trigger.type,
+          thread: trigger.reply_to,
+          mode: 'shelter',
+          controls: {
+            visibility: 'internal',
+            external_io: 'blocked'
+          },
+          tags: ['trigger', 'shelter-mode']
+        },
+        body: `## Agent Trigger (Shelter Mode)
+
+**Type**: ${trigger.type}
+**Thread**: ${trigger.reply_to}
+**Status**: SIMULATED (not executed due to shelter mode)
+
+### Payload
+\`\`\`json
+${JSON.stringify(trigger.payload, null, 2)}
+\`\`\``
+      };
+      
+      await storageAdapter.save(triggerRecord.frontmatter, triggerRecord.body);
+      
+      // Trigger index rebuild
+      if (config.indexAutoRebuild) {
+        indexManager.scheduleRebuild();
+      }
+      
+      return {
+        ok: true,
+        mode: 'shelter',
+        ref: triggerId,
+        message: 'Trigger recorded but not executed (shelter mode)',
+        timestamp: when
+      };
+    }
+    
+    // Future: Signal mode implementation would go here
+    reply.code(501);
+    return { 
+      ok: false, 
+      error: 'Agent execution not implemented for current mode',
+      mode: process.env.MODE || 'unknown'
+    };
+    
+  } catch (error) {
+    app.log.error('Agent trigger failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// Context Packet export endpoint
+app.get('/export/context/:thread', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const { intent = 'export' } = req.query;
+    
+    const packet = await contextBuilder.buildPacket(thread, intent);
+    
+    reply.type('application/json');
+    reply.header('Content-Disposition', `attachment; filename="${thread}-context.json"`);
+    return packet;
+    
+  } catch (error) {
+    app.log.error('Context export failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// Copilot markdown export endpoint
+app.get('/export/markdown/:thread', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const includeMetadata = req.query.metadata !== 'false';
+    const includeKnots = req.query.knots !== 'false';
+    
+    const markdown = await contextBuilder.generateCopilotMarkdown(thread, {
+      includeMetadata,
+      includeKnots
+    });
+    
+    reply.type('text/markdown');
+    reply.header('Content-Disposition', `attachment; filename="${thread}.md"`);
+    return markdown;
+    
+  } catch (error) {
+    app.log.error('Markdown export failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+// VS Code Extension preparation endpoints
+app.get('/vscode/threads', async (req, reply) => {
+  try {
+    // This is a simple implementation - in a real system we'd have better thread management
+    // For now, we'll return a placeholder response
+    return {
+      ok: true,
+      threads: [
+        {
+          id: 'th-example',
+          title: 'Example Thread',
+          lastActivity: new Date().toISOString(),
+          fragmentCount: 0
+        }
+      ],
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('VS Code threads request failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+app.get('/vscode/context/:thread/compact', async (req, reply) => {
+  try {
+    const { thread } = req.params;
+    const summary = await contextBuilder.getThreadSummary(thread);
+    
+    return {
+      ok: true,
+      data: summary,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    app.log.error('VS Code context request failed:', error);
+    reply.code(500);
+    return { ok: false, error: error.message };
+  }
+});
+
+app.post('/vscode/copilot/context', async (req, reply) => {
+  try {
+    const { thread, format = 'markdown' } = req.body;
+    
+    if (!thread) {
+      reply.code(400);
+      return { ok: false, error: 'thread parameter is required' };
+    }
+    
+    if (format === 'markdown') {
+      const markdown = await contextBuilder.generateCopilotMarkdown(thread);
+      return {
+        ok: true,
+        format: 'markdown',
+        content: markdown,
+        timestamp: new Date().toISOString()
+      };
+    } else if (format === 'json') {
+      const packet = await contextBuilder.buildPacket(thread, 'copilot-context');
+      return {
+        ok: true,
+        format: 'json',
+        content: packet,
+        timestamp: new Date().toISOString()
+      };
+    } else {
+      reply.code(400);
+      return { ok: false, error: 'format must be either "markdown" or "json"' };
+    }
+  } catch (error) {
+    app.log.error('VS Code Copilot context request failed:', error);
     reply.code(500);
     return { ok: false, error: error.message };
   }

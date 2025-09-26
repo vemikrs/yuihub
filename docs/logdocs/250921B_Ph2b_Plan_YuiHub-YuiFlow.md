@@ -275,7 +275,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 * HTTP: `/save` `/search` `/trigger` を **Step2.5 のコントラクト**どおり実装
 * Agent: **Echo**（payload受→即ログ）
-* 記録: `docs/logdocs/flow-runs/` に 1実験=1ファイルの痕跡
+* 記録: `chatlogs/flow-runs/` に 1実験=1ファイルの痕跡
 
 **テスト（smoke）**
 
@@ -295,7 +295,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 **差分**
 
-* 未達/保留は `docs/logdocs/Δ_Knots.md` に列挙（次Threadの起点）
+* 未達/保留は `chatlogs/Δ_Knots.md` に列挙（次Threadの起点）
 
 ---
 
@@ -313,7 +313,7 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 * 1 Issue = 「最小の合意可能な変化」
 * ラベル例: `track/yuiflow` `track/poc` `type/spec` `type/impl` `Δ-knot`
-* PRは**小さく**、`docs/logdocs/` に**検証ログを必ず残す**
+* PRは**小さく**、`chatlogs/` に**検証ログを必ず残す**
 
 ---
 

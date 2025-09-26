@@ -110,7 +110,7 @@ async function buildIndex() {
         const docId = `${frontmatter.id}-${i}`;
         const chunk = chunks[i];
         
-        if (chunk.length < 50) continue; // Skip very short chunks
+  if (chunk.length < 10) continue; // Skip very short chunks (allow short notes)
         
         documents.push({
           id: docId,
@@ -131,6 +131,8 @@ async function buildIndex() {
           tags: frontmatter.tags || [],
           decision: frontmatter.decision,
           actors: frontmatter.actors || [],
+          source: frontmatter.source || null,
+          thread: frontmatter.thread || null,
           body: chunk.substring(0, 500) // Store first 500 chars for snippets
         });
         

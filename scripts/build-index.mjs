@@ -8,6 +8,7 @@ import { performance } from 'perf_hooks';
 import lunr from 'lunr';
 import yaml from 'js-yaml';
 import minimist from 'minimist';
+import { glob } from 'glob';
 
 const argv = minimist(process.argv.slice(2), {
   string: ['paths','mode','visibility'],
@@ -20,7 +21,7 @@ const argv = minimist(process.argv.slice(2), {
 });
 const roots = (Array.isArray(argv.paths) ? argv.paths : [argv.paths]).filter(Boolean);
 if (roots.length === 0) {
-  roots.push('notes', 'docs/logdocs');
+  roots.push('notes', 'chatlogs');
 }
 const modeFilter = new Set((argv.mode || '').split(',').filter(Boolean));
 const visibilityFilter = new Set((argv.visibility || '').split(',').filter(Boolean));
@@ -28,23 +29,26 @@ const dryRun = !!argv.dryRun;
 
 function splitFrontMatter(content) {
   if (!content.startsWith('---')) return { fm: {}, body: content };
-  const end = content.indexOf('\\n---', 3);
+  const end = content.indexOf('\n---', 3);
   if (end === -1) return { fm: {}, body: content };
-  const raw = content.slice(3, end+1); // between --- ... ---\n
+  const raw = content.slice(3, end + 1); // between --- ... --- + trailing newline
   let fm = {};
   try { fm = yaml.load(raw) || {}; } catch (e) { fm = {}; }
-  const body = content.slice(end+4);
+  const body = content.slice(end + 4);
   return { fm, body };
 }
 
 function matchFilters(fm) {
   if (modeFilter.size > 0) {
-    const mode = (fm.mode || '').toString();
-    if (!modeFilter.has(mode)) return false;
+    const mode = (fm.mode || '').toString().toLowerCase();
+    const filterSet = new Set([...modeFilter].map(v => v.toLowerCase()));
+    if (!filterSet.has(mode)) return false;
   }
   if (visibilityFilter.size > 0) {
-    const vis = (fm.visibility || '').toString();
-    if (!visibilityFilter.has(vis)) return false;
+    // support controls.visibility or top-level visibility
+    const vis = (fm?.controls?.visibility || fm.visibility || '').toString().toLowerCase();
+    const filterSetV = new Set([...visibilityFilter].map(v => v.toLowerCase()));
+    if (!filterSetV.has(vis)) return false;
   }
   return true;
 }
@@ -54,17 +58,20 @@ const collected = [];
 const skipped = [];
 for (const rootDir of roots) {
   if (!fs.existsSync(rootDir)) continue;
-  const entries = fs.readdirSync(rootDir);
-  for (const file of entries) {
-    if (!file.endsWith('.md')) continue;
-    const p = path.join(rootDir, file);
-    const content = fs.readFileSync(p, 'utf8');
-    const { fm, body } = splitFrontMatter(content);
-    if (!matchFilters(fm)) {
-      skipped.push({ id: p, reason: 'filter-mismatch', fm });
-      continue;
+  const pattern = path.join(rootDir, '**/*.md').replace(/\\/g, '/');
+  const files = await glob(pattern);
+  for (const p of files) {
+    try {
+      const content = fs.readFileSync(p, 'utf8');
+      const { fm, body } = splitFrontMatter(content);
+      if (!matchFilters(fm)) {
+        skipped.push({ id: p, reason: 'filter-mismatch', fm });
+        continue;
+      }
+      collected.push({ id: p, text: body, fm });
+    } catch (e) {
+      skipped.push({ id: p, reason: 'read-failed', error: e.message });
     }
-    collected.push({ id: p, text: body, fm });
   }
 }
 

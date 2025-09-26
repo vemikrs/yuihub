@@ -7,9 +7,18 @@
  * - test: 認証OFF、固定シード、テスト最適化
  */
 
+import path from 'path';
+import fs from 'fs';
+import { timingSafeEqual } from 'crypto';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export class ConfigManager {
   constructor() {
     this.env = process.env.NODE_ENV || 'development';
+    this.workspaceRoot = this._findWorkspaceRoot();
     
     this.profiles = {
       development: {
@@ -50,33 +59,75 @@ export class ConfigManager {
   }
 
   /**
+   * ワークスペースルートを自動検出
+   * yuihub_apiフォルダが存在するディレクトリを探索
+   * @returns {string} ワークスペースルートの絶対パス
+   * @private
+   */
+  _findWorkspaceRoot() {
+    let current = process.cwd();
+    
+    // 現在のディレクトリがyuihub_api配下の場合は親を探す
+    if (current.endsWith('/yuihub_api') || current.includes('/yuihub_api/')) {
+      current = path.resolve(current, '../');
+    }
+    
+    // yuihub_apiフォルダが存在するまで上位ディレクトリを探索
+    while (current !== '/' && current !== path.parse(current).root) {
+      const yuihubApiPath = path.join(current, 'yuihub_api');
+      if (fs.existsSync(yuihubApiPath) && fs.statSync(yuihubApiPath).isDirectory()) {
+        return current;
+      }
+      current = path.dirname(current);
+    }
+    
+    // 見つからない場合は現在のディレクトリから相対的に推測
+    console.warn('⚠️  Workspace root not found, falling back to relative path detection');
+    const fallback = path.resolve(__dirname, '../../..');
+    if (fs.existsSync(path.join(fallback, 'yuihub_api'))) {
+      return fallback;
+    }
+    
+    // 最後の手段として現在のcwdを返す
+    return process.cwd();
+  }
+
+  /**
    * 現在の環境設定を取得
    * @returns {object} 環境設定オブジェクト
    */
   get current() {
     const profile = this.profiles[this.env] || this.profiles.development;
     
+    // ワークスペースルートベースのデフォルトパス構築
+  const defaultDataRoot = path.resolve(this.workspaceRoot, 'yuihub_api', 'data');
+    
     return {
       ...profile,
       env: this.env,
-      // パス設定（環境変数から取得、デフォルトはdata/配下）
-      dataRoot: process.env.DATA_ROOT || './data',
+      workspaceRoot: this.workspaceRoot,
+      // パス設定（環境変数から取得、デフォルトは自動検出したyuihub_api/data）
+  dataRoot: path.resolve(this.workspaceRoot, process.env.DATA_ROOT || defaultDataRoot),
       port: parseInt(process.env.PORT) || 3000,
       host: process.env.HOST || (this.env === 'production' ? '0.0.0.0' : 'localhost'),
       storageAdapter: process.env.STORAGE_ADAPTER || 'local',
       
       // パス構築
       get localStoragePath() {
-        return process.env.LOCAL_STORAGE_PATH || `${this.dataRoot}/chatlogs`;
+        const p = process.env.LOCAL_STORAGE_PATH || path.join(this.dataRoot, 'chatlogs');
+        return path.resolve(this.workspaceRoot, p);
       },
       get lunrIndexPath() {
-        return process.env.LUNR_INDEX_PATH || `${this.dataRoot}/index/lunr.idx.json`;
+        const p = process.env.LUNR_INDEX_PATH || path.join(this.dataRoot, 'index', 'lunr.idx.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       get termsIndexPath() {
-        return process.env.TERMS_INDEX_PATH || `${this.dataRoot}/index/terms.json`;
+        const p = process.env.TERMS_INDEX_PATH || path.join(this.dataRoot, 'index', 'terms.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       get statsPath() {
-        return process.env.STATS_PATH || `${this.dataRoot}/index/stats.json`;
+        const p = process.env.STATS_PATH || path.join(this.dataRoot, 'index', 'stats.json');
+        return path.resolve(this.workspaceRoot, p);
       },
       
       // API設定
@@ -156,6 +207,7 @@ export class ConfigManager {
     const config = this.current;
     return {
       environment: config.env,
+      workspaceRoot: this.workspaceRoot,
       auth: config.auth ? 'enabled' : 'disabled',
       cors: Array.isArray(config.corsOrigins) ? config.corsOrigins : config.corsOrigins,
       indexAutoRebuild: config.indexAutoRebuild,
@@ -209,13 +261,56 @@ export class ConfigManager {
         return;
       }
       
+      // /ops/* はローカル限定・別トークン（LOCAL_OPS_TOKEN）
+      if (req.url.startsWith('/ops/')) {
+        const isLocal = req.ip === '127.0.0.1' || req.ip === '::1' || req.hostname === 'localhost';
+        if (!isLocal) {
+          reply.code(403).send({ ok: false, error: 'Forbidden: local only' });
+          return;
+        }
+        const bearer = req.headers['authorization'];
+        const bearerToken = (typeof bearer === 'string' && bearer.toLowerCase().startsWith('bearer '))
+          ? bearer.slice(7).trim()
+          : undefined;
+        const opsToken = process.env.LOCAL_OPS_TOKEN || '';
+        if (!opsToken || !bearerToken) {
+          reply.code(401).send({ ok: false, error: 'Unauthorized: missing ops token' });
+          return;
+        }
+        const safeEquals = (a, b) => {
+          const A = Buffer.from(String(a ?? ''), 'utf8');
+          const B = Buffer.from(String(b ?? ''), 'utf8');
+          if (A.length !== B.length) return false;
+          try { return timingSafeEqual(A, B); } catch { return false; }
+        };
+        if (!safeEquals(bearerToken, opsToken)) {
+          reply.code(401).send({ ok: false, error: 'Unauthorized: invalid ops token' });
+          return;
+        }
+        return; // /ops/* はここで認証完了
+      }
+
       // /health エンドポイントはスキップ
-      if (req.method === 'GET' && req.url.startsWith('/health')) {
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/health')) {
+        return;
+      }
+      
+      // OpenAPI schema is public for GPTs Actions integration
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/openapi.yml')) {
+        return;
+      }
+      
+      // Privacy policy is public for OpenAPI compliance
+      if ((req.method === 'GET' || req.method === 'HEAD') && req.url.startsWith('/privacy')) {
         return;
       }
 
       const apiToken = config.apiToken;
-      const authHeader = req.headers['x-yuihub-token'];
+      const headerToken = req.headers['x-yuihub-token'];
+      const bearer = req.headers['authorization'];
+      const bearerToken = (typeof bearer === 'string' && bearer.toLowerCase().startsWith('bearer '))
+        ? bearer.slice(7).trim()
+        : undefined;
       
       if (!apiToken) {
         reply.code(500).send({ 
@@ -225,27 +320,28 @@ export class ConfigManager {
         return;
       }
 
-      if (!authHeader) {
+      if (!headerToken && !bearerToken) {
         reply.code(401).send({ 
           ok: false, 
-          error: 'Missing x-yuihub-token header' 
+          error: 'Missing authentication: x-yuihub-token or Authorization: Bearer' 
         });
         return;
       }
 
-      // タイミング攻撃対策の安全な比較
+      // タイミング攻撃対策の安全な比較（ESM対応）
       const safeEquals = (a, b) => {
-        const A = Buffer.from(String(a ?? ''));
-        const B = Buffer.from(String(b ?? ''));
+        const A = Buffer.from(String(a ?? ''), 'utf8');
+        const B = Buffer.from(String(b ?? ''), 'utf8');
         if (A.length !== B.length) return false;
-        try { 
-          return require('crypto').timingSafeEqual(A, B); 
-        } catch { 
-          return false; 
+        try {
+          return timingSafeEqual(A, B);
+        } catch {
+          return false;
         }
       };
 
-      if (!safeEquals(authHeader, apiToken)) {
+      const provided = headerToken ?? bearerToken;
+      if (!safeEquals(provided, apiToken)) {
         req.log.warn({ 
           ip: req.ip, 
           url: req.url 

@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": "^22.0.0"
+  },
   "scripts": {
-    "dev": "node --env-file=.env --watch src/server.js",
-    "start": "node --env-file=.env src/server.js",
-    "build-index": "node ../scripts/chunk_and_lunr.mjs"
+    "dev": "node --env-file=../.env --watch src/server.js",
+    "start": "node --env-file=../.env src/server.js",
+    "build-index": "node ../scripts/chunk_and_lunr.mjs",
+    "test:integration": "node tests/api-integration.test.js"
   },
   "dependencies": {
     "@fastify/cors": "^8.5.0",
@@ -19,7 +23,8 @@
     "js-yaml": "^4.1.0",
     "lunr": "^2.3.9",
     "tiny-segmenter": "^0.2.0",
-    "ulid": "^2.3.0"
+    "ulid": "^2.4.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "pino-pretty": "^13.1.1"

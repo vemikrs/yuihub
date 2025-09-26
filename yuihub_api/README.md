@@ -2,10 +2,12 @@
 
 ## Setup
 ```bash
-cd yuihub_api
-npm i
-cp ../.env.example .env
-npm run dev
+# 環境設定
+cp .env.example .env  # 統合環境設定ファイル
+# .envファイルを編集（API_TOKEN等）
+
+# API開発サーバー起動
+npm run dev:api       # または npm run dev -w yuihub_api
 ```
 
 ## Endpoints

@@ -9,7 +9,7 @@ version: 0.2.0
 # 運用API仕様：POST /ops/reindex（Shelter限定）
 
 ## 概要
-ローカルリポジトリの `notes/` と `logdocs/` を対象に Lunr 索引を再生成する。  
+ローカルリポジトリの `notes/` と `chatlogs/` を対象に Lunr 索引を再生成する。  
 **127.0.0.1 バインド／Bearerトークン必須／FREEZE尊重**。
 
 ## リクエスト例
@@ -20,7 +20,7 @@ Authorization: Bearer <LOCAL_OPS_TOKEN>
 Content-Type: application/json
 
 {
-  "paths": ["notes/", "logdocs/"],
+  "paths": ["notes/", "chatlogs/"],
   "filters": { "mode": ["Shelter"], "visibility": ["private","internal"] },
   "dryRun": false
 }

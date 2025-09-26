@@ -40,6 +40,8 @@ export function normalizeJa(text = '') {
     return String(text ?? '')
         .trim()
         .normalize('NFKC')
+    // ひらがな→カタカナ（検索時とインデックス時の表記ゆれを吸収）
+    .replace(/[ぁ-ゖ]/g, (s) => String.fromCharCode(s.charCodeAt(0) + 0x60))
         .replace(/\s+/g, ' ');  // 複数の空白文字を1つの半角スペースに統一
 }
 
@@ -57,14 +59,21 @@ export function tokenizeJa(text = '') {
     if (!normalized) return '';
     
     // 分かち書き実行
-    const tokens = segmenter.segment(normalized)
+    const rawTokens = segmenter.segment(normalized)
         .filter(token => {
             // 空文字、スペースのみ、ストップワードを除去
             const trimmed = token.trim();
             return trimmed.length > 0 && !JAPANESE_STOPWORDS.has(trimmed);
         });
+
+    // 反復語ユニット分割（カタカナ連続の完全反復のみ対象）
+    const expanded = [];
+    for (const tok of rawTokens) {
+        const parts = splitRepeatingKatakana(tok);
+        for (const p of parts) expanded.push(p);
+    }
     
-    return tokens.join(' ');
+    return expanded.join(' ');
 }
 
 /**
@@ -114,12 +123,34 @@ export function debugTokenization(text) {
         const trimmed = token.trim();
         return trimmed.length > 0 && !JAPANESE_STOPWORDS.has(trimmed);
     });
-    
+    const expanded = filteredTokens.flatMap(splitRepeatingKatakana);
     return {
         original: text,
         normalized,
         rawTokens,
         filteredTokens,
-        result: filteredTokens.join(' ')
+        expandedTokens: expanded,
+        result: expanded.join(' ')
     };
+}
+
+/**
+ * カタカナ反復語をユニット分割する
+ * 例: "ミャオミャオ" → ["ミャオ","ミャオ"]
+ * 完全反復（同一ユニットの繰り返し）のみを対象。該当しない場合は元のトークンを返す。
+ */
+function splitRepeatingKatakana(token) {
+    const t = token.trim();
+    if (t.length < 4) return [t]; // 2文字×2回以上のケースを主対象
+    // カタカナ + 長音符のみ
+    if (!/^[\u30A0-\u30FFー]+$/.test(t)) return [t];
+    const len = t.length;
+    for (let unit = 2; unit <= Math.floor(len / 2); unit++) {
+        if (len % unit !== 0) continue;
+        const base = t.slice(0, unit);
+        if (base.repeat(len / unit) === t) {
+            return Array(len / unit).fill(base);
+        }
+    }
+    return [t];
 }

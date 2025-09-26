@@ -43,7 +43,27 @@ export class SearchService {
         return { hits: [] };
       }
 
-      const results = this.index.search(processedQuery);
+      // 後方ワイルドカード（TRAILING）を各トークンに適用してクエリ発行
+      const tokens = processedQuery
+        .split(/\s+/)
+        .map(t => t.trim())
+        .filter(t => t.length > 0 && /[\p{L}\p{N}]/u.test(t));
+
+      if (tokens.length === 0) {
+        return { hits: [] };
+      }
+
+      const results = this.index.query(q => {
+        tokens.forEach(tok => {
+          try {
+            // 後方一致は title/body に限定（タグや他メタには適用しない）
+            q.term(tok, { fields: ['title', 'body'], wildcard: lunr.Query.wildcard.TRAILING });
+          } catch (e) {
+            // 不正なトークンはスキップ
+          }
+        });
+      });
+
       const hits = results
         .slice(0, limit)
         .map(result => {
@@ -59,7 +79,8 @@ export class SearchService {
             url: doc.url,
             date: doc.date,
             tags: doc.tags || [],
-            decision: doc.decision
+            decision: doc.decision,
+            thread: doc.thread || null
           };
         })
         .filter(Boolean);
@@ -153,5 +174,49 @@ export class SearchService {
       console.error('Failed to get recent notes:', error);
       return [];
     }
+  }
+
+  /**
+   * タグ由来のフォールバック検索（ゼロ件時補助）
+   * @param {string} query 
+   * @param {number} limit 
+   * @returns {{hits: Array}}
+   */
+  fallbackByTag(query, limit = 10) {
+    const q = (query || '').toString().trim();
+    if (!q) return { hits: [] };
+    try {
+      const docs = Array.from(this.documents.values());
+      const matches = [];
+      for (const doc of docs) {
+        const tags = Array.isArray(doc.tags) ? doc.tags : [];
+        if (tags.some(t => typeof t === 'string' && t.includes(q))) {
+          matches.push({
+            id: doc.id,
+            score: 0.05,
+            title: doc.title || doc.topic,
+            path: doc.path,
+            snippet: '',
+            url: doc.url,
+            date: doc.date,
+            tags: doc.tags || [],
+            decision: doc.decision,
+            thread: doc.thread || null
+          });
+        }
+        if (matches.length >= limit) break;
+      }
+      return { hits: matches.slice(0, limit) };
+    } catch (e) {
+      console.warn('fallbackByTag failed:', e.message);
+      return { hits: [] };
+    }
+  }
+
+  getStats() {
+    return {
+      indexLoaded: !!this.index,
+      documents: this.documents.size
+    };
   }
 }
