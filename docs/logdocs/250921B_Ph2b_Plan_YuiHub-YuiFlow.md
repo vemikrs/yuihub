@@ -301,11 +301,11 @@ Authorization: Bearer {{AUTH_TOKEN}}
 
 ## 思想準拠チェック（実装後）
 
-* [ ] **中立形式**: 主要I/Oが YAML/Markdown を第一級で扱う
-* [ ] **移植性**: ベンダ鍵は外だし＆最小権限。依存は疎
-* [ ] **安心**: 記録はユーザ側に帰属し、削除・閉鎖が容易
-* [ ] **膨張抑制**: 可視化/UIより**構造**（Flow/ICD/I/O）を優先
-* [ ] **語彙整合**: Fragment→Knot→Thread で説明可能
+* [x] **中立形式**: 主要I/Oが YAML/Markdown を第一級で扱う
+* [x] **移植性**: ベンダ鍵は外だし＆最小権限。依存は疎
+* [x] **安心**: 記録はユーザ側に帰属し、削除・閉鎖が容易
+* [x] **膨張抑制**: 可視化/UIより**構造**（Flow/ICD/I/O）を優先
+* [x] **語彙整合**: Fragment→Knot→Thread で説明可能
 
 ---
 
@@ -320,10 +320,10 @@ Authorization: Bearer {{AUTH_TOKEN}}
 ## Draft: Thread（実行順の目安）
 
 * [x] **T0（09/21）**: Step1 残（マニフェスト・ログ・スキャン）
-* [ ] **T1（～09/22）**: Step2 `00_min-spec.md`
-* [ ] **T1.5（～09/22）**: Step2.5 `01_technical-design.md`（ICD/コントラクトテスト雛形含む）＋ `openapi/poc.yaml`
-* [ ] **T2（～09/24）**: Step3 実装・スモーク合格
-* [ ] **T3（～09/25）**: Step4 DoD & 差分整理
+* [x] **T1（～09/22）**: Step2 `00_min-spec.md`
+* [x] **T1.5（～09/22）**: Step2.5 `01_technical-design.md`（ICD/コントラクトテスト雛形含む）＋ `openapi/poc.yaml`
+* [x] **T2（～09/24）**: Step3 実装・スモーク合格
+* [x] **T3（～09/25）**: Step4 DoD & 差分整理
 
 ---
 
