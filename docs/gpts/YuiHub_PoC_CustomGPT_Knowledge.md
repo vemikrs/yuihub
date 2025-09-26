@@ -1,7 +1,7 @@
-# YuiHub PoC — Custom GPT 知識ファイル
+# YuiHub PoC — Custom GPT 知識ファイル（Knowledge）
 
-この文書は、ChatGPT の Custom GPT（以下 GPTs）が YuiHub と正しく疎通し、会話メモを保存・検索できるようにするための最小・実務向けナレッジです。
-
+この文書は、ChatGPT の Custom GPT（以下 GPTs）が YuiHub と正しく疎通し、会話メモを保存・検索できるようにするための最小・実務向けナレッジ（Knowledge）です。System に設定する「指示文（Instructions）」は別ファイルで管理します。
+関連: 指示文（System）→ `docs/gpts/YuiHub_PoC_CustomGPT_Instructions.md`
 YuiHub の思想（Flow＝型／Hub＝場）は docs/yuiflow 配下を一次正とし、本書は運用ヘルパーに徹します。
 
 ---
@@ -56,7 +56,7 @@ YuiFlow の型制約により、`thread` は必ず `th-` + ULID(26字) です。
 ## 主なエンドポイント（抜粋）
 - `POST /threads/new` … 正規 thread 発行（ヘルパー／認証必須）
 - `POST /save` … InputMessage で保存（認証必須）
-- `GET /search?q=&thread=&tag=&limit=` … 検索
+- `GET /search?q=&thread=&tag=&limit=` … 検索（q を空にすると最近順トップを返却。thread フィルタ併用可）
 - `POST /trigger` … Shelter モードでは記録のみ（実行はしない）
 - `GET /openapi.yml` … OpenAPI スキーマ（実行環境に応じて動的 URL）
 - `GET /health` … ヘルス
@@ -105,6 +105,12 @@ YuiFlow の型制約により、`thread` は必ず `th-` + ULID(26字) です。
   - 403 はトークン設定（`x-yuihub-token`）を再確認
 - 成功時は `{id, thread, when}` を返答に含めて簡潔に共有
 
+### 検索とエクスポートの指針
+- q が空の `/search` は最近の記録を返します。`thread=th-...` と併用でスレッド限定の一覧が取れます。
+- 保存直後は検索インデックスに反映されるまで待ち時間が発生する場合があります（Prodは自動再索引OFF）。必要に応じてオペレータが Reindex を実行します。
+- エクスポートは `GET /export/markdown/{thread}` を使用します。スレッドIDは検索結果の `hits[].thread` から取得できます。
+- 0件のときは「threadフィルタでの空検索」を先に実行して確認してください（例: `/search?thread=th-...&q=`）。
+
 ### 会話のきっかけ（スターター）
 - この議論を保存して（新規スレッド）
 - thread: th-... にこのメモを書き足して
@@ -119,7 +125,9 @@ YuiFlow の型制約により、`thread` は必ず `th-` + ULID(26字) です。
 ## 運用メモ
 - トンネルURLが変わった場合: GPTs の Schema URL を更新
 - トークンをローテーションした場合: GPTs の Actions 設定も更新
-- インデックスが未構築/古い場合: ワークスペースのビルドタスクで再構築
+- インデックスが未構築/古い場合: ワークスペースの Reindex タスク（または `/ops/reindex`）で再構築（Prodは明示実行）
+- OpenAPIでは `/save` と `/threads/new` は非Consequentialに設定済みのため、承認ダイアログを極力発生させません。
+ - ただしPoC方針で承認ダイアログを有効化したい場合は、サーバ環境変数 `OPENAPI_CONFIRM_WRITES=true`（必要に応じ `OPENAPI_CONFIRM_TRIGGERS=true`）を設定し、OpenAPIを再読込してください（Prodは既定でON）。
 
 ---
 
