@@ -147,10 +147,20 @@ export class ContextBuilder {
       includeKnots = true
     } = options;
 
+    function escapeMarkdown(str) {
+      // Minimal escape: replace <, >, &, and optionally backticks
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/`/g, '&#96;');
+    }
+
     try {
       const packet = await this.buildPacket(thread, 'copilot-export', { includeKnots });
       
-      let markdown = `# Thread: ${thread}\n\n`;
+      const escapedThread = escapeMarkdown(thread);
+      let markdown = `# Thread: ${escapedThread}\n\n`;
       
       if (includeMetadata) {
         markdown += `**Intent**: ${packet.intent}\n`;
