@@ -71,10 +71,10 @@ UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
 - GPTs との疎通テストは「Prod（Cloudflare Named Tunnel）」を前提とする。
 - Dev 環境は最小スモークのみ（/health OK、最低限のAPI疎通）。GPTs接続は原則しない。
 - VS Code Tasks を使用：
-  - 停止: 「YuiHub: Complete Server Stop」
-  - Prod起動: 「YuiHub: Start Prod Server (with Named Tunnel)」
-  - Dev起動（スモーク時のみ）: 「YuiHub: Start API Server (Dev)」
-  - 再索引: 「YuiHub: Reindex」
+  - 停止: 「YuiHub:API:Stop:All (Force)」
+  - Prod起動: 「YuiHub:API:Start (Prod + Named Tunnel)」
+  - Dev起動（スモーク時のみ）: 「YuiHub:API:Start (Dev)」
+  - 再索引: 「YuiHub:Index:Reindex:OPS」（稼働中サーバ推奨）
 
 確認の最小手順（Prod）
 1) Prodサーバ起動 → /health が 200（searchIndex: ready|building|missing）
@@ -171,7 +171,7 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
   - ファイル名例: `2025-09-26-rec-01K62... .md`（topic未指定時は日付＋ID）
 - 再索引: Lunr 形式
   - 生成先: `yuihub_api/data/index/lunr.idx.json`（documents.json, stats.json も）
-  - 実行: VS Code タスク「YuiHub: Reindex」
+  - 実行: VS Code タスク「YuiHub:Index:Reindex:OPS」
   - 反映: サーバ起動時に読み込み／必要に応じて `/index/reload`（内部エンドポイント）
 
 よくある未ヒット原因（例: 猫/「にゃーん」）
