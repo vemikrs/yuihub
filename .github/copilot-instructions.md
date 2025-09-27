@@ -1,14 +1,14 @@
-# YuiHub with YuiFlow (Ph2b) — copilot-instructions.md
-version: v0.2.0
-status: PoC / Shelter-fixed
+# YuiHub with YuiFlow (Ph2c) — copilot-instructions.md
+version: v0.2.x
+status: PoC (Phase 2c) / Public repo / Shelter-first
 
 ## この文書の立ち位置
-- 本書は **GitHub Copilot（以下「Copilot」）** が **Ph2b** の開発を支援するための **行動規範と実装手順** を定義する。
+- 本書は **GitHub Copilot（以下「Copilot」）** が **Ph2c** の開発を支援するための **行動規範と実装手順** を定義する。
 - **思想の参照は不要**：必要最小の思想要約を本書に **内包** する。
 - **非対称の原則**：**思想は上書きしない／実装は差し替え可能**。
 
 ## アクターモデル（0⇒1の現実と将来）
-- **いま（Ph2b）**：
+- **いま（Ph2c）**：
   - **UXDL（ChatGPT＋vemikrs）** … 思想を守り、文脈を言語化。
   - **vemikrs本人** … *橋渡し*（思想のコピペ／注入を手動で行う）。
   - **Copilot（GitHub Copilot）** … *実装の手*（コード生成・差分編集・Lint）。
@@ -26,6 +26,12 @@ status: PoC / Shelter-fixed
   - 外部公開・デプロイの独断実行。
   - 思想語彙（Manifesto/Focus/Lexicon）の自己改変。
   - 乱暴なプロセス殺傷（後述の禁止句に従う）。
+
+### Copilot Cloud Agent / Review（拡張ポジショニング）
+- PRファースト：変更はブランチ＋PRで提案し、直接pushやデプロイは行わない。
+- 外部IOの既定：`EXTERNAL_IO=blocked` を尊重。例外は指示とKnot承認がある場合のみ。
+- シークレット厳守：`.env` やトークンは出力・ログ・PRコメントに載せない。
+- 言語ポリシー：すべての応答は常に日本語で行う（説明・コードコメント・PR本文を含む）。
 
 ---
 
@@ -48,6 +54,17 @@ pgrep -f "yuihub_api/src/server.js" | xargs kill
 
 ---
 
+## 🤝 Copilot Chat との最小疎通（参考）
+- 連携対象: 別リポジトリ「yuihub-copilot-chat」との最小疎通を行っています。
+- 現状の制約: 本リポ単体では Copilot Chat に直接対応していません（専用拡張/プラグイン未実装）。
+- 運用の指針:
+  - PRファースト（ブランチ → PR → レビュー）。
+  - VS Code Tasks を優先して API サーバの起動/停止/再索引/スモークを実行。
+  - 秘密情報は出さない（公開リポ前提）。
+  - 返答はすべて日本語（説明/コードコメント/PR本文）。
+
+メモ: Copilot Chat 側の体験は yuihub-copilot-chat の構成に依存します。本リポでは API/Tasks/Docs の一貫性を維持し、最小限の疎通に留めます。
+
 ## 🏗️ アーキテクチャ（YuiHub＝場 / YuiFlow＝型）
 - **YuiHub**：ランタイム／HTTP API／保存・検索の「場」
 - **YuiFlow**：語彙・スキーマ・契約の「型」
@@ -58,7 +75,7 @@ pgrep -f "yuihub_api/src/server.js" | xargs kill
 - `docs/yuiflow/**` … 語彙・スキーマ・契約（一次正）
 - `data/chatlogs/` … YAML Front-Matter付きMD保存
 
-**目標となる疎通（Ph2b）**
+**目標となる疎通（Ph2c）**
 ```
 UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
                 ↓                  ↓
@@ -67,14 +84,19 @@ UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
 
 ---
 
-## 🚦 運用方針（Devはスモーク、Prod前提）
+## 🚦 運用方針（Ph2c・公開リポジトリ）
 - GPTs との疎通テストは「Prod（Cloudflare Named Tunnel）」を前提とする。
 - Dev 環境は最小スモークのみ（/health OK、最低限のAPI疎通）。GPTs接続は原則しない。
 - VS Code Tasks を使用：
-  - 停止: 「YuiHub: Complete Server Stop」
-  - Prod起動: 「YuiHub: Start Prod Server (with Named Tunnel)」
-  - Dev起動（スモーク時のみ）: 「YuiHub: Start API Server (Dev)」
-  - 再索引: 「YuiHub: Reindex」
+  - 停止: 「YuiHub:API:Stop:All (Force)」
+  - Prod起動: 「YuiHub:API:Start (Prod + Named Tunnel)」
+  - Dev起動（スモーク時のみ）: 「YuiHub:API:Start (Dev)」
+  - 再索引: 「YuiHub:Index:Reindex:OPS」（稼働中サーバ推奨）
+  - 参考: ローカル一括ビルドは「YuiHub:Index:Build:All」
+
+注意:
+- リポジトリは公開（public）。個人情報/機微情報を含めないこと。
+- Node.js 22.x を推奨（ワークスペース/パッケージの engines に準拠）。
 
 確認の最小手順（Prod）
 1) Prodサーバ起動 → /health が 200（searchIndex: ready|building|missing）
@@ -92,10 +114,12 @@ UXDL →(手動橋渡し: vemikrs)→ HTTP API(Hub) → Agent Trigger
 - **Thread** … 筋。目的に沿う時系列。  
 - **Context Packet** … Fragment/Knot/Threadを実装へ橋渡しする翻訳層。
 
-**Git運用への適用（必須）**
-- Issue/PR ラベル：`fragment` / `knot` / `thread`
-- ブランチ：`feat/k-<slug>`（Knot中心）
-- PRテンプレ：**目的(Knot) → 背景(Fragments要約) → 反映範囲(Thread)**
+**Git運用への適用（推奨／任意）**
+- Issue/PR ラベル：必要に応じて `fragment` / `knot` / `thread` を補助的に使用（強制ではありません）。
+- ブランチ：`feat/<slug>` を基本とし、`k-<slug>` 等の命名は任意。
+- PRテンプレ：リポジトリのテンプレートは汎用形式（目的→背景→変更内容→影響範囲）。YuiFlow話法の明示は任意です。
+
+補足：外部コラボや一般的な開発者体験を損なわないため、Issue/PR テンプレートはベンダーロックインのない汎用形を採用しています。
 
 ---
 
@@ -111,8 +135,13 @@ EXTERNAL_IO=blocked   # blocked | unsafe
 PORT=3000
 HOST=localhost
 STORAGE_ADAPTER=local
-LOCAL_STORAGE_PATH=./data/chatlogs
-LUNR_INDEX_PATH=./data/index/lunr.idx.json
+
+# 既定のデータルート（API側と整合）
+DATA_ROOT=./yuihub_api/data
+LOCAL_STORAGE_PATH=./yuihub_api/data/chatlogs
+LUNR_INDEX_PATH=./yuihub_api/data/index/lunr.idx.json
+TERMS_INDEX_PATH=./yuihub_api/data/index/terms.json
+STATS_PATH=./yuihub_api/data/index/stats.json
 ```
 
 **外部連携の既定**
@@ -125,14 +154,14 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
 
 ---
 
-## 🔧 技術スタック（Ph2b固定）
-- Node.js 18+ / ES Modules
+## 🔧 技術スタック（Ph2c固定）
+- Node.js 22.x / ES Modules
 - Fastify 4.x（HTTP）
 - MCP SDK（stdio）
 - Lunr.js（検索）
 - gray-matter（Front-Matter）
 - ulid（ID）
-- **スキーマ検証：`zod`（固定。`ajv`は未採用）**
+- **スキーマ検証：`zod`（固定）**（補助的に AJV を examples 検証スクリプトで併用）
 - **プロトコル：HTTP / MCP のみ（SSEは未採用）**
 - **状態管理：FS（YAML/MD）のみ（DB未採用）**
 
@@ -153,10 +182,15 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
 
 ## 📡 API（PoC最小）
 - `GET /health`
+- `POST /threads/new` … Thread ID発行
 - `POST /save`   … YuiFlowスキーマ準拠で保存
 - `GET /search?q=&thread=&tag=`
 - `POST /trigger`… Agent起動の最小フック
-- `GET /openapi.yml` … OpenAPI参照（一次正は `docs/yuiflow/openapi/poc.yaml`）
+- `GET /openapi.yml` … OpenAPI参照（ランタイムで servers と承認フラグを動的注入）
+- `GET /index/status` … インデックス状態の取得
+- `POST /index/rebuild` … 手動フル再構築
+- `POST /index/reload` … ファイル再読み込み
+- `POST /ops/reindex` … 運用再索引（dryRun:true で候補JSON、false で IndexManager.rebuild）
 
 補足（GPTs最適化）
 - `/save` は `x-openai-isConsequential: false`（承認ダイアログを避ける）
@@ -171,7 +205,7 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
   - ファイル名例: `2025-09-26-rec-01K62... .md`（topic未指定時は日付＋ID）
 - 再索引: Lunr 形式
   - 生成先: `yuihub_api/data/index/lunr.idx.json`（documents.json, stats.json も）
-  - 実行: VS Code タスク「YuiHub: Reindex」
+  - 実行: VS Code タスク「YuiHub:Index:Reindex:OPS」
   - 反映: サーバ起動時に読み込み／必要に応じて `/index/reload`（内部エンドポイント）
 
 よくある未ヒット原因（例: 猫/「にゃーん」）
@@ -179,7 +213,7 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
    - 対策: OpenAPI再読込（`x-openai-isConsequential:false`を反映）、承認ダイアログをOFF
    - 検証: `yuihub_api/data/chatlogs/YYYY/MM` に当日のMDが増えているか確認
 2) 再索引未反映
-   - 対策: 「YuiHub: Reindex」を実行 → /health の `lastIndexBuild` 更新を確認
+  - 対策: 「YuiHub:Index:Reindex:OPS」を実行 → /health の `lastIndexBuild` 更新を確認
 3) 短文の除外（過去の閾値）
    - 対策: 閾値を緩和済み（短文もインデックス化）。最新ビルドで再実行
 
@@ -194,7 +228,7 @@ LUNR_INDEX_PATH=./data/index/lunr.idx.json
 
 ---
 
-**スキーマの一次正**：`docs/yuiflow/00_min-spec.md` に従い、本書では**重複定義しない**。
+**スキーマ/仕様の一次正**：`docs/yuiflow/**`（思想/契約）。実装一次参照は `yuihub_api/openapi.yml`（サーバ提供は `/openapi.yml`）。本書では**重複定義しない**。
 
 ---
 
@@ -221,7 +255,7 @@ curl -X POST http://localhost:3000/trigger -H "Content-Type: application/json"  
 
 ---
 
-## 🔄 開発フロー（Ph2b推奨）
+## 🔄 開発フロー（Ph2c推奨）
 1) **設計（Flow）**：`docs/yuiflow/` で仕様更新  
 2) **契約**：スキーマ・OpenAPIを更新（一次正）  
 3) **実装（Hub）**：`yuihub_api/` に反映  
@@ -233,15 +267,18 @@ curl -X POST http://localhost:3000/trigger -H "Content-Type: application/json"  
 
 ---
 
-## 🎯 DoD（Ph2b）
+## 🎯 DoD（Ph2c）
 **MSC**
 1. GPTs→YuiHub の保存/検索が通る  
 2. YuiHub→Agent の最小トリガが通る  
 3. すべての痕跡が YAML/Markdown に残り再現可能  
+4. 再索引（OPS）が成功し、`/health` の `lastIndexBuild` が更新される  
+5. `/openapi.yml` の servers と `x-openai-isConsequential` が環境に応じて期待通り（dev: false / prod: true 既定）  
 
 **FSC**
 - MCP/HTTP の両経路で再現
 - 日本語検索の軽微な補正（terms補正 等）
+- 保存直後の検索反映（delta）の最小スモークが通る
 
 ---
 
@@ -253,4 +290,4 @@ curl -X POST http://localhost:3000/trigger -H "Content-Type: application/json"  
 
 ---
 
-この instruction に基づいて、**Copilot** は Ph2b（YuiFlow Framework PoC）の一貫した開発を支援する。
+この instruction に基づいて、**Copilot** は Ph2（YuiFlow Framework PoC）の一貫した開発を支援する。

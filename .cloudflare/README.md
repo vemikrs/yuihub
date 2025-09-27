@@ -24,13 +24,13 @@ sudo dpkg -i cloudflared.deb
 ### 2. APIサーバー起動
 ```bash
 npm run start:api
-# または VS Code Task: "YuiHub: Start API Server"
+# または VS Code Task: "YuiHub:API:Start"
 ```
 
 ### 3. Tunnel起動
 ```bash
 ./.cloudflare/tunnel.sh
-# または VS Code Task: "YuiHub: Start Cloudflare Tunnel"
+# または VS Code Task: "YuiHub:API:Start (Prod + Named Tunnel)" または "YuiHub:API:Start (Dev + Quick Tunnel)"
 ```
 
 ### 4. URL取得
@@ -44,10 +44,10 @@ cat .cloudflare/.tunnel-url
 
 | タスク名 | 機能 |
 |---------|------|
-| `YuiHub: Start Cloudflare Tunnel` | Tunnel起動（バックグラウンド） |
+| `YuiHub:API:Start (Prod + Named Tunnel)` | Named Tunnel起動（バックグラウンド） |
 | `YuiHub: Get Tunnel URL` | 現在のURL表示 |
 | `YuiHub: Test Tunnel Connection` | 疎通確認 |
-| `YuiHub: Stop Cloudflare Tunnel` | Tunnel停止 |
+| `YuiHub:API:Stop:All (Force)` | API（3000番）停止（トンネルは別途停止） |
 
 ## 📝 ChatGPT Actions設定
 
