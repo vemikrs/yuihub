@@ -4,6 +4,33 @@
 
 import { ContextPacketSchema } from './schemas/yuiflow.js';
 
+/**
+ * Escape markdown special characters to prevent injection attacks
+ * @param {string} str - String to escape
+ * @returns {string} Escaped string
+ */
+function escapeMarkdown(str) {
+  // Comprehensive escape: HTML entities + Markdown special characters
+  return String(str)
+    .replace(/&/g, '&amp;')        // Must be first to avoid double-escaping
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/`/g, '&#96;')         // Backticks (code blocks)
+    .replace(/\[/g, '&#91;')        // Square brackets (links)
+    .replace(/\]/g, '&#93;')
+    .replace(/\(/g, '&#40;')        // Parentheses (links)
+    .replace(/\)/g, '&#41;')
+    .replace(/\{/g, '&#123;')       // Curly braces
+    .replace(/\}/g, '&#125;')
+    .replace(/\*/g, '&#42;')        // Asterisks (bold/italic)
+    .replace(/_/g, '&#95;')         // Underscores (bold/italic)
+    .replace(/#/g, '&#35;')         // Hash (headers)
+    .replace(/\|/g, '&#124;')       // Pipe (tables)
+    .replace(/\\/g, '&#92;');       // Backslash (escape character)
+}
+
 export class ContextBuilder {
   constructor(storage, searchService) {
     this.storage = storage;
@@ -150,7 +177,8 @@ export class ContextBuilder {
     try {
       const packet = await this.buildPacket(thread, 'copilot-export', { includeKnots });
       
-      let markdown = `# Thread: ${thread}\n\n`;
+      const escapedThread = escapeMarkdown(thread);
+      let markdown = `# Thread: ${escapedThread}\n\n`;
       
       if (includeMetadata) {
         markdown += `**Intent**: ${packet.intent}\n`;
