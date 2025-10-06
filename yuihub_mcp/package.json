@@ -10,7 +10,7 @@
     "start": "node src/server.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.19.1",
     "ulid": "^3.0.1",
     "zod": "^4.1.11"
   }
