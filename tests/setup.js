@@ -14,15 +14,4 @@ process.env.EXTERNAL_IO = 'blocked';
 // タイムアウト警告を抑制
 process.setMaxListeners(20);
 
-// グローバルタイムアウトの設定
-jest.setTimeout(10000);
-
-// console.log/warn/errorのモック（必要に応じて）
-// global.console = {
-//   ...console,
-//   log: jest.fn(),
-//   warn: jest.fn(),
-//   error: jest.fn(),
-// };
-
 console.log('✅ Jest test environment initialized');

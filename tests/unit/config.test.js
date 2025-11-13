@@ -441,7 +441,10 @@ describe('ConfigManager', () => {
       process.env.PORT = 'invalid';
       const config = new ConfigManager();
 
-      expect(isNaN(config.current.port)).toBe(true);
+      // parseInt('invalid') はNaNを返すが、|| 3000でデフォルトにフォールバック
+      // config.jsの実装では、parseInt(process.env.PORT) || 3000なので
+      // NaNはfalsyとして扱われ、3000が使われる
+      expect(config.current.port).toBe(3000);
     });
 
     test('tunnel設定が正しく読み込まれる', () => {

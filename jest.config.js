@@ -10,14 +10,6 @@ export default {
   // ES Modules変換設定
   transform: {},
   
-  // .js ファイルを ESM として扱う
-  extensionsToTreatAsEsm: ['.js'],
-  
-  // モジュール解決設定
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
-  
   // テストファイルパターン
   testMatch: [
     '**/tests/**/*.test.js',
