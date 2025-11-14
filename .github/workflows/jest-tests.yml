@@ -179,18 +179,8 @@ jobs:
           mkdir -p yuihub_api/data/chatlogs
           mkdir -p yuihub_api/data/index
           
-      - name: Run all Jest tests (including reference implementations)
-        id: all_tests
-        run: |
-          NODE_OPTIONS='--experimental-vm-modules' npx jest \
-            --ci \
-            --testTimeout=10000 \
-            --passWithNoTests \
-            --verbose
-        continue-on-error: true
-        env:
-          NODE_ENV: test
-          CI: true
+      - name: "Run Jest tests (all) with coverage"
+        run: npm run test:jest:all
           
       - name: Summary of all tests
         if: always()
