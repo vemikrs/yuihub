@@ -180,7 +180,13 @@ jobs:
           mkdir -p yuihub_api/data/index
           
       - name: "Run Jest tests (all) with coverage"
-        run: npm run test:jest:all
+        run: |
+          NODE_OPTIONS='--experimental-vm-modules' npx jest \
+            --ci \
+            --coverage \
+            --testTimeout=10000 \
+            --passWithNoTests \
+            --verbose
           
       - name: Summary of all tests
         if: always()
