@@ -1,5 +1,7 @@
 # YuiHub Prototype — AI会話の連続性を守る外部記憶
 
+[![Jest Tests CI](https://github.com/vemikrs/yuihub/actions/workflows/jest-tests.yml/badge.svg)](https://github.com/vemikrs/yuihub/actions/workflows/jest-tests.yml)
+
 YuiHub は、AIとの対話や開発過程で失われやすい **判断の筋** を守るための OSS Prototype（試作版）です。  
 「思想の翻訳装置」というコンセプトを、Fragment → Knot → Thread → Context Packet の流れとして最小実装しました。  
 本リポジトリは実用製品ではなく、コンセプトを体験できる **試作的プロトタイプ** として公開しています。  

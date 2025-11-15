@@ -199,4 +199,10 @@ async function runTests() {
   return results;
 }
 
-runTests().then(r => process.exit(r.failed === 0 ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });
+// Jest test wrapper
+describe('YuiHub API Integration Test', () => {
+  test('complete GPTs E2E lifecycle', async () => {
+    const results = await runTests();
+    expect(results.failed).toBe(0);
+  }, 30000); // 30秒タイムアウト
+});
