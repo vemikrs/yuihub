@@ -14,6 +14,8 @@ export default {
   testMatch: [
     '**/tests/**/*.test.js',
     '**/__tests__/**/*.test.js',
+    // Standalone E2E scripts (not Jest tests)
+    '!**/yuihub_api/tests/api-integration.test.js',
   ],
   
   // カバレッジ設定
