@@ -199,4 +199,15 @@ async function runTests() {
   return results;
 }
 
-runTests().then(r => process.exit(r.failed === 0 ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });
+
+// Run tests if executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  runTests()
+    .then(results => {
+      process.exit(results.failed > 0 ? 1 : 0);
+    })
+    .catch(err => {
+      console.error('💥 Unhandled error:', err);
+      process.exit(1);
+    });
+}

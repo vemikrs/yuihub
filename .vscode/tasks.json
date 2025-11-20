@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-                "label": "YuiHub: Reindex (dryRun)",
+        "label": "YuiHub:Index:Reindex:CLI:dry-run",
                 "type": "shell",
                 "command": "node",
                 "args": [
@@ -19,8 +19,8 @@
                 ],
                 "problemMatcher": []
         },
-        {
-                "label": "YuiHub: Reindex",
+    {
+        "label": "YuiHub:Index:Reindex:Local",
                 "type": "shell",
                 "command": "node",
                 "args": [
@@ -31,7 +31,7 @@
                 "problemMatcher": []
     },
             {
-                "label": "YuiHub: OPS Reindex (dryRun)",
+                "label": "YuiHub:Index:Reindex:OPS:dry-run",
                 "type": "shell",
                 "command": "bash",
                 "args": [
@@ -42,7 +42,7 @@
                 "problemMatcher": []
             },
             {
-                "label": "YuiHub: OPS Reindex",
+                "label": "YuiHub:Index:Reindex:OPS",
                 "type": "shell",
                 "command": "bash",
                 "args": [
@@ -52,8 +52,8 @@
                 "group": "test",
                 "problemMatcher": []
             },
-    {
-      "label": "YuiHub: Start API Server",
+        {
+            "label": "YuiHub:API:Start",
       "type": "shell",
       "command": "npm",
             "args": ["run", "start:api"],
@@ -80,7 +80,7 @@
             }
         },
         {
-            "label": "YuiHub: Start API Server (Dev)",
+            "label": "YuiHub:API:Start (Dev)",
             "type": "shell",
             "command": "npm",
             "args": ["run", "dev:api"],
@@ -107,7 +107,7 @@
             }
         },
         {
-            "label": "YuiHub: Start Dev Server (with Tunnel)",
+            "label": "YuiHub:API:Start (Dev + Quick Tunnel)",
             "type": "shell",
             "command": "npm",
             "args": ["run", "dev:tunnel"],
@@ -139,7 +139,7 @@
             }
         },
         {
-            "label": "YuiHub: Start Prod Server (with Named Tunnel)",
+            "label": "YuiHub:API:Start (Prod + Named Tunnel)",
             "type": "shell",
             "command": "bash",
             "args": ["-c", "source .env && npm run start:prod-tunnel"],
@@ -171,7 +171,7 @@
             }
         },
         {
-            "label": "YuiHub: Start MCP Server", 
+            "label": "YuiHub:MCP:Start", 
             "type": "shell",
             "command": "npm",
             "args": ["run", "start:mcp"],
@@ -202,7 +202,7 @@
             }
         },
         {
-            "label": "YuiHub: Build Search Index",
+            "label": "YuiHub:Index:Build:All",
             "type": "shell",
             "command": "npm",
             "args": ["run", "build-all"],
@@ -224,7 +224,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Health Check",
+            "label": "YuiHub:Test:Health",
             "type": "shell",
             "command": "curl",
             "args": ["-s", "-f", "http://localhost:3000/health"],
@@ -240,7 +240,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: API Quick Test",
+            "label": "YuiHub:Test:API-Quick",
             "type": "shell", 
             "command": "bash",
             "args": ["-lc", "curl -s http://localhost:3000/health; echo HEALTH_OK; curl -s http://localhost:3000/recent?n=3 | head -20; echo RECENT_OK"],
@@ -256,7 +256,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Safe Stop Server",
+            "label": "YuiHub:API:Stop:Safe",
             "type": "shell",
             "command": "bash", 
             "args": ["-c", "pkill -f 'node.*yuihub_api/src/server.js' && echo '✓ Server stopped safely' || echo 'ℹ No server process found'"],
@@ -272,7 +272,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Force Stop Port 3000",
+            "label": "YuiHub:API:Stop:Force (Port 3000)",
             "type": "shell",
             "command": "bash",
             "args": ["-c", "fuser -k 3000/tcp 2>/dev/null && echo '✓ Port 3000 processes killed' || echo 'ℹ No processes found on port 3000'"],
@@ -288,10 +288,10 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Complete Server Stop",
+            "label": "YuiHub:API:Stop:All (Force)",
             "type": "shell",
             "command": "bash",
-            "args": ["-c", "echo '🛑 Stopping all YuiHub processes...' && pkill -f 'node.*yuihub_api/src/server.js' 2>/dev/null; fuser -k 3000/tcp 2>/dev/null; echo '✅ All processes stopped'"],
+            "args": ["-c", "echo '🛑 Stopping YuiHub API on port 3000...' && fuser -k 3000/tcp 2>/dev/null && echo '✅ Port 3000 processes killed' || echo 'ℹ No processes found on port 3000'"],
             "group": "build", 
             "presentation": {
                 "echo": true,
@@ -304,7 +304,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Run YuiFlow Tests",
+            "label": "YuiHub:Test:YuiFlow",
             "type": "shell",
             "command": "npm",
             "args": ["run", "test:yuiflow"],
@@ -320,7 +320,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: E2E Workflow Test", 
+            "label": "YuiHub:Test:E2E-Workflow", 
             "type": "shell",
             "command": "./run-tests.sh",
             "group": "test",
@@ -335,7 +335,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Full Development Stack",
+            "label": "YuiHub:Dev:Full-Stack",
             "type": "shell",
             "command": "npm",
             "args": ["run", "dev:full"],
@@ -359,7 +359,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Validate YuiFlow Compliance",
+            "label": "YuiHub:Test:Validate-YuiFlow",
             "type": "shell",
             "command": "npm", 
             "args": ["run", "validate:yuiflow"],
@@ -375,7 +375,7 @@
             "problemMatcher": []
         },
         {
-            "label": "YuiHub: Run GPTs E2E",
+            "label": "YuiHub:Test:E2E-GPTs",
             "type": "shell",
             "command": "bash",
             "args": ["-c", "source .env && npm run test:e2e:gpts"],

@@ -3,11 +3,6 @@ name: Smoke Tests
 on:
   pull_request:
     types: [ready_for_review]
-    paths:
-      - 'yuihub_api/**'
-      - 'yuihub_mcp/**'
-      - 'tests/smoke/**'
-      - '.github/workflows/smoke-tests.yml'
 
 env:
   NODE_VERSION: '22'

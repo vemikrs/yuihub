@@ -12,8 +12,13 @@ import path from 'path';
 import fs from 'fs/promises';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
 
 const execAsync = promisify(execFile);
+
+// ES modulesでの__dirname定義
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class IndexManager {
   constructor(config) {
@@ -143,8 +148,8 @@ export class IndexManager {
    * @returns {Promise<boolean>}
    */
   async _performRebuild() {
-    // scripts/chunk_and_lunr.mjsを呼び出し（プロジェクトルートからの相対パス）
-    const scriptPath = path.resolve(process.cwd(), '../scripts/chunk_and_lunr.mjs');
+    // scripts/chunk_and_lunr.mjsを呼び出し（モジュール基準の絶対パス）
+    const scriptPath = path.resolve(__dirname, '../../scripts/chunk_and_lunr.mjs');
     const sourceDir = path.join(this.dataRoot, 'chatlogs');
     const outputDir = path.join(this.dataRoot, 'index');
     

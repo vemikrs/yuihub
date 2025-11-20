@@ -1,5 +1,7 @@
 # YuiHub Prototype — AI会話の連続性を守る外部記憶
 
+[![Jest Tests CI](https://github.com/vemikrs/yuihub/actions/workflows/jest-tests.yml/badge.svg)](https://github.com/vemikrs/yuihub/actions/workflows/jest-tests.yml)
+
 YuiHub は、AIとの対話や開発過程で失われやすい **判断の筋** を守るための OSS Prototype（試作版）です。  
 「思想の翻訳装置」というコンセプトを、Fragment → Knot → Thread → Context Packet の流れとして最小実装しました。  
 本リポジトリは実用製品ではなく、コンセプトを体験できる **試作的プロトタイプ** として公開しています。  
@@ -67,7 +69,7 @@ STATS_PATH=./yuihub_api/data/index/stats.json
 
 ### 3. API サーバを起動
 
-- VS Code Tasks（推奨）: 「YuiHub: Start API Server (Dev)」
+- VS Code Tasks（推奨）: 「YuiHub:API:Start (Dev)」
 - もしくは npm スクリプト: `npm run dev:api`
 
 起動後、ログに `listening on localhost:3000` が出ればOKです。
@@ -115,14 +117,17 @@ curl -s "http://localhost:3000/search?q=初期"
 ### 8. （任意）再索引の実行
 大量に投入した後などは再索引を行うと安定します。
 
-- VS Code Tasks: 「YuiHub: Reindex」
-- HTTP API: `POST http://localhost:3000/index/rebuild`
+- VS Code Tasks（稼働中サーバ向け）: 「YuiHub:Index:Reindex:OPS」
+	- サーバに対して正攻法で再構築（IndexManager経由）。`/health` の `lastIndexBuild` が更新されます。
+- 代替（ローカル実行）: 「YuiHub:Index:Reindex:Local」
+	- サーバ停止中やローカルで一気に再構築したい場合に利用します。
+ - HTTP API: `POST http://localhost:3000/index/rebuild`
 
 ---
 
 補足
 - 本番相当（NODE_ENV=production）では認証が有効になります。`API_TOKEN` を設定し、`Authorization: Bearer <token>` もしくは `x-yuihub-token: <token>` ヘッダーを付与してください。
-- ポート競合時は VS Code Tasks の「YuiHub: Force Stop Port 3000」または「YuiHub: Complete Server Stop」を利用してください。
+- ポート競合時は VS Code Tasks の「YuiHub:API:Stop:Force (Port 3000)」または「YuiHub:API:Stop:All (Force)」を利用してください。
 - OpenAPI は `GET /openapi.yml` から取得できます（PoC段階では、ChatGPT Actionsをターゲットにしています）。
 
 YuiHub は保存した断片を索引化し、Context Packet として取り出せます。
