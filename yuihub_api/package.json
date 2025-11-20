@@ -20,7 +20,7 @@
     "fs-extra": "^11.2.0",
     "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "lunr": "^2.3.9",
     "tiny-segmenter": "^0.2.0",
     "ulid": "^2.4.0",
