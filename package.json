@@ -58,7 +58,7 @@
     "tiny-segmenter": "^0.2.0"
   },
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^5.2.1",
     "js-yaml": "^4.1.1",
     "lunr": "^2.3.9"
   }
