@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { spawn } from 'node:child_process';
 
 const app = express();
@@ -20,7 +21,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/ops/reindex', (req, res) => {
+app.post('/ops/reindex', reindexLimiter, (req, res) => {
   const body = req.body || {};
   const paths = Array.isArray(body.paths) ? body.paths : (body.paths ? [body.paths] : []);
   const filters = body.filters || {};
