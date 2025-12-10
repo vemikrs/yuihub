@@ -66,12 +66,24 @@ await app.register(cors, {
   allowedHeaders: ['Content-Type', 'x-yuihub-token', 'Authorization'],
 });
 
-// Rate limiting
+// Rate limiting (global)
 await app.register(rateLimit, {
   max: config.rateLimitMax,
   timeWindow: config.rateLimitWindow,
   allowList: ['127.0.0.1', '::1']
 });
+
+// Rate limiting for sensitive OPS endpoints
+const opsRateLimitConfig = {
+  max: 5,              // 5 requests
+  timeWindow: '1 minute',
+  allowList: ['127.0.0.1', '::1'],
+  errorResponseBuilder: () => ({
+    ok: false,
+    error: 'Rate limit exceeded for OPS endpoint',
+    retryAfter: '1 minute'
+  })
+};
 
 // 認証ミドルウェア登録
 const authMiddleware = configManager.createAuthMiddleware();
@@ -206,7 +218,11 @@ app.post('/index/reload', async (req, reply) => {
 });
 
 // OPS: Reindex endpoint (local-only, bearer via middleware)
-app.post('/ops/reindex', async (req, reply) => {
+app.post('/ops/reindex', {
+  config: {
+    rateLimit: opsRateLimitConfig
+  }
+}, async (req, reply) => {
   try {
     const body = req.body || {};
     const paths = Array.isArray(body.paths) ? body.paths : (body.paths ? [body.paths] : []);
