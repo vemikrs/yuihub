@@ -1,6 +1,6 @@
 {
   "name": "yuihub_mcp",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "type": "module",
   "private": true,
   "engines": {
@@ -10,8 +10,8 @@
     "start": "node src/server.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.0",
+    "@modelcontextprotocol/sdk": "^1.24.3",
     "ulid": "^3.0.2",
-    "zod": "^4.1.11"
+    "zod": "^4.1.13"
   }
 }
