@@ -76,7 +76,7 @@ await app.register(rateLimit, {
 // Rate limiting for sensitive OPS endpoints
 const opsRateLimitConfig = {
   max: 5,              // 5 requests
-  timeWindow: '1 minute',  // per minute
+  timeWindow: '1 minute',
   allowList: ['127.0.0.1', '::1'],
   errorResponseBuilder: () => ({
     ok: false,
