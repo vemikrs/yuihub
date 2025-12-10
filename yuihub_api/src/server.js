@@ -262,7 +262,14 @@ app.post('/ops/reindex', async (req, reply) => {
 });
 
 // OpenAPI schema endpoint for ChatGPT Actions
-app.get('/openapi.yml', async (req, reply) => {
+app.get('/openapi.yml', {
+  config: {
+    rateLimit: {
+      max: 10, // maximum 10 requests
+      timeWindow: '1 minute'
+    }
+  }
+}, async (req, reply) => {
   try {
     const fs = await import('fs/promises');
     const schemaPath = path.join(__dirname, '../openapi.yml');
