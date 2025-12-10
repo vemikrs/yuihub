@@ -346,6 +346,13 @@ app.get('/openapi.yml', async (req, reply) => {
 });
 
 // Privacy policy endpoint
+app.register(rateLimit, {
+  max: 5, // maximum 5 requests per minute per IP
+  timeWindow: '1 minute',
+  allowList: [], // set to array of trusted IPs if needed
+  keyGenerator: (req) => req.ip,
+  skipOnError: false
+});
 app.get('/privacy', async (req, reply) => {
   try {
     const fs = await import('fs/promises');
