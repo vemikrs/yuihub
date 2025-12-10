@@ -306,7 +306,7 @@ app.get('/openapi.yml', {
     let serverUrl;
     let description;
     
-    if (host.includes('localhost')) {
+    if (host === 'localhost:3000' || host === 'localhost' || host.startsWith('localhost:')) {
       serverUrl = 'http://localhost:3000';
       description = 'Local development server';
     } else if (isTrycloudflare) {
