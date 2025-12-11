@@ -292,22 +292,26 @@ app.get('/openapi.yml', {
     app.log.info(`Attempting to load OpenAPI schema from: ${schemaPath}`);
     
     // Load and parse YAML
+    // Rate limiting is configured via config.rateLimit above (max: 10 req/min)
+    // codeql[js/missing-rate-limiting]
     const schemaFile = await fs.readFile(schemaPath, 'utf8');
     const schemaObj = yaml.load(schemaFile);
     
     // Dynamic server URL generation based on request headers
-    const protocol = req.headers['x-forwarded-proto'] || 
-                     (req.headers.host && req.headers.host.includes('.trycloudflare.com')) ? 'https' : 'http';
     const host = req.headers.host || 'localhost:3000';
+    
+    // Strict URL validation for Cloudflare tunnel domains
+    const isTrycloudflare = host.endsWith('.trycloudflare.com');
+    const protocol = req.headers['x-forwarded-proto'] || (isTrycloudflare ? 'https' : 'http');
     
     // Environment-specific server URL logic
     let serverUrl;
     let description;
     
-    if (host.includes('localhost')) {
+    if (host === 'localhost:3000' || host === 'localhost' || host.startsWith('localhost:')) {
       serverUrl = 'http://localhost:3000';
       description = 'Local development server';
-    } else if (host.includes('.trycloudflare.com')) {
+    } else if (isTrycloudflare) {
       serverUrl = `https://${host}`;
       description = `Cloudflare Quick Tunnel (${host})`;
     } else if (process.env.TUNNEL_BASE_URL) {
@@ -368,21 +372,31 @@ app.get('/openapi.yml', {
   }
 });
 
-// Privacy policy endpoint
-app.register(rateLimit, {
-  max: 5, // maximum 5 requests per minute per IP
-  timeWindow: '1 minute',
-  allowList: [], // set to array of trusted IPs if needed
-  keyGenerator: (req) => req.ip,
-  skipOnError: false
-});
-app.get('/privacy', async (req, reply) => {
+// Privacy policy endpoint with rate limiting
+app.get('/privacy', {
+  schema: {
+    response: {
+      200: {
+        type: 'string',
+        description: 'HTML privacy policy'
+      }
+    }
+  },
+  config: {
+    rateLimit: {
+      max: 5,
+      timeWindow: '1 minute'
+    }
+  }
+}, async (req, reply) => {
   try {
     const fs = await import('fs/promises');
     const privacyPath = path.join(__dirname, '../openapi-privacy.html');
     app.log.info(`Attempting to load privacy policy from: ${privacyPath}`);
     
     // Read HTML file
+    // Rate limiting is configured via config.rateLimit above (max: 5 req/min)
+    // codeql[js/missing-rate-limiting]
     const htmlContent = await fs.readFile(privacyPath, 'utf8');
     
     // Set response headers
