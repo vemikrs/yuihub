@@ -292,7 +292,8 @@ app.get('/openapi.yml', {
     app.log.info(`Attempting to load OpenAPI schema from: ${schemaPath}`);
     
     // Load and parse YAML
-    // lgtm[js/missing-rate-limiting] - Rate limiting configured via config.rateLimit above
+    // Rate limiting is configured via config.rateLimit above (max: 10 req/min)
+    // codeql[js/missing-rate-limiting]
     const schemaFile = await fs.readFile(schemaPath, 'utf8');
     const schemaObj = yaml.load(schemaFile);
     
@@ -394,7 +395,8 @@ app.get('/privacy', {
     app.log.info(`Attempting to load privacy policy from: ${privacyPath}`);
     
     // Read HTML file
-    // lgtm[js/missing-rate-limiting] - Rate limiting configured via config.rateLimit above
+    // Rate limiting is configured via config.rateLimit above (max: 5 req/min)
+    // codeql[js/missing-rate-limiting]
     const htmlContent = await fs.readFile(privacyPath, 'utf8');
     
     // Set response headers
