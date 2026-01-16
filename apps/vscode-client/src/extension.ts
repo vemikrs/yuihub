@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { randomUUID } from 'crypto';
 
 // --- Types ---
 type Health = { ok: boolean; version?: string; status?: string };
@@ -173,7 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (choice === 'Enter Session ID') {
         sessionId = await vscode.window.showInputBox({ prompt: 'Session/Thread ID' });
       } else {
-        sessionId = vscode.env.uuid; // Generate Local UUID
+        sessionId = randomUUID(); // Generate Local UUID
       }
       
       if (sessionId) {
@@ -190,7 +191,7 @@ export function activate(context: vscode.ExtensionContext) {
       // V1 /save Payload
       await fetchApi<SaveResponse>('POST', '/save', {
         entries: [{
-          id: vscode.env.uuid,
+          id: randomUUID(),
           text,
           mode: 'private',
           source,

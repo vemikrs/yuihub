@@ -9,6 +9,8 @@ import { Indexer } from './engine/indexer.js';
 import { SafeWatcher } from './engine/watcher.js';
 import { globalMutex } from './engine/lock.js';
 import { extractTerms } from './api/text-process.js';
+import { GitHubSyncProvider } from './sync/github-provider.js';
+import { SyncScheduler } from './sync/scheduler.js';
 import path from 'path';
 import fs from 'fs-extra';
 import { randomUUID } from 'crypto';
@@ -28,6 +30,12 @@ const DATA_DIR = process.env.DATA_DIR || './';
 const vectorStore = new VectorStore(DATA_DIR);
 const indexer = new Indexer(vectorStore);
 const watcher = new SafeWatcher(indexer);
+
+// --- Sync Setup ---
+// Notes folder is what we sync? Or entire DATA_DIR?
+// Usually the Vault (DATA_DIR).
+const syncProvider = new GitHubSyncProvider(DATA_DIR);
+const syncScheduler = new SyncScheduler(syncProvider, '*/5 * * * *'); // Every 5 min
 
 // --- Security & Plugins ---
 const AUTH_TOKEN = process.env.YUIHUB_TOKEN || 'dev-token'; // In prod, rely on env
@@ -79,15 +87,22 @@ server.addHook('onReady', async () => {
   server.log.info('Engine initialized.');
   
   // Start Watcher
-  // For V1, we store markdown files in DATA_DIR/notes ?
-  // Or do we just rely on /save API to write files?
   const notesDir = path.join(DATA_DIR, 'notes');
   await fs.ensureDir(notesDir);
   watcher.start(notesDir);
+
+  // Initialize & Start Sync
+  // Only if git installed? Assume yes.
+  if (process.env.ENABLE_SYNC === 'true') {
+     server.log.info('Initializing Sync...');
+     await syncProvider.init(process.env.GIT_REMOTE);
+     syncScheduler.start();
+  }
 });
 
 server.addHook('onClose', async () => {
   await watcher.close();
+  syncScheduler.stop();
 });
 
 // --- Endpoints ---
@@ -107,8 +122,6 @@ server.post('/save', {
   // Mutex Lock for Write
   const release = await globalMutex.acquire();
   try {
-    const savedCount = 0;
-    
     // Process each entry
     for (const entry of entries) {
        // Enhanced Logic: Japanese Terms Extraction
@@ -123,20 +136,8 @@ server.post('/save', {
        };
 
        // Physical Save (Markdown)
-       // Filename strategy: SessionID or Timestamp
-       // If source is provided, use it? Or append to file?
-       // For V1, we simply write to a file named by session or timestamp in notes/
        const filename = finalEntry.session_id ? `${finalEntry.session_id}.md` : `entry-${finalEntry.id}.md`;
        const filePath = path.join(DATA_DIR, 'notes', filename);
-       
-       // Append or Write?
-       // YuiHub logic usually appends to Session Thread.
-       // Format: 
-       // ---
-       // id: ...
-       // tags: ...
-       // ---
-       // content...
        
        const fileContent = `\n\n---\nid: ${finalEntry.id}\ndate: ${finalEntry.date}\ntags: [${finalEntry.tags.join(', ')}]\n---\n\n${finalEntry.text}`;
        
@@ -181,14 +182,7 @@ server.get('/export/context', {
 }, async (req: FastifyRequest<{ Querystring: ExportQueryType }>, reply) => {
   const { q, session } = req.query;
   
-  // 1. Retrieve Recent Context (Session)
-  // For V1 MVP, just search or read file?
-  // Let's use search with session filter to get recent entries? Or explicit DB query?
-  // Since we rely on VectorStore, we can search by session.
-  // Ideally VectorStore supports 'get recent' without vector search.
-  // For now, assume search matches.
-  
-  // 2. Retrieve Long Term Memory (Vector Search)
+  // 1. Retrieve Recent Context
   const longTermResults = q ? await vectorStore.search(q, 5) : [];
   
   // Construct Context Packet
@@ -196,7 +190,6 @@ server.get('/export/context', {
     intent: q || 'No specific intent',
     session_id: session,
     working_memory: {
-        // Todo: Load recent entries from session file
         recent_summary: '...'
     },
     long_term_memory: longTermResults.map(r => ({
