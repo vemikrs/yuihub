@@ -1,0 +1,140 @@
+# Context Packet Schema
+# Version: 0.1.0
+# Description: YuiHub Context Packet の構造定義（Shelter-First Policy）
+
+$schema: "http://json-schema.org/draft-07/schema#"
+type: object
+title: ContextPacket
+description: |
+  YuiHub が生成する文脈パケット。
+  ローカル完結型の自律思考エージェントが、過去の思考とコード文脈を統合するための構造。
+
+required:
+  - version
+  - timestamp
+  - intent
+  - working_memory
+  - long_term_memory
+
+properties:
+  version:
+    type: string
+    description: Context Packet のスキーマバージョン
+    example: "0.1.0"
+
+  timestamp:
+    type: string
+    format: date-time
+    description: Packet 生成時刻（ISO 8601）
+
+  intent:
+    type: object
+    description: ユーザーの意図
+    required:
+      - summary
+    properties:
+      summary:
+        type: string
+        description: 現在の作業目的の一行要約
+      goals:
+        type: array
+        items:
+          type: string
+        description: 達成したい具体的なゴール一覧
+      constraints:
+        type: array
+        items:
+          type: string
+        description: 制約条件や守るべきルール
+
+  working_memory:
+    type: object
+    description: 直近の作業コンテキスト（短期記憶）
+    properties:
+      recent_conversation:
+        type: array
+        items:
+          type: object
+          properties:
+            role:
+              type: string
+              enum: [user, assistant, system]
+            content:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+        description: 直近の会話履歴
+      open_files:
+        type: array
+        items:
+          type: string
+        description: 現在開いているファイルのパス一覧
+      git_diff:
+        type: object
+        properties:
+          staged:
+            type: string
+            description: ステージング済みの変更差分
+          unstaged:
+            type: string
+            description: 未ステージングの変更差分
+        description: Git 差分情報
+      cursor_position:
+        type: object
+        properties:
+          file:
+            type: string
+          line:
+            type: integer
+          column:
+            type: integer
+        description: 現在のカーソル位置
+
+  long_term_memory:
+    type: object
+    description: 過去の設計判断と文脈（Vector Search 結果）
+    properties:
+      related_decisions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            summary:
+              type: string
+            relevance_score:
+              type: number
+              minimum: 0
+              maximum: 1
+            source:
+              type: string
+              description: Knot/Thread への参照
+        description: 関連する過去の設計判断（Knot）
+      related_fragments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            content:
+              type: string
+            relevance_score:
+              type: number
+              minimum: 0
+              maximum: 1
+        description: 関連する過去の断片（Fragment）
+
+  signal:
+    type: object
+    description: "(Optional) 外部 Mira への送信ペイロード - 次フェーズで実装"
+    properties:
+      enabled:
+        type: boolean
+        default: false
+        description: Signal Mode が有効かどうか
+      payload:
+        type: object
+        description: 外部送信用のデータ（Signal Mode 時のみ使用）
