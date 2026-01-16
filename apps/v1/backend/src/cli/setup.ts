@@ -15,7 +15,7 @@ async function runSetup() {
       type: 'input',
       name: 'dataDir',
       message: 'Where should we store your data (DATA_DIR)?',
-      default: process.env.DATA_DIR || path.join(os.homedir(), '.yuihub-v1'),
+      default: process.env.DATA_DIR || path.join(os.homedir(), '.yuihub'),
     },
     {
       type: 'list',
@@ -39,6 +39,9 @@ async function runSetup() {
   } else {
     await setupExistingVault(dataDir);
   }
+  
+  // Ensure VERSION file exists
+  await fs.writeFile(path.join(dataDir, 'VERSION'), '1'); // Version 1
 
   // Final Config Check
   const configService = new ConfigService(dataDir);

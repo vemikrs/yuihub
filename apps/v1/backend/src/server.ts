@@ -29,9 +29,9 @@ server.setSerializerCompiler(serializerCompiler);
 
 // --- Config & Engine Setup ---
 const workspaceRoot = path.resolve(process.cwd(), '../../../'); 
-const DEFAULT_DATA_DIR = path.join(os.homedir(), '.yuihub-v1');
+const DEFAULT_DATA_DIR = path.join(os.homedir(), '.yuihub');
 const DATA_DIR = process.env.DATA_DIR || DEFAULT_DATA_DIR;
-// Base DB location
+const STORAGE_VERSION = '1';
 
 // 1. Initialize Config Service
 const configService = new ConfigService(DATA_DIR);
@@ -97,6 +97,22 @@ type ConfigUpdateType = z.infer<typeof ConfigUpdateSchema>;
 server.addHook('onReady', async () => {
   server.log.info({ config: configService.get() }, 'Initializing Engine with Config...');
   
+  // Storage Version Check
+  const versionPath = path.join(DATA_DIR, 'VERSION');
+  if (config.sync.enabled || await fs.pathExists(versionPath)) {
+      // If sync enabled or version file exists, check it.
+      if (await fs.pathExists(versionPath)) {
+          const version = (await fs.readFile(versionPath, 'utf-8')).trim();
+          if (version !== STORAGE_VERSION) {
+              server.log.warn(`⚠️ Storage Version Mismatch! Expected ${STORAGE_VERSION}, found ${version}. Compatibility issues may occur.`);
+          }
+      } else {
+          // If no version file but data exists... write it? or warn?
+          // Write it for now to migrate.
+          await fs.writeFile(versionPath, STORAGE_VERSION);
+      }
+  }
+
   await vectorStore.init();
   server.log.info('Engine initialized.');
   
