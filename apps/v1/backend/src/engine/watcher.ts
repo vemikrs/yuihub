@@ -42,6 +42,36 @@ export class SafeWatcher {
     if (handler) handler(filePath);
   }
 
+  async scan(dir: string) {
+    console.log(`[Watcher] Scanning directory: ${dir}`);
+    try {
+       // Node 20+ supports recursive readdir. Assume Node 18+ or use manual walk?
+       // Let's use fs-extra readdir or custom walk if needed. 
+       // fs.readdir(dir, { recursive: true }) is Node 20.
+       // Safe fallback: use chokidar instance if ready? No.
+       // Simple recursive walk:
+       const files = await this.getFiles(dir);
+       console.log(`[Watcher] Found ${files.length} files. Enqueuing...`);
+       
+       for (const file of files) {
+          if (file.endsWith('.md')) {
+             this.indexer.enqueue(file);
+          }
+       }
+    } catch (e) {
+       console.error('[Watcher] Scan failed:', e);
+    }
+  }
+
+  private async getFiles(dir: string): Promise<string[]> {
+    const dirents = await import('fs').then(r => r.promises.readdir(dir, { withFileTypes: true }));
+    const files = await Promise.all(dirents.map((dirent) => {
+      const res = import('path').then(p => p.join(dir, dirent.name));
+      return dirent.isDirectory() ? res.then(p => this.getFiles(p)) : res;
+    }));
+    return Array.prototype.concat(...files);
+  }
+
   async close() {
     if (this.watcher) await this.watcher.close();
     this.debouncedHandlers.forEach(h => h.cancel());

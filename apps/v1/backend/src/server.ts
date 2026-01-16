@@ -108,6 +108,18 @@ server.addHook('onReady', async () => {
      await syncProvider.init(config.sync.remoteUrl);
      syncScheduler.start();
   }
+
+  // Bootstrap Indexing: If DB empty but files exist, scan!
+  if (await vectorStore.isEmpty()) {
+      const hasFiles = await fs.pathExists(notesDir) && (await fs.readdir(notesDir)).length > 0;
+      if (hasFiles) {
+          server.log.info('🚀 Empty Index detected with existing notes. Starting Initial Scan...');
+          // Don't await scan fully to allow server start? Or await?
+          // Await is safer to ensure index is ready.
+          await watcher.scan(notesDir);
+          server.log.info('✅ Initial Scan queued.');
+      }
+  }
 });
 
 server.addHook('onClose', async () => {

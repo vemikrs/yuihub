@@ -7,6 +7,7 @@
     "build": "npx tsc -b",
     "dev": "npx tsx watch src/server.ts",
     "start": "node dist/server.js",
+    "setup": "npx tsx src/cli/setup.ts",
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "fastify": "^5.2.0",
     "fastify-type-provider-zod": "^4.0.0",
     "fastq": "^1.20.1",
+    "inquirer": "^9.3.8",
     "lodash": "^4.17.21",
     "tiny-segmenter": "^0.2.0",
     "tree-sitter": "^0.21.1",
@@ -36,6 +38,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.9",
     "@types/node": "^22.0.0",
     "tsx": "^4.7.0",
     "typescript": "^5.0.0"

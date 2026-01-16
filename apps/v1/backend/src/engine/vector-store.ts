@@ -77,4 +77,14 @@ export class VectorStore {
 
     return await builder.toArray();
   }
+
+  async isEmpty(): Promise<boolean> {
+    if (!this.table) return true;
+    try {
+      const count = await this.table.countRows();
+      return count === 0;
+    } catch {
+      return true;
+    }
+  }
 }
