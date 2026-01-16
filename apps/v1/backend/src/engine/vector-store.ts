@@ -4,17 +4,21 @@ import fs from 'fs-extra';
 import { Entry } from '@yuihub/core';
 import { LanceEntry, toLanceEntryBase } from './schema.js';
 import { IEmbeddingService } from './embeddings/types.js';
+import { IVectorStore, SearchResult } from './vector-store-types.js';
 
-export class VectorStore {
+export class LanceVectorStore implements IVectorStore {
   private db: lancedb.Connection | null = null;
   private table: lancedb.Table | null = null;
   private embedder: IEmbeddingService;
   private dbPath: string;
-  private tableName: string = 'yuihub_entries';
+  private tableName: string;
+  public readonly name: string; // Identifier for RRF (e.g. 'local', 'vertex')
 
-  constructor(basePath: string, embedder: IEmbeddingService) {
+  constructor(basePath: string, embedder: IEmbeddingService, name: string = 'yuihub_entries', tableName?: string) {
     this.dbPath = path.join(basePath, 'data/lancedb');
     this.embedder = embedder;
+    this.name = name;
+    this.tableName = tableName || `entries_${name}`; // e.g. entries_local, entries_vertex
   }
 
   async init() {
@@ -55,7 +59,7 @@ export class VectorStore {
     }
   }
 
-  async search(query: string, limit: number = 10, filter?: { tag?: string; session?: string }) {
+  async search(query: string, limit: number = 10, filter?: { tag?: string; session?: string }): Promise<SearchResult[]> {
     if (!this.table) return [];
 
     const output = await this.embedder.embed(query);
@@ -64,9 +68,6 @@ export class VectorStore {
     let builder = this.table.search(vector).limit(limit);
 
     const whereClauses: string[] = [];
-    if (filter?.tag) {
-       // Pending: efficient array contains support
-    }
     if (filter?.session) {
       whereClauses.push(`session_id = '${filter.session}'`);
     }
@@ -75,7 +76,16 @@ export class VectorStore {
       builder = builder.where(whereClauses.join(' AND '));
     }
 
-    return await builder.toArray();
+    const rows = await builder.toArray();
+    
+    return rows.map((r: any) => ({
+      ...r,
+      score: r._distance, // LanceDB uses distance (lower is better usually for L2, cosine dist?)
+      // Note: OpenAI/MiniLM usually use Cosine Similarity or Distance. 
+      // LanceDB 'cosine' distance = 1 - similarity. 
+      // RRF needs consistent ranking. Distance is fine for ascending rank.
+      _source_store: this.name
+    }));
   }
 
   async isEmpty(): Promise<boolean> {
@@ -88,3 +98,4 @@ export class VectorStore {
     }
   }
 }
+

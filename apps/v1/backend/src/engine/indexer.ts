@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { Entry } from '@yuihub/core';
 import { globalMutex } from './lock.js';
 import { SemanticChunker } from './chunker.js';
-import { VectorStore } from './vector-store.js';
+import { IVectorStore } from './vector-store-types.js';
 
 interface IndexJob {
   filePath: string;
@@ -13,9 +13,9 @@ interface IndexJob {
 export class Indexer {
   private queue: queueAsPromised<IndexJob>;
   private chunker: SemanticChunker;
-  private vectorStore: VectorStore;
+  private vectorStore: IVectorStore;
 
-  constructor(vectorStore: VectorStore) {
+  constructor(vectorStore: IVectorStore) {
     this.vectorStore = vectorStore;
     this.chunker = new SemanticChunker();
     // Concurrency 1 (Serialized)

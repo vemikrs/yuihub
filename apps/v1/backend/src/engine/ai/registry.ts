@@ -41,6 +41,25 @@ export class AIProviderRegistry {
     return service;
   }
 
+  async getAllEmbeddingServices(): Promise<{ id: string; service: IEmbeddingService }[]> {
+    // 1. Identify all embedding providers from config
+    const embeddingProviderIds = this.config.defaults.embedding; // e.g. ['local', 'vertex']
+    
+    const results: { id: string; service: IEmbeddingService }[] = [];
+    for (const id of embeddingProviderIds) {
+      try {
+        const service = await this.getEmbeddingService(id);
+        results.push({ id, service });
+      } catch (err) {
+        console.error(`[AI] Failed to initialize embedding provider '${id}':`, err);
+        // We continue to allow partial functionality? 
+        // Or throw? Dual embedding implies redundancy, but if primary fails?
+        // Let's log and continue for now (Lazy / Partial support).
+      }
+    }
+    return results;
+  }
+
   async getGenAIService(providerId?: string): Promise<IGenAIService> {
     const id = providerId || this.config.defaults.agent;
     

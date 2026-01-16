@@ -4,7 +4,8 @@ import rateLimit from '@fastify/rate-limit';
 import bearerAuth from '@fastify/bearer-auth';
 import z from 'zod';
 import { Entry } from '@yuihub/core';
-import { VectorStore } from './engine/vector-store.js';
+import { LanceVectorStore } from './engine/vector-store.js';
+import { CompositeVectorStore } from './engine/composite-vector-store.js';
 import { Indexer } from './engine/indexer.js';
 import { SafeWatcher } from './engine/watcher.js';
 import { globalMutex } from './engine/lock.js';
@@ -40,10 +41,24 @@ let config = configService.get();
 
 // 2. Initialize AI Registry & Services
 const aiRegistry = new AIProviderRegistry(config.ai);
-const embeddingService = await aiRegistry.getEmbeddingService();
-console.log(`[AI] Embedding Service initialized: ${embeddingService.constructor.name} (${embeddingService.getDimensions()}d)`);
 
-const vectorStore = new VectorStore(DATA_DIR, embeddingService);
+// Initialize Composite Vector Store (Dual Embedding)
+const embeddingServices = await aiRegistry.getAllEmbeddingServices();
+if (embeddingServices.length === 0) {
+    throw new Error('No embedding services configured or initialized.');
+}
+
+const stores = embeddingServices.map(({ id, service }) => {
+    // Store name = provider id (e.g. 'local', 'vertex')
+    // Table name defaults to `entries_${id}` inside LanceVectorStore
+    return new LanceVectorStore(DATA_DIR, service, id);
+});
+
+console.log(`[AI] Initialized ${stores.length} Vector Stores: ${stores.map(s => s.name).join(', ')}`);
+
+const vectorStore = new CompositeVectorStore(stores);
+await vectorStore.init(); // Init all underlying stores
+
 const indexer = new Indexer(vectorStore);
 const watcher = new SafeWatcher(indexer);
 
@@ -279,7 +294,8 @@ server.get('/export/context', {
     },
     long_term_memory: longTermResults.map(r => ({
        text: r.text,
-       relevance: r._distance // LanceDB returns distance
+       relevance: r.score, // Use normalized score from Composite Store
+       source_store: r._source_store
     })),
     meta: {
       mode: 'private'

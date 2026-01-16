@@ -3,7 +3,7 @@ import { IEmbeddingService, EmbeddingOutput } from './types.js';
 
 export class LocalEmbeddingService implements IEmbeddingService {
   private embedder: any = null;
-  private modelName: string = 'Xenova/all-MiniLM-L6-v2';
+  private modelName: string = 'Xenova/bge-m3';
 
   constructor(modelName?: string) {
     if (modelName) this.modelName = modelName;
