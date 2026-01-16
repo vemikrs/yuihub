@@ -31,7 +31,7 @@ server.setSerializerCompiler(serializerCompiler);
 const workspaceRoot = path.resolve(process.cwd(), '../../../'); 
 const DEFAULT_DATA_DIR = path.join(os.homedir(), '.yuihub');
 const DATA_DIR = process.env.DATA_DIR || DEFAULT_DATA_DIR;
-const STORAGE_VERSION = '1';
+const STORAGE_VERSION = '1.0.0-rc1';
 
 // 1. Initialize Config Service
 const configService = new ConfigService(DATA_DIR);

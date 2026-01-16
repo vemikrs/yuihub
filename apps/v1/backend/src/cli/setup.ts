@@ -41,7 +41,7 @@ async function runSetup() {
   }
   
   // Ensure VERSION file exists
-  await fs.writeFile(path.join(dataDir, 'VERSION'), '1'); // Version 1
+  await fs.writeFile(path.join(dataDir, 'VERSION'), '1.0.0-rc1'); 
 
   // Final Config Check
   const configService = new ConfigService(dataDir);
