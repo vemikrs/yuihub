@@ -20,7 +20,7 @@ properties:
   version:
     type: string
     description: Context Packet のスキーマバージョン
-    example: "0.1.0"
+    example: "1.0.0"
 
   timestamp:
     type: string
@@ -110,9 +110,9 @@ properties:
               maximum: 1
             source:
               type: string
-              description: Knot/Thread への参照
-        description: 関連する過去の設計判断（Knot）
-      related_fragments:
+              description: Checkpoint/Session への参照
+        description: 関連する過去の設計判断（Checkpoint）
+      related_entries:
         type: array
         items:
           type: object
@@ -125,16 +125,16 @@ properties:
               type: number
               minimum: 0
               maximum: 1
-        description: 関連する過去の断片（Fragment）
+        description: 関連する過去の断片（Entry）
 
-  signal:
+  public_mode:
     type: object
-    description: "(Optional) 外部 Mira への送信ペイロード - 次フェーズで実装"
+    description: "(Optional) 外部 Mira への送信ペイロード - Public Mode 時のみ使用"
     properties:
       enabled:
         type: boolean
         default: false
-        description: Signal Mode が有効かどうか
+        description: Public Mode が有効かどうか
       payload:
         type: object
-        description: 外部送信用のデータ（Signal Mode 時のみ使用）
+        description: 外部送信用のデータ
