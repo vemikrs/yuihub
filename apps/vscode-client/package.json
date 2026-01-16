@@ -1,11 +1,11 @@
 {
   "name": "yuihub-copilot-chat",
-  "displayName": "YuiHub Copilot Chat",
+  "displayName": "YuiHub Copilot Chat (V1)",
   "publisher": "ve",
-  "version": "0.0.9",
-  "description": "Minimal VS Code bridge to YuiHub (search/save/health). Shelter by default.",
+  "version": "1.0.0",
+  "description": "YuiHub V1 Client: Connects to local YuiHub Engine for semantic memory and private agent execution.",
   "engines": {
-    "vscode": "^1.108.0"
+    "vscode": "^1.90.0"
   },
   "categories": [
     "Other"
@@ -20,8 +20,7 @@
     "Copilot",
     "Chat",
     "Context",
-    "Packet",
-    "YuiFlow"
+    "Packet"
   ],
   "contributes": {
     "commands": [
@@ -37,13 +36,13 @@
       },
       {
         "command": "yuihub.saveSelection",
-        "title": "YuiHub: Save Selection to Thread",
+        "title": "YuiHub: Save Selection to Memory",
         "category": "YuiHub",
         "enablement": "isWorkspaceTrusted"
       },
       {
-        "command": "yuihub.issueThread",
-        "title": "YuiHub: Issue New Thread ID",
+        "command": "yuihub.createCheckpoint",
+        "title": "YuiHub: Create Checkpoint (Decision Anchor)",
         "category": "YuiHub"
       },
       {
@@ -53,19 +52,8 @@
       },
       {
         "command": "yuihub.setApiToken",
-        "title": "YuiHub: Set API Token (SecretStorage)",
+        "title": "YuiHub: Set API Token",
         "category": "YuiHub"
-      },
-      {
-        "command": "yuihub.openSearchResult",
-        "title": "YuiHub: Open Search Result",
-        "category": "YuiHub"
-      },
-      {
-        "command": "yuihub.clearSearchResults",
-        "title": "YuiHub: Clear Search Results",
-        "category": "YuiHub",
-        "icon": "$(clear-all)"
       }
     ],
     "configuration": {
@@ -74,96 +62,19 @@
         "yuihub.apiBaseUrl": {
           "type": "string",
           "default": "http://localhost:3000",
-          "description": "Base URL of the YuiHub API (e.g., http://localhost:3000)"
+          "description": "Base URL of the YuiHub API"
         },
         "yuihub.apiKey": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Optional API token. Used according to `yuihub.authHeader` and `yuihub.authScheme`.\n\nセキュリティ向上のため、設定保存ではなく SecretStorage を推奨します。コマンド `YuiHub: Set API Token (SecretStorage)` を使って保存してください。",
-          "deprecationMessage": "Deprecated: Please store your API token in SecretStorage (run 'YuiHub: Set API Token (SecretStorage)' from the Command Palette). This setting will be removed in a future release.",
-          "markdownDeprecationMessage": "**Deprecated**: Please store your API token in SecretStorage (run `YuiHub: Set API Token (SecretStorage)` from the Command Palette). This setting will be removed in a future release."
-        },
-        "yuihub.authHeader": {
-          "type": "string",
-          "enum": [
-            "auto",
-            "authorization",
-            "x-yuihub-token"
-          ],
-          "default": "auto",
-          "markdownDescription": "Which header to use for authentication.\n- auto: try Authorization first, on 401/403 fall back to x-yuihub-token\n- authorization: send token via `Authorization`\n- x-yuihub-token: send token via `x-yuihub-token`"
-        },
-        "yuihub.authScheme": {
-          "type": "string",
-          "enum": [
-            "bearer",
-            "none"
-          ],
-          "default": "bearer",
-          "markdownDescription": "How to format the token when using Authorization header.\n- bearer: send as `Authorization: Bearer <token>` (if token already starts with 'Bearer ', keep as-is)\n- none: send the token as-is in Authorization header"
-        },
-        "yuihub.defaultSource": {
-          "type": "string",
-          "enum": [
-            "gpts",
-            "copilot",
-            "claude",
-            "human"
-          ],
-          "default": "copilot",
-          "description": "Source field used when saving messages."
-        },
-        "yuihub.defaultAuthor": {
-          "type": "string",
-          "default": "VSCode",
-          "description": "Author used when saving messages (you can override per save)."
-        },
-        "yuihub.defaultThreadId": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "Default thread id (e.g., `th-01XXXXXXXX...`). If empty, use workspaceState or prompt."
+          "description": "API Token (Optional in Private Mode)"
         },
         "yuihub.searchLimit": {
           "type": "number",
           "default": 10,
-          "minimum": 1,
-          "maximum": 100,
           "description": "Max results for search."
-        },
-        "yuihub.requestTimeoutMs": {
-          "type": "number",
-          "default": 15000,
-          "minimum": 1000,
-          "maximum": 120000,
-          "markdownDescription": "Timeout for HTTP requests in milliseconds. Default 15000 (15s)."
-        },
-        "yuihub.logResponseBodies": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "If true, include up to 400 chars of error response body in logs. Default false."
-        },
-        "yuihub.saveConfirmOnFullDocument": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "When saving with no selection (sending the entire document), ask for confirmation."
-        },
-        "yuihub.saveConfirmFullDocThresholdBytes": {
-          "type": "number",
-          "default": 8192,
-          "minimum": 1024,
-          "maximum": 1048576,
-          "markdownDescription": "If the full document content exceeds this size (bytes), show a stronger confirmation dialog."
         }
       }
-    },
-    "menus": {
-      "view/title": [
-        {
-          "command": "yuihub.clearSearchResults",
-          "when": "view == yuihub.results",
-          "group": "navigation"
-        }
-      ]
     },
     "viewsContainers": {
       "activitybar": [
@@ -186,46 +97,20 @@
   },
   "main": "./dist/extension.js",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vemikrs/vscode-yuihub-copilot-chat"
-  },
-  "bugs": {
-    "url": "https://github.com/vemikrs/vscode-yuihub-copilot-chat/issues"
-  },
-  "homepage": "https://github.com/vemikrs/vscode-yuihub-copilot-chat",
   "scripts": {
     "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --format=cjs --platform=node --external:vscode --sourcemap",
     "watch": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --format=cjs --platform=node --external:vscode --sourcemap --watch",
     "typecheck": "tsc --noEmit",
-    "prepackage": "mkdir -p packages",
-    "package": "vsce package -o packages/",
-    "publish": "vsce publish"
+    "package": "vsce package"
   },
-  "capabilities": {
-    "untrustedWorkspaces": {
-      "supported": "limited",
-      "description": "In untrusted workspaces, this extension runs in limited mode: it does not read or transmit any workspace file contents and disables 'Save Selection'. Other commands require explicit user input only.",
-      "restrictedConfigurations": [
-        "yuihub.apiBaseUrl",
-        "yuihub.apiKey",
-        "yuihub.authHeader",
-        "yuihub.authScheme",
-        "yuihub.defaultSource",
-        "yuihub.defaultAuthor",
-        "yuihub.defaultThreadId",
-        "yuihub.searchLimit",
-        "yuihub.requestTimeoutMs",
-        "yuihub.logResponseBodies",
-        "yuihub.saveConfirmOnFullDocument",
-        "yuihub.saveConfirmFullDocThresholdBytes"
-      ]
-    }
+  "dependencies": {
+    "@yuihub/core": "*"
   },
   "devDependencies": {
-    "@types/vscode": "^1.108.1",
-    "esbuild": "^0.27.2",
-    "typescript": "^5.9.3",
-    "@vscode/vsce": "^3.7.1"
+    "@types/vscode": "^1.90.0",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.4.0",
+    "@vscode/vsce": "^2.24.0"
   }
 }
