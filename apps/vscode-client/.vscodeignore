@@ -1,0 +1,26 @@
+# Version control and development files
+**/.git*
+**/.github/**
+.history/
+
+# Dependencies
+**/node_modules/**
+
+# Source code (only dist is needed)
+**/src/**
+**/tsconfig.json
+
+# Documentation and development docs
+**/docs/**
+
+# Build artifacts and maps
+dist/*.map
+**/*.map
+
+# Package outputs (shouldn't be in published extension)
+packages/
+
+# Development and temporary files
+.vscode/**
+.vscode-test/
+*.vsix

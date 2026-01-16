@@ -7,59 +7,19 @@
     "node": "^22.0.0"
   },
   "workspaces": [
-    "yuihub_api",
-    "yuihub_mcp"
+    "apps/v0/*",
+    "apps/v1/*",
+    "apps/vscode-client",
+    "packages/*"
   ],
   "scripts": {
-    "reindex": "node scripts/chunk_and_lunr.mjs --paths notes --paths chatlogs --mode=Shelter --visibility=private,internal",
-    "schema:check": "node scripts/validate-schemas-simple.mjs",
-    "reindex:with-dev": "YH_INDEX_ROOTS=chatlogs,docs/logdocs node scripts/build-index.mjs",
-    "dev:api": "node --env-file=.env --watch yuihub_api/src/server.js",
-    "dev:tunnel": "ENABLE_TUNNEL=true TUNNEL_MODE=quick npm run dev -w yuihub_api",
-    "start:api": "npm start -w yuihub_api",
-    "start:prod": "ENABLE_TUNNEL=true TUNNEL_MODE=named npm start -w yuihub_api",
-    "start:prod-tunnel": "ENABLE_TUNNEL=true TUNNEL_MODE=named npm start -w yuihub_api",
-    "start:mcp": "npm start -w yuihub_mcp",
-    "build-index": "node scripts/chunk_and_lunr.mjs",
-    "build-terms": "node scripts/build_terms.mjs",
-    "build-summaries": "node scripts/summarize_weekly.mjs",
-    "build-all": "npm run build-index && npm run build-terms && npm run build-summaries",
-    "install-all": "npm install && npm install -w yuihub_api && npm install -w yuihub_mcp",
-    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
-    "test:unit": "NODE_OPTIONS='--experimental-vm-modules' jest --testPathPattern='tests/unit'",
-    "test:integration": "NODE_OPTIONS='--experimental-vm-modules' jest --testPathPattern='tests/integration'",
-    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
-    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
-    "test:yuiflow": "npm run test:schema && npm run test:api && npm run test:mcp",
-    "test:schema": "npm test -w yuihub_api -- --testNamePattern=schema",
-    "test:api": "npm run test:integration -w yuihub_api",
-    "test:e2e:gpts": "node yuihub_api/tests/api-integration.test.js",
-    "test:mcp": "npm test -w yuihub_mcp",
-    "test:e2e": "./run-tests.sh",
-    "validate:yuiflow": "npm run schema:check && npm run test:yuiflow",
-    "dev:full": "concurrently \"npm run dev:api\" \"npm run start:mcp\"",
-    "debug:yuiflow": "node --env-file=.env --inspect yuihub_api/src/server.js",
-    "tunnel:setup": "bash .cloudflare/setup-tunnel.sh",
-    "tunnel:start": "bash .cloudflare/start-tunnel.sh",
-    "tunnel:quick": "node .cloudflare/tunnel-cli.js quick",
-    "tunnel:named": "node .cloudflare/tunnel-cli.js named",
-    "tunnel:status": "node .cloudflare/tunnel-cli.js status",
-    "tunnel:stop": "node .cloudflare/tunnel-cli.js stop",
-    "tunnel:test": "bash -c 'API_URL=$(grep -o \"https://[^/]*\" .cloudflare/start-tunnel.sh | head -1) && curl -s \"$API_URL/health\" | python3 -m json.tool'",
-    "smoke": "curl -s http://127.0.0.1:3000/health | node -e \"process.stdin.pipe(require('stream').Writable({write(c,_,n){try{JSON.parse(c)}catch(e){process.exit(1)}n()}}))\""
+    "test": "npm run test:v1",
+    "test:v1": "echo 'No tests yet'",
+    "build:v1": "echo 'No build yet'"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "concurrently": "^9.2.1",
-    "jest": "^30.2.0",
-    "minimist": "^1.2.8",
-    "tiny-segmenter": "^0.2.0"
+    "concurrently": "^9.2.1"
   },
-  "dependencies": {
-    "express": "^5.2.1",
-    "js-yaml": "^4.1.1",
-    "lunr": "^2.3.9"
-  }
+  "dependencies": {}
 }

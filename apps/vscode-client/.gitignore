@@ -1,0 +1,69 @@
+########################################
+# Node / Package managers
+########################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+########################################
+# Build outputs (TypeScript / esbuild)
+########################################
+dist/
+out/
+.esbuild/
+*.tsbuildinfo
+
+# Source maps generated during build
+*.map
+
+########################################
+# VS Code extension packaging/testing
+########################################
+*.vsix
+.vscode-test/
+packages/
+
+########################################
+# Coverage / reports
+########################################
+coverage/
+.nyc_output/
+reports/
+
+########################################
+# Environment files
+########################################
+.env
+.env.*
+.env.local
+.env.*.local
+
+########################################
+# Editors / OS junk
+########################################
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.history/
+*.swp
+*~
+
+########################################
+# VS Code workspace files
+# Keep common shared configs, ignore the rest
+########################################
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+########################################
+# Temp
+########################################
+tmp/
+.tmp/
