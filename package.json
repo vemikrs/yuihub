@@ -15,7 +15,10 @@
   "scripts": {
     "test": "npm run test:v1",
     "test:v1": "echo 'No tests yet'",
-    "build:v1": "echo 'No build yet'"
+    "build:core": "npm run build --workspace=@yuihub/core",
+    "build:backend": "npm run build --workspace=@yuihub/v1-backend",
+    "build:client": "npm run build --workspace=yuihub-copilot-chat",
+    "build:all-v1": "npm run build:core && npm run build:backend && npm run build:client"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
