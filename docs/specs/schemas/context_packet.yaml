@@ -1,6 +1,6 @@
 # Context Packet Schema
 # Version: 0.1.0
-# Description: YuiHub Context Packet の構造定義（Shelter-First Policy）
+# Description: YuiHub Context Packet の構造定義（Offline-First Context）
 
 $schema: "http://json-schema.org/draft-07/schema#"
 type: object

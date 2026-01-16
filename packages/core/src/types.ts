@@ -12,7 +12,7 @@ export interface Entry {
   text: string;
   mode: YuiHubMode;
   tags?: string[];
-  session_id?: string; // Thread ID
+  session_id?: string;
   source?: string; // File path or URL
   metadata?: Record<string, unknown>;
 }
@@ -30,7 +30,7 @@ export interface Checkpoint {
 
 // Cognitive Session (Session)
 export interface Session {
-  id: string; // th-ulid
+  id: string; // ulid
   title: string;
   created_at: string;
   last_updated: string;
