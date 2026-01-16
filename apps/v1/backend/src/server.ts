@@ -11,6 +11,9 @@ import { globalMutex } from './engine/lock.js';
 import { extractTerms } from './api/text-process.js';
 import { GitHubSyncProvider } from './sync/github-provider.js';
 import { SyncScheduler } from './sync/scheduler.js';
+import { ConfigService } from './config/service.js';
+import { AppConfigSchema, AppConfigUpdateSchema } from './config/schema.js';
+import { LocalEmbeddingService } from './engine/embeddings/local-service.js';
 import path from 'path';
 import fs from 'fs-extra';
 import { randomUUID } from 'crypto';
@@ -23,23 +26,38 @@ const server = Fastify({
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
-import { LocalEmbeddingService } from './engine/embeddings/local-service.js';
-
-// --- Engine Setup ---
+// --- Config & Engine Setup ---
 const workspaceRoot = path.resolve(process.cwd(), '../../../'); 
-const DATA_DIR = process.env.DATA_DIR || './'; 
+const DATA_DIR = process.env.DATA_DIR || './'; // Base DB location
 
-// Dependency Injection (Vertex AI Ready)
-const embeddingService = new LocalEmbeddingService();
+// 1. Initialize Config Service
+const configService = new ConfigService(DATA_DIR);
+let config = configService.get();
+
+// 2. Dependency Injection
+const embeddingService = new LocalEmbeddingService(config.ai.modelName);
 const vectorStore = new VectorStore(DATA_DIR, embeddingService);
 const indexer = new Indexer(vectorStore);
 const watcher = new SafeWatcher(indexer);
 
-// --- Sync Setup ---
-// Notes folder is what we sync? Or entire DATA_DIR?
-// Usually the Vault (DATA_DIR).
+// 3. Sync Setup
 const syncProvider = new GitHubSyncProvider(DATA_DIR);
-const syncScheduler = new SyncScheduler(syncProvider, '*/5 * * * *'); // Every 5 min
+const syncScheduler = new SyncScheduler(syncProvider, config.sync.interval);
+
+// --- Security ---
+const AUTH_TOKEN = process.env.YUIHUB_TOKEN || 'dev-token';
+
+server.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute'
+});
+
+server.register(bearerAuth, {
+  keys: new Set([AUTH_TOKEN]),
+  errorResponse: (err) => {
+    return { error: 'Unauthorized', message: err.message };
+  }
+});
 
 // --- API Schema ---
 const SaveBodySchema = z.object({
@@ -65,14 +83,17 @@ const ExportQuerySchema = z.object({
   session: z.string().optional()
 });
 
+const ConfigUpdateSchema = AppConfigUpdateSchema;
+
 type SaveBodyType = z.infer<typeof SaveBodySchema>;
 type SearchQueryType = z.infer<typeof SearchQuerySchema>;
 type ExportQueryType = z.infer<typeof ExportQuerySchema>;
+type ConfigUpdateType = z.infer<typeof ConfigUpdateSchema>;
 
 // --- Lifecycle ---
-
 server.addHook('onReady', async () => {
-  server.log.info('Initializing Engine...');
+  server.log.info({ config: configService.get() }, 'Initializing Engine with Config...');
+  
   await vectorStore.init();
   server.log.info('Engine initialized.');
   
@@ -81,11 +102,10 @@ server.addHook('onReady', async () => {
   await fs.ensureDir(notesDir);
   watcher.start(notesDir);
 
-  // Initialize & Start Sync
-  // Only if git installed? Assume yes.
-  if (process.env.ENABLE_SYNC === 'true') {
+  // Initialize & Start Sync if Enabled
+  if (config.sync.enabled) {
      server.log.info('Initializing Sync...');
-     await syncProvider.init(process.env.GIT_REMOTE);
+     await syncProvider.init(config.sync.remoteUrl);
      syncScheduler.start();
   }
 });
@@ -94,7 +114,6 @@ server.addHook('onClose', async () => {
   server.log.info('Shutting down...');
   await watcher.close();
   syncScheduler.stop();
-  // vectorStore.close() if implemented, for now just connection drop implicit
 });
 
 // --- Endpoints ---
@@ -102,6 +121,44 @@ server.addHook('onClose', async () => {
 server.get('/health', async () => {
   return { status: 'ok', version: 'v1' };
 });
+
+// System API: Get Config
+server.get('/system/config', async () => {
+  return { ok: true, config: configService.get() };
+});
+
+// System API: Update Config (Hot Reload-ish)
+server.patch('/system/config', {
+  schema: {
+    body: ConfigUpdateSchema
+  }
+}, async (req: FastifyRequest<{ Body: ConfigUpdateType }>, reply) => {
+  try {
+    const newConfig = await configService.update(req.body);
+    config = newConfig; // Update local ref
+
+    // Apply specific changes dynamically
+    if (req.body.sync) {
+      if (newConfig.sync.enabled && !syncScheduler['isRunning']) {
+         // If enabled and not running, start
+         // Re-init provider if remote url changed?
+         if (req.body.sync.remoteUrl) await syncProvider.init(newConfig.sync.remoteUrl);
+         syncScheduler.start(); // TODO: Update interval if changed
+      } else if (!newConfig.sync.enabled) {
+         syncScheduler.stop();
+      }
+    }
+    
+    // Note: Deep reconfiguration (e.g. port change, model change) might require restart.
+    // For now we just return the new config.
+    return { ok: true, config: newConfig, message: 'Config updated. Some changes may require restart.' };
+  } catch (err: any) {
+    server.log.error(err);
+    reply.code(500);
+    return { ok: false, error: err.message };
+  }
+});
+
 
 // 1. SAVE Endpoint
 server.post('/save', {
@@ -199,7 +256,10 @@ server.get('/export/context', {
 
 const start = async () => {
   try {
-    await server.listen({ port: 3000, host: '0.0.0.0' });
+    const port = config.server.port;
+    const host = config.server.host;
+    await server.listen({ port, host });
+    console.log(`Server listening on ${host}:${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
