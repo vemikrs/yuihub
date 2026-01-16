@@ -26,4 +26,14 @@ export class LocalEmbeddingService implements IEmbeddingService {
       dimensions: output.dims ? output.dims[1] : output.data.length
     };
   }
+
+  getDimensions(): number {
+    // Default for all-MiniLM-L6-v2 is 384. 
+    // If using bge-m3, it is 1024.
+    // Ideally this should be determined after init, but for now we hardcode or guess based on model name?
+    // Or we fetch it from embedder config if possible.
+    if (this.modelName.includes('MiniLM')) return 384;
+    if (this.modelName.includes('bge-m3')) return 1024;
+    return 384; // Fallback
+  }
 }

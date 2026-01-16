@@ -14,6 +14,7 @@ import { SyncScheduler } from './sync/scheduler.js';
 import { ConfigService } from './config/service.js';
 import { AppConfigSchema, AppConfigUpdateSchema } from './config/schema.js';
 import { LocalEmbeddingService } from './engine/embeddings/local-service.js';
+import { AIProviderRegistry } from './engine/ai/registry.js';
 import path from 'path';
 import fs from 'fs-extra';
 import { randomUUID } from 'crypto';
@@ -37,8 +38,11 @@ const STORAGE_VERSION = '1.0.0-rc1';
 const configService = new ConfigService(DATA_DIR);
 let config = configService.get();
 
-// 2. Dependency Injection
-const embeddingService = new LocalEmbeddingService(config.ai.modelName);
+// 2. Initialize AI Registry & Services
+const aiRegistry = new AIProviderRegistry(config.ai);
+const embeddingService = await aiRegistry.getEmbeddingService();
+console.log(`[AI] Embedding Service initialized: ${embeddingService.constructor.name} (${embeddingService.getDimensions()}d)`);
+
 const vectorStore = new VectorStore(DATA_DIR, embeddingService);
 const indexer = new Indexer(vectorStore);
 const watcher = new SafeWatcher(indexer);

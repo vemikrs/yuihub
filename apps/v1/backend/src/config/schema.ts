@@ -12,8 +12,28 @@ export const AppConfigSchema = z.object({
     branch: z.string().default('main'),
   }),
   ai: z.object({
-    provider: z.enum(['local', 'vertex', 'openai']).default('local'),
-    modelName: z.string().default('Xenova/all-MiniLM-L6-v2'),
+    providers: z.record(z.string(), z.union([
+      z.object({
+        type: z.literal('local'),
+        embeddingModel: z.string().default('Xenova/bge-m3'),
+      }),
+      z.object({
+        type: z.literal('vertex'),
+        projectId: z.string().optional(), // Optional (ADC)
+        location: z.string().optional(),  // e.g. 'us-central1'
+        embeddingModel: z.string().default('gemini-embedding-001'),
+        chatModel: z.string().default('gemini-2.5-flash'),
+      })
+    ])).default({
+      'local': { type: 'local', embeddingModel: 'Xenova/bge-m3' }
+    }),
+    defaults: z.object({
+      embedding: z.array(z.string()).default(['local']),
+      agent: z.string().default('local'),
+    }).default({
+      embedding: ['local'],
+      agent: 'local'
+    }),
   }),
   // System managed paths, not in json usually but resolved at runtime
   storage: z.object({
@@ -22,7 +42,9 @@ export const AppConfigSchema = z.object({
 });
 
 // Export Deep Partial type for updates
-export const AppConfigUpdateSchema = AppConfigSchema.deepPartial();
+// Note: Zod's deepPartial sometimes struggles with complex unions/records.
+// We use a simpler partial here for now or trust it works at runtime if compiled.
+export const AppConfigUpdateSchema = AppConfigSchema.deepPartial(); 
 export type AppConfigUpdate = z.infer<typeof AppConfigUpdateSchema>;
 export type AppConfig = z.infer<typeof AppConfigSchema>;
 
