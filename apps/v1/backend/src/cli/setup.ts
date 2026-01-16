@@ -4,6 +4,8 @@ import path from 'path';
 import { simpleGit } from 'simple-git';
 import { ConfigService } from '../config/service.js';
 
+import os from 'os';
+
 // Setup Wizard
 async function runSetup() {
   console.log('🤖 YuiHub V1 Setup Wizard 🤖');
@@ -13,7 +15,7 @@ async function runSetup() {
       type: 'input',
       name: 'dataDir',
       message: 'Where should we store your data (DATA_DIR)?',
-      default: process.env.DATA_DIR || path.join(process.cwd(), 'yuihub-data'),
+      default: process.env.DATA_DIR || path.join(os.homedir(), '.yuihub-v1'),
     },
     {
       type: 'list',

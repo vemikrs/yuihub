@@ -1,5 +1,5 @@
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
-import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
 import rateLimit from '@fastify/rate-limit';
 import bearerAuth from '@fastify/bearer-auth';
 import z from 'zod';
@@ -17,10 +17,11 @@ import { LocalEmbeddingService } from './engine/embeddings/local-service.js';
 import path from 'path';
 import fs from 'fs-extra';
 import { randomUUID } from 'crypto';
+import os from 'os';
 
 const server = Fastify({
   logger: true
-});
+}).withTypeProvider<ZodTypeProvider>();
 
 // Zod Type Provider Setup
 server.setValidatorCompiler(validatorCompiler);
@@ -28,7 +29,9 @@ server.setSerializerCompiler(serializerCompiler);
 
 // --- Config & Engine Setup ---
 const workspaceRoot = path.resolve(process.cwd(), '../../../'); 
-const DATA_DIR = process.env.DATA_DIR || './'; // Base DB location
+const DEFAULT_DATA_DIR = path.join(os.homedir(), '.yuihub-v1');
+const DATA_DIR = process.env.DATA_DIR || DEFAULT_DATA_DIR;
+// Base DB location
 
 // 1. Initialize Config Service
 const configService = new ConfigService(DATA_DIR);
@@ -146,15 +149,16 @@ server.patch('/system/config', {
   }
 }, async (req: FastifyRequest<{ Body: ConfigUpdateType }>, reply) => {
   try {
-    const newConfig = await configService.update(req.body);
+    const body = req.body as ConfigUpdateType; 
+    const newConfig = await configService.update(body);
     config = newConfig; // Update local ref
 
     // Apply specific changes dynamically
-    if (req.body.sync) {
+    if (body.sync) {
       if (newConfig.sync.enabled && !syncScheduler['isRunning']) {
          // If enabled and not running, start
          // Re-init provider if remote url changed?
-         if (req.body.sync.remoteUrl) await syncProvider.init(newConfig.sync.remoteUrl);
+         if (body.sync.remoteUrl) await syncProvider.init(newConfig.sync.remoteUrl);
          syncScheduler.start(); // TODO: Update interval if changed
       } else if (!newConfig.sync.enabled) {
          syncScheduler.stop();
