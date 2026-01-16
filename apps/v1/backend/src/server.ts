@@ -41,9 +41,36 @@ const watcher = new SafeWatcher(indexer);
 const syncProvider = new GitHubSyncProvider(DATA_DIR);
 const syncScheduler = new SyncScheduler(syncProvider, '*/5 * * * *'); // Every 5 min
 
-// ... (Security & Plugins omitted in replacement if not changing, but showing context)
+// --- API Schema ---
+const SaveBodySchema = z.object({
+  entries: z.array(z.object({
+    id: z.string().optional(),
+    text: z.string(),
+    mode: z.enum(['private', 'public']),
+    tags: z.array(z.string()).optional(),
+    session_id: z.string().optional(),
+    source: z.string().optional()
+  }))
+});
+
+const SearchQuerySchema = z.object({
+  q: z.string(),
+  limit: z.coerce.number().optional().default(10),
+  tag: z.string().optional(),
+  session: z.string().optional()
+});
+
+const ExportQuerySchema = z.object({
+  q: z.string().optional(), // Intent
+  session: z.string().optional()
+});
+
+type SaveBodyType = z.infer<typeof SaveBodySchema>;
+type SearchQueryType = z.infer<typeof SearchQuerySchema>;
+type ExportQueryType = z.infer<typeof ExportQuerySchema>;
 
 // --- Lifecycle ---
+
 server.addHook('onReady', async () => {
   server.log.info('Initializing Engine...');
   await vectorStore.init();
