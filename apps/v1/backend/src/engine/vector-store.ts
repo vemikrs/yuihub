@@ -42,10 +42,12 @@ export class LanceVectorStore implements IVectorStore {
     for (const entry of entries) {
       const output = await this.embedder.embed(entry.text);
       
+      // Serialize tags array to JSON string to avoid Arrow type inference issues
+      const baseEntry = toLanceEntryBase(entry);
       data.push({
-        ...toLanceEntryBase(entry),
+        ...baseEntry,
         vector: output.data
-      });
+      } as any);
     }
 
     if (data.length === 0) return;

@@ -5,7 +5,7 @@ export interface SearchResult {
   text: string;
   score: number; // Normalized score or distance
   mode: string;
-  tags: string[];
+  tags: string; // JSON stringified array
   session_id: string;
   source: string;
   date: string;

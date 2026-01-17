@@ -23,7 +23,7 @@ describe('schema.ts', () => {
       expect(result.id).toBe('test-123');
       expect(result.text).toBe('Test content');
       expect(result.mode).toBe('private');
-      expect(result.tags).toEqual(['tag1', 'tag2']);
+      expect(result.tags).toBe('["tag1","tag2"]');
       expect(result.session_id).toBe('session-abc');
       expect(result.source).toBe('/path/to/file.md');
       expect(result.date).toBe('2026-01-18T00:00:00Z');
@@ -43,7 +43,7 @@ describe('schema.ts', () => {
 
       const result = toLanceEntryBase(entry);
 
-      expect(result.tags).toEqual([]);
+      expect(result.tags).toBe('[]');
       expect(result.session_id).toBe('');
       expect(result.source).toBe('');
     });
@@ -61,7 +61,7 @@ describe('schema.ts', () => {
 
       const result = toLanceEntryBase(entry);
 
-      expect(result.tags).toEqual([]);
+      expect(result.tags).toBe('[]');
       expect(result.session_id).toBe('');
       expect(result.source).toBe('');
     });
