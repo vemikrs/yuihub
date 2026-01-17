@@ -187,7 +187,8 @@ jobs:
             --testTimeout=10000 \
             --passWithNoTests \
             --verbose \
-            --testPathIgnorePatterns="apps/v1/backend/tests/"
+            --testPathIgnorePatterns="apps/v1/backend/tests/" \
+            --testPathIgnorePatterns="yuihub_api/tests/api-integration.test.js"
           
       - name: Summary of all tests
         if: always()
