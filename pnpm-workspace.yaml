@@ -1,0 +1,4 @@
+packages:
+  - "apps/v1/*"
+  - "apps/vscode-client"
+  - "packages/*"

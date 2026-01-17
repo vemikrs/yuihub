@@ -3,22 +3,18 @@
   "version": "0.2.1",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": "^22.0.0"
   },
-  "workspaces": [
-    "apps/v1/*",
-    "apps/vscode-client",
-    "packages/*"
-  ],
   "scripts": {
-    "test": "npm run test:v1",
-    "test:v1": "npm test --workspace=@yuihub/v1-backend",
-    "build:core": "npm run build --workspace=@yuihub/core",
-    "build:backend": "npm run build --workspace=@yuihub/v1-backend",
-    "build:client": "npm run build --workspace=yuihub-copilot-chat",
-    "build:all-v1": "npm run build:core && npm run build:backend && npm run build:client",
-    "build-all": "npm run build:all-v1"
+    "test": "pnpm run test:v1",
+    "test:v1": "pnpm --filter @yuihub/v1-backend test",
+    "build:core": "pnpm --filter @yuihub/core build",
+    "build:backend": "pnpm --filter @yuihub/v1-backend build",
+    "build:client": "pnpm --filter yuihub-copilot-chat build",
+    "build:all-v1": "pnpm build:core && pnpm build:backend && pnpm build:client",
+    "build-all": "pnpm build:all-v1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
