@@ -14,7 +14,6 @@ function createMockVectorStore(): IVectorStore {
     search: vi.fn().mockResolvedValue([]),
     deleteBySource: vi.fn().mockResolvedValue(0),
     isEmpty: vi.fn().mockResolvedValue(true),
-    getStats: vi.fn().mockResolvedValue({ documentCount: 0, vectorDimension: 1024 }),
   };
 }
 
