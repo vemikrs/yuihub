@@ -41,10 +41,9 @@ export const AppConfigSchema = z.object({
   }).optional(), 
 });
 
-// Export Deep Partial type for updates
-// Note: Zod's deepPartial sometimes struggles with complex unions/records.
-// We use a simpler partial here for now or trust it works at runtime if compiled.
-export const AppConfigUpdateSchema = AppConfigSchema.deepPartial(); 
+// Export Partial type for updates
+// Note: Using .partial() as deepPartial() is not available in all Zod versions.
+export const AppConfigUpdateSchema = AppConfigSchema.partial(); 
 export type AppConfigUpdate = z.infer<typeof AppConfigUpdateSchema>;
 export type AppConfig = z.infer<typeof AppConfigSchema>;
 
