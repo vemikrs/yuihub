@@ -14,8 +14,15 @@ export default {
   testMatch: [
     '**/tests/**/*.test.js',
     '**/__tests__/**/*.test.js',
+  ],
+  
+  // 除外パターン
+  testPathIgnorePatterns: [
+    '/node_modules/',
     // Standalone E2E scripts (not Jest tests)
-    '!**/yuihub_api/tests/api-integration.test.js',
+    'yuihub_api/tests/api-integration.test.js',
+    // v1 backend E2E tests are Vitest-only (uses TypeScript)
+    'apps/v1/backend/tests/',
   ],
   
   // カバレッジ設定
