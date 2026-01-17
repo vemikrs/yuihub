@@ -8,7 +8,9 @@
     "dev": "npx tsx watch src/server.ts",
     "start": "node dist/server.js",
     "setup": "npx tsx src/cli/setup.ts",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "vitest run",
+    "test:e2e": "vitest run tests/e2e"
   },
   "dependencies": {
     "@fastify/bearer-auth": "^10.1.2",
@@ -43,6 +45,7 @@
     "@types/inquirer": "^9.0.9",
     "@types/node": "^22.0.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.17"
   }
 }
