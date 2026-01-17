@@ -1,8 +1,10 @@
 import { AppConfig } from '../../config/schema.js';
 import { IEmbeddingService } from '../embeddings/types.js';
+import { VertexEmbeddingService } from '../embeddings/vertex-service.js';
 import { IGenAIService } from './types.js';
 import { LocalEmbeddingService } from '../embeddings/local-service.js';
-// We will import Vertex services later
+import { VertexGenAIService } from './vertex-genai-service.js';
+
 
 export class AIProviderRegistry {
   private config: AppConfig['ai'];
@@ -30,8 +32,7 @@ export class AIProviderRegistry {
     if (providerConfig.type === 'local') {
       service = new LocalEmbeddingService(providerConfig.embeddingModel);
     } else if (providerConfig.type === 'vertex') {
-      // Stub for now
-      throw new Error('Vertex Embedding Service not implemented yet');
+       service = new VertexEmbeddingService(providerConfig);
     } else {
       throw new Error(`Unknown provider type: ${(providerConfig as any).type}`);
     }
@@ -79,9 +80,7 @@ export class AIProviderRegistry {
         throw new Error('Local GenAI Service (Ollama) not implemented yet');
         // service = new LocalGenAIService(); 
     } else if (providerConfig.type === 'vertex') {
-        // Stub
-         throw new Error('Vertex GenAI Service not implemented yet');
-         // service = new VertexGenAIService(providerConfig);
+         service = new VertexGenAIService(providerConfig);
     } else {
         throw new Error(`Unknown provider type: ${(providerConfig as any).type}`);
     }
