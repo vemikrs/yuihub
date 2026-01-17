@@ -26,10 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
           
       - name: Install all dependencies (workspace-aware)
-        run: npm ci
+        run: pnpm install --frozen-lockfile
           
       - name: Setup environment files
         run: |
@@ -40,7 +42,7 @@ jobs:
           
       - name: Start API server in background (workspace context)
         run: |
-          timeout 30s npm run start:api &
+          timeout 30s pnpm start:api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
           sleep 10  # Give server time to start
