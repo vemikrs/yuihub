@@ -1,7 +1,7 @@
 /**
  * AgentContext - Manages working memory and session state for the Agent loop
  */
-import { Checkpoint, Session } from '@yuihub/core';
+import { Checkpoint } from '@yuihub/core';
 import fs from 'fs-extra';
 import path from 'path';
 import { ulid } from 'ulid';

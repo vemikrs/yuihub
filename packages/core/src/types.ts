@@ -1,6 +1,6 @@
 /**
  * YuiHub V1 Core Types
- * Based on docs/specs/glossary.md and docs/specs/schemas/context.packet.yaml
+ * Based on docs/specs/glossary.md and docs/specs/schemas/context_packet.yaml
  */
 
 export type YuiHubMode = 'private' | 'public';
