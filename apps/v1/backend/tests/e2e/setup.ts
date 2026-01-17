@@ -5,7 +5,6 @@
 import { mkdtemp, rm, mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import Fastify from 'fastify';
 
 export interface TestEnv {
   DATA_DIR: string;

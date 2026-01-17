@@ -2,7 +2,7 @@
  * Scenario A: Data Flow Tests
  * Tests: Save → Index → Search pipeline
  */
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createTestEnv, createTestNote, waitFor, TestEnv } from './setup.js';
 import { LanceVectorStore } from '../../src/engine/vector-store.js';
 import { LocalEmbeddingService } from '../../src/engine/embeddings/local-service.js';

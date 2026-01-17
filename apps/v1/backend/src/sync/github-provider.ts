@@ -1,4 +1,4 @@
-import { simpleGit, SimpleGit, GitError } from 'simple-git';
+import { simpleGit, SimpleGit } from 'simple-git';
 import fs from 'fs-extra';
 import { ISyncProvider } from '@yuihub/core';
 import path from 'path';

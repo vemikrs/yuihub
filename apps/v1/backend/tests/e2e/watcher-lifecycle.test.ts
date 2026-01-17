@@ -5,7 +5,7 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createTestEnv, waitFor, TestEnv } from './setup.js';
-import { writeFile, rm } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { LanceVectorStore } from '../../src/engine/vector-store.js';
 import { LocalEmbeddingService } from '../../src/engine/embeddings/local-service.js';

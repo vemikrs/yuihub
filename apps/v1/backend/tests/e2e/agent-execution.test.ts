@@ -4,8 +4,8 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createTestEnv, TestEnv } from './setup.js';
-import { Agent, AgentConfig } from '../../src/engine/agent/core.js';
-import { IGenAIService, GenAIResult, ToolCall } from '../../src/engine/ai/types.js';
+import { Agent } from '../../src/engine/agent/core.js';
+import { IGenAIService, GenAIResult } from '../../src/engine/ai/types.js';
 import { ToolDef } from '../../src/engine/ai/tools.js';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
