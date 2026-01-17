@@ -20,10 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false || github.event_name == 'push'
     timeout-minutes: 10
-    
-    defaults:
-      run:
-        working-directory: apps/v1/backend
 
     steps:
       - name: Checkout code
@@ -34,8 +30,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           
-      - name: Install dependencies
+      - name: Install dependencies (root + workspaces)
         run: npm ci
         
       - name: Run Vitest tests
         run: npm test
+        working-directory: apps/v1/backend
