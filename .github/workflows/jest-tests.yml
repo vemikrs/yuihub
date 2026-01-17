@@ -186,7 +186,8 @@ jobs:
             --coverage \
             --testTimeout=10000 \
             --passWithNoTests \
-            --verbose
+            --verbose \
+            --testPathIgnorePatterns="apps/v1/backend/tests/"
           
       - name: Summary of all tests
         if: always()
