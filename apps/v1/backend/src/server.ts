@@ -306,7 +306,56 @@ server.get('/export/context', {
 });
 
 
+// 5. AGENT Endpoint
+import { Agent } from './engine/agent/core.js';
+import { LiveContextService } from './engine/agent/live-context.js';
+
+const liveContextService = new LiveContextService();
+watcher.onActivity((path, type) => liveContextService.addEvent(type, path));
+
+const AgentPromptSchema = z.object({
+  prompt: z.string(),
+  context: z.string().optional()
+});
+type AgentPromptType = z.infer<typeof AgentPromptSchema>;
+
+server.post('/agent', {
+  schema: {
+    body: AgentPromptSchema
+  }
+}, async (req: FastifyRequest<{ Body: AgentPromptType }>, reply) => {
+  const { prompt, context } = req.body;
+  
+  try {
+      const providerId = config.ai.defaults.agent;
+      const genAIService = await aiRegistry.getGenAIService(providerId);
+      
+      // Generate or retrieve session ID
+      // For now, use a new session per request or extract from headers
+      const sessionId = req.headers['x-session-id'] as string || randomUUID();
+      
+      const agent = new Agent({
+          genAI: genAIService,
+          rootDir: workspaceRoot,
+          sessionId: sessionId,
+          vectorStore: vectorStore,
+          dataDir: DATA_DIR
+      });
+      
+      const fullContext = (context || '') + '\n\n' + liveContextService.getSnapshot();
+      
+      const answer = await agent.run(prompt, fullContext);
+      return { ok: true, answer, session_id: sessionId };
+  } catch (err: any) {
+      server.log.error(err);
+      reply.code(500);
+      return { ok: false, error: err.message };
+  }
+});
+
+
 const start = async () => {
+
   try {
     const port = config.server.port;
     const host = config.server.host;
