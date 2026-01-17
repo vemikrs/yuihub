@@ -77,7 +77,7 @@ async function setupNewVault(dataDir: string) {
     }]);
     
     await git.addRemote('origin', remoteUrl);
-    await configService.update({ sync: { enabled: true, remoteUrl } });
+    await configService.update({ sync: { enabled: true, remoteUrl, interval: '*/5 * * * *', branch: 'main' } });
     console.log('🔗 Remote configured.');
   }
 }
@@ -114,7 +114,7 @@ async function setupExistingVault(dataDir: string) {
 
   // Update Config to match
   const configService = new ConfigService(dataDir);
-  await configService.update({ sync: { enabled: true, remoteUrl } });
+  await configService.update({ sync: { enabled: true, remoteUrl, interval: '*/5 * * * *', branch: 'main' } });
   
   // Note: Initial Indexing will happen on server startup automatically
   console.log('💡 Note: Search Index will be rebuilt when you start the server.');

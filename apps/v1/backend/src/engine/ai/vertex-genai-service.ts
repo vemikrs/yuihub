@@ -44,9 +44,10 @@ export class VertexGenAIService implements IGenAIService {
       // Map ToolDef to Vertex AI FunctionDeclaration
       // Vertex AI expects { functionDeclarations: [...] } inside 'tools'
       const functionDeclarations = tools.map(t => {
-        const jsonSchema = zodToJsonSchema(t.parameters);
+        // Cast to any to avoid TypeScript infinite type instantiation error
+        const jsonSchema = zodToJsonSchema(t.parameters as any) as Record<string, any>;
         // Clean up schema for Vertex (remove $schema property)
-        delete (jsonSchema as any).$schema;
+        delete jsonSchema.$schema;
 
         return {
           name: t.name,
