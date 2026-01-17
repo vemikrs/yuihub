@@ -19,17 +19,32 @@ export class CompositeVectorStore implements IVectorStore {
   }
 
   async add(entries: Entry[]): Promise<void> {
-    // Fan-out write
-    // TODO: Error handling strategy (partial fail vs all fail).
-    // For now, if one fails, we throw. 
-    await Promise.all(this.stores.map(s => s.add(entries)));
+    // Fan-out write with error collection
+    const errors: Error[] = [];
+    await Promise.all(this.stores.map(async s => {
+      try {
+        await s.add(entries);
+      } catch (e) {
+        console.error(`[CompositeVectorStore] add failed for store:`, e);
+        errors.push(e as Error);
+      }
+    }));
+    // If all stores failed, throw
+    if (errors.length === this.stores.length) {
+      throw new Error('All stores failed to add entries');
+    }
   }
 
   async isEmpty(): Promise<boolean> {
-    // If ANY is empty? Or ALL? 
-    // Usually if primary is empty. Let's return true if all are empty.
+    // Return true if all stores are empty
     const results = await Promise.all(this.stores.map(s => s.isEmpty()));
     return results.every(r => r === true);
+  }
+
+  async deleteBySource(source: string): Promise<number> {
+    // Fan-out delete and sum results
+    const counts = await Promise.all(this.stores.map(s => s.deleteBySource(source)));
+    return counts.reduce((sum, c) => sum + c, 0);
   }
 
   async search(query: string, limit: number = 10, filter?: { tag?: string; session?: string }): Promise<SearchResult[]> {
@@ -63,3 +78,4 @@ export class CompositeVectorStore implements IVectorStore {
     return sortedIds.map(id => docMap.get(id)!);
   }
 }
+

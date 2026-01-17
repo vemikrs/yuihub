@@ -22,13 +22,41 @@ export class SafeWatcher {
 
     this.watcher
       .on('add', this.handleFileChange.bind(this))
-      .on('change', this.handleFileChange.bind(this));
-      // .on('unlink', ...) TODO
+      .on('change', this.handleFileChange.bind(this))
+      .on('unlink', this.handleFileDelete.bind(this));
     
     console.log(`[Watcher] Started watching: ${paths}`);
   }
 
+  private callbacks: ((path: string, type: 'change' | 'add' | 'unlink') => void)[] = [];
+
+  onActivity(cb: (path: string, type: 'change' | 'add' | 'unlink') => void) {
+    this.callbacks.push(cb);
+  }
+
+  private handleFileDelete(filePath: string) {
+    console.log(`[Watcher] File deleted: ${filePath}`);
+    this.callbacks.forEach(cb => cb(filePath, 'unlink'));
+    
+    // Cancel any pending debounced handler for this file
+    const handler = this.debouncedHandlers.get(filePath);
+    if (handler) {
+      handler.cancel();
+      this.debouncedHandlers.delete(filePath);
+    }
+    
+    // Enqueue delete job
+    this.indexer.enqueueDelete(filePath);
+  }
+
   private handleFileChange(filePath: string) {
+    // Notify listeners immediately (or debounced?)
+    // Live Context prefers immediate or distinct? 
+    // Let's use debounced for indexing, but maybe immediate for "activity log"?
+    // The current logic debounces indexing. 
+    // Let's notify listeners here (immediate activity).
+    this.callbacks.forEach(cb => cb(filePath, 'change'));
+
     if (!this.debouncedHandlers.has(filePath)) {
       // Create debounced handler per file
       const handler = lodash.debounce((path: string) => {

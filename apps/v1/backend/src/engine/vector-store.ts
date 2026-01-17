@@ -97,5 +97,21 @@ export class LanceVectorStore implements IVectorStore {
       return true;
     }
   }
+
+  async deleteBySource(source: string): Promise<number> {
+    if (!this.table) return 0;
+    try {
+      // LanceDB delete API - returns void, we count before/after
+      const countBefore = await this.table.countRows();
+      // Escape single quotes in source path
+      const escapedSource = source.replace(/'/g, "''");
+      await this.table.delete(`source = '${escapedSource}'`);
+      const countAfter = await this.table.countRows();
+      return countBefore - countAfter;
+    } catch (e) {
+      console.error(`[LanceVectorStore] deleteBySource failed for ${source}:`, e);
+      return 0;
+    }
+  }
 }
 

@@ -8,6 +8,7 @@ import { IVectorStore } from './vector-store-types.js';
 
 interface IndexJob {
   filePath: string;
+  type: 'index' | 'delete';
 }
 
 export class Indexer {
@@ -23,22 +24,28 @@ export class Indexer {
   }
 
   async enqueue(filePath: string) {
-    // Simple deduplication can be added here if needed, 
-    // but fastq processes linearly so pushing same file twice just queues it twice.
-    // Given debounce in Watcher, this shouldn't happen often.
-    return this.queue.push({ filePath });
+    return this.queue.push({ filePath, type: 'index' });
+  }
+
+  async enqueueDelete(filePath: string) {
+    return this.queue.push({ filePath, type: 'delete' });
   }
 
   private async worker(job: IndexJob): Promise<void> {
-    const { filePath } = job;
+    const { filePath, type } = job;
     
     // Acquire Global Lock (Wait for API /save)
     const release = await globalMutex.acquire();
     try {
+      if (type === 'delete') {
+        await this.handleDelete(filePath);
+        return;
+      }
+      
       console.log(`[Indexer] Processing ${filePath}`);
       if (!await fs.pathExists(filePath)) {
-        console.log(`[Indexer] File deleted: ${filePath}`);
-        // Handle deletion (remove from vector) - TODO
+        console.log(`[Indexer] File no longer exists: ${filePath}`);
+        await this.handleDelete(filePath);
         return;
       }
 
@@ -52,11 +59,7 @@ export class Indexer {
       const chunks = await this.chunker.chunk(content, lang);
       
       const entries: Entry[] = chunks.map(c => ({
-        id: '', // Should be deterministic based on content+path or ulid? Re-indexing needs stable ID or delete-and-insert logic.
-        // For V1 MVP, assuming append-only or simple rebuild. 
-        // Ideally should generate ID from file path + chunk metadata (e.g. function name)
-        // or clear previous entries for this file.
-        // TODO: Implement "Clear entries by Source" logic in VectorStore.
+        id: '', // Generated on insert
         mode: 'private', 
         date: new Date().toISOString(),
         text: c.text,
@@ -66,7 +69,12 @@ export class Indexer {
         }
       }));
 
-      // TODO: Delete old entries for this source
+      // Delete old entries for this source before adding new ones
+      const deleted = await this.vectorStore.deleteBySource(filePath);
+      if (deleted > 0) {
+        console.log(`[Indexer] Removed ${deleted} old entries for ${filePath}`);
+      }
+      
       await this.vectorStore.add(entries);
       console.log(`[Indexer] Indexed ${entries.length} chunks from ${filePath}`);
 
@@ -76,4 +84,10 @@ export class Indexer {
       release();
     }
   }
+
+  private async handleDelete(filePath: string): Promise<void> {
+    const deleted = await this.vectorStore.deleteBySource(filePath);
+    console.log(`[Indexer] Deleted ${deleted} entries for removed file: ${filePath}`);
+  }
 }
+

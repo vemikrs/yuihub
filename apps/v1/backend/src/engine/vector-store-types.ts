@@ -18,4 +18,6 @@ export interface IVectorStore {
   add(entries: Entry[]): Promise<void>;
   search(query: string, limit?: number, filter?: { tag?: string; session?: string }): Promise<SearchResult[]>;
   isEmpty(): Promise<boolean>;
+  deleteBySource(source: string): Promise<number>; // Returns count of deleted rows
 }
+
