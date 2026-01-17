@@ -18,6 +18,8 @@ import path from 'path';
 import fs from 'fs-extra';
 import { randomUUID } from 'crypto';
 import os from 'os';
+import { ulid } from 'ulid';
+import { initAuth } from './auth.js';
 
 const server = Fastify({
   logger: true
@@ -64,8 +66,10 @@ const watcher = new SafeWatcher(indexer);
 const syncProvider = new GitHubSyncProvider(DATA_DIR);
 const syncScheduler = new SyncScheduler(syncProvider, config.sync.interval);
 
-// --- Security ---
-const AUTH_TOKEN = process.env.YUIHUB_TOKEN || 'dev-token';
+// --- Security (File-based Handshake) ---
+const authData = await initAuth(DATA_DIR);
+const AUTH_TOKEN = process.env.YUIHUB_TOKEN || authData.token;
+console.log(`[Auth] Token initialized (file-based handshake)`);
 
 server.register(rateLimit, {
   max: 100,
@@ -276,7 +280,62 @@ server.post('/trigger', async (req, reply) => {
   return { ok: true, ref: 'mock-private-ref', status: 'ignored_in_private_mode' };
 });
 
-// 4. EXPORT CONTEXT Endpoint
+// --- MCP Support Endpoints ---
+
+// 3.1 THREADS/NEW - Create new session
+const ThreadsNewSchema = z.object({
+  title: z.string().optional()
+});
+type ThreadsNewType = z.infer<typeof ThreadsNewSchema>;
+
+server.post('/threads/new', {
+  schema: { body: ThreadsNewSchema }
+}, async (req: FastifyRequest<{ Body: ThreadsNewType }>, reply) => {
+  const { title } = req.body;
+  
+  const session = {
+    id: `th-${ulid()}`,
+    title: title || `Session ${new Date().toLocaleDateString()}`,
+    created_at: new Date().toISOString()
+  };
+  
+  return { ok: true, session };
+});
+
+// 3.2 CHECKPOINTS - Create decision checkpoint
+const CheckpointSchema = z.object({
+  session_id: z.string(),
+  summary: z.string(),
+  intent: z.string(),
+  working_memory: z.record(z.unknown()).optional(),
+  entry_ids: z.array(z.string()).optional()
+});
+type CheckpointType = z.infer<typeof CheckpointSchema>;
+
+server.post('/checkpoints', {
+  schema: { body: CheckpointSchema }
+}, async (req: FastifyRequest<{ Body: CheckpointType }>, reply) => {
+  const { session_id, summary, intent, working_memory, entry_ids } = req.body;
+  
+  const checkpoint = {
+    id: `cp-${ulid()}`,
+    session_id,
+    snapshot: {
+      working_memory: JSON.stringify(working_memory || {}),
+      decision_rationale: summary
+    },
+    intent,
+    entry_ids: entry_ids || [],
+    created_at: new Date().toISOString()
+  };
+  
+  // Persist checkpoint
+  const checkpointDir = path.join(DATA_DIR, 'checkpoints');
+  await fs.ensureDir(checkpointDir);
+  await fs.writeJson(path.join(checkpointDir, `${checkpoint.id}.json`), checkpoint, { spaces: 2 });
+  
+  return { ok: true, checkpoint };
+});
 server.get('/export/context', {
   schema: {
     querystring: ExportQuerySchema

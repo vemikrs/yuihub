@@ -2,7 +2,7 @@ import z from 'zod';
 
 export const AppConfigSchema = z.object({
   server: z.object({
-    port: z.number().default(3000),
+    port: z.number().default(4182),
     host: z.string().default('0.0.0.0'),
   }),
   sync: z.object({
