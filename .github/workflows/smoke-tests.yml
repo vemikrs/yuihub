@@ -59,7 +59,7 @@ jobs:
       - name: Run smoke tests
         id: smoke_tests
         run: |
-          cd tests/smoke
+          cd apps/v0/tests/smoke
           chmod +x *.sh
           ./run-all-tests-ci.sh
         continue-on-error: false
@@ -77,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: smoke-test-results
-          path: tests/smoke/
+          path: apps/v0/tests/smoke/
           retention-days: 7
           
       - name: Comment PR with results
