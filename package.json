@@ -18,7 +18,9 @@
     "build:core": "npm run build --workspace=@yuihub/core",
     "build:backend": "npm run build --workspace=@yuihub/v1-backend",
     "build:client": "npm run build --workspace=yuihub-copilot-chat",
-    "build:all-v1": "npm run build:core && npm run build:backend && npm run build:client"
+    "build:all-v1": "npm run build:core && npm run build:backend && npm run build:client",
+    "build-all": "npm run build:all-v1",
+    "start:api": "node apps/v0/yuihub_api/src/server.js"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
