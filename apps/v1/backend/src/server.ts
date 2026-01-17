@@ -330,22 +330,16 @@ server.post('/agent', {
       const providerId = config.ai.defaults.agent;
       const genAIService = await aiRegistry.getGenAIService(providerId);
       
-      // Generate or retrieve session ID
-      // For now, use a new session per request or extract from headers
-      const sessionId = req.headers['x-session-id'] as string || randomUUID();
-      
       const agent = new Agent({
           genAI: genAIService,
           rootDir: workspaceRoot,
-          sessionId: sessionId,
-          vectorStore: vectorStore,
           dataDir: DATA_DIR
       });
       
       const fullContext = (context || '') + '\n\n' + liveContextService.getSnapshot();
       
       const answer = await agent.run(prompt, fullContext);
-      return { ok: true, answer, session_id: sessionId };
+      return { ok: true, answer };
   } catch (err: any) {
       server.log.error(err);
       reply.code(500);

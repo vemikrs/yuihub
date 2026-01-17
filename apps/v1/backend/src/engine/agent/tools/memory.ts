@@ -1,9 +1,6 @@
 import { ToolDef } from '../../ai/tools.js';
 import z from 'zod';
-import { AgentContext, CheckpointMetadata } from '../context.js';
-import { randomUUID } from 'crypto';
-import fs from 'fs-extra';
-import path from 'path';
+import { IAgentContext } from '../context.js';
 
 export const MemoryTools: ToolDef[] = [
   {
@@ -36,46 +33,23 @@ export const MemoryTools: ToolDef[] = [
   }
 ];
 
+// Memory tool implementations - require IAgentContext
 export const MemoryToolImplementations = {
-    create_checkpoint: async (args: { summary: string; intent: string }, context: AgentContext): Promise<string> => {
-        const checkpointId = randomUUID();
-        const timestamp = new Date().toISOString();
-        
-        const metadata: CheckpointMetadata = {
-            id: checkpointId,
-            session_id: context.sessionId,
-            summary: args.summary,
-            intent: args.intent,
-            timestamp,
-        };
-        
-        // Save checkpoint to file
-        const checkpointDir = path.join(context.dataDir, 'checkpoints');
-        await fs.ensureDir(checkpointDir);
-        const checkpointFile = path.join(checkpointDir, `${checkpointId}.json`);
-        await fs.writeJson(checkpointFile, metadata, { spaces: 2 });
-        
-        return `Checkpoint created: ${checkpointId} - "${args.summary}"`;
+    create_checkpoint: async (args: { summary: string; intent: string }, context: IAgentContext) => {
+        const checkpoint = await context.createCheckpoint(args.summary, args.intent);
+        return `Checkpoint created: ${checkpoint.id} | Intent: ${args.intent}`;
     },
-    
-    upsert_intent: async (args: { intent: string }, context: AgentContext): Promise<string> => {
-        context.workingMemory.set('current_intent', args.intent);
-        context.workingMemory.set('intent_updated_at', new Date().toISOString());
-        return `Intent updated to: "${args.intent}"`;
+    upsert_intent: async (args: { intent: string }, context: IAgentContext) => {
+        context.setIntent(args.intent);
+        return `Intent updated to: ${args.intent}`;
     },
-    
-    update_working_memory: async (args: { key: string; value: any }, context: AgentContext): Promise<string> => {
-        context.workingMemory.set(args.key, args.value);
+    update_working_memory: async (args: { key: string; value: unknown }, context: IAgentContext) => {
+        context.setWorkingMemory(args.key, args.value);
         return `Working memory updated: ${args.key} = ${JSON.stringify(args.value)}`;
     },
-    
-    get_current_packet: async (args: {}, context: AgentContext): Promise<string> => {
-        const packet = {
-            session_id: context.sessionId,
-            intent: context.workingMemory.get('current_intent') || 'No intent set',
-            working_memory: Object.fromEntries(context.workingMemory),
-            timestamp: new Date().toISOString()
-        };
+    get_current_packet: async (_args: Record<string, never>, context: IAgentContext) => {
+        const packet = context.getPacket();
         return JSON.stringify(packet, null, 2);
     }
 };
+
