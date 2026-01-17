@@ -190,13 +190,17 @@ server.patch('/system/config', {
 
     // Apply specific changes dynamically
     if (body.sync) {
-      if (newConfig.sync.enabled && !syncScheduler['isRunning']) {
+      if (newConfig.sync.enabled && !syncScheduler['isSchedulerActive']) {
          // If enabled and not running, start
          // Re-init provider if remote url changed?
          if (body.sync.remoteUrl) await syncProvider.init(newConfig.sync.remoteUrl);
-         syncScheduler.start(); // TODO: Update interval if changed
+         syncScheduler.start();
       } else if (!newConfig.sync.enabled) {
          syncScheduler.stop();
+      }
+      // Update interval if changed
+      if (body.sync.interval) {
+         syncScheduler.updateInterval(newConfig.sync.interval);
       }
     }
     

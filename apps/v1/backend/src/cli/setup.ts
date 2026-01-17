@@ -96,9 +96,20 @@ async function setupExistingVault(dataDir: string) {
   }
 
   const { remoteUrl } = await inquirer.prompt([{
-    type: 'input', // TODO: paste validation
+    type: 'input',
     name: 'remoteUrl',
-    message: 'Enter Git Remote URL to Clone:'
+    message: 'Enter Git Remote URL to Clone:',
+    validate: (input: string) => {
+      if (!input || input.trim().length === 0) {
+        return 'URL is required';
+      }
+      // Basic Git URL validation (supports https://, git@, ssh://)
+      const gitUrlPattern = /^(https?:\/\/|git@|ssh:\/\/|git:\/\/).+/i;
+      if (!gitUrlPattern.test(input.trim())) {
+        return 'Please enter a valid Git URL (https://, git@, or ssh://)';
+      }
+      return true;
+    }
   }]);
 
   console.log('⬇️  Cloning from remote... (This may take a while)');

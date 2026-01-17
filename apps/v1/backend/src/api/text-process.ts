@@ -35,14 +35,22 @@ function isContentWord(term: string): boolean {
 
 export function extractTerms(text: string, limit: number = 10): string[] {
   const segments = segmenter.segment(text);
-  const uniqueTerms = new Set<string>();
+  const termFrequency = new Map<string, number>();
 
   for (const seg of segments) {
     if (isContentWord(seg)) {
-      uniqueTerms.add(seg);
+      termFrequency.set(seg, (termFrequency.get(seg) || 0) + 1);
     }
   }
 
-  // TODO: Frequency based sort?
-  return Array.from(uniqueTerms).slice(0, limit);
+  // Sort by frequency (descending) then alphabetically for ties
+  const sortedTerms = Array.from(termFrequency.entries())
+    .sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1]; // Higher frequency first
+      return a[0].localeCompare(b[0]); // Alphabetical for ties
+    })
+    .map(([term]) => term);
+
+  return sortedTerms.slice(0, limit);
 }
+
