@@ -4,6 +4,7 @@ import { VertexEmbeddingService } from '../embeddings/vertex-service.js';
 import { IGenAIService } from './types.js';
 import { LocalEmbeddingService } from '../embeddings/local-service.js';
 import { VertexGenAIService } from './vertex-genai-service.js';
+import { LocalGenAIService } from './local-genai-service.js';
 
 
 export class AIProviderRegistry {
@@ -77,8 +78,7 @@ export class AIProviderRegistry {
     let service: IGenAIService;
 
     if (providerConfig.type === 'local') {
-        throw new Error('Local GenAI Service (Ollama) not implemented yet');
-        // service = new LocalGenAIService(); 
+        service = new LocalGenAIService({});
     } else if (providerConfig.type === 'vertex') {
          service = new VertexGenAIService(providerConfig);
     } else {
