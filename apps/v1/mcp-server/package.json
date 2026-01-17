@@ -1,0 +1,32 @@
+{
+  "name": "@yuihub/mcp-server",
+  "version": "1.0.0",
+  "description": "YuiHub MCP Server - Protocol Adapter for Semantic Memory",
+  "type": "module",
+  "bin": {
+    "yuihub-mcp": "./dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "start:sse": "node dist/sse-server.js",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@yuihub/core": "workspace:*",
+    "zod": "^4.3.5",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  }
+}
