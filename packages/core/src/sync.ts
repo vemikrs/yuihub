@@ -1,11 +1,16 @@
 // Interface for Sync Layer
 // Pluggable provider for syncing local memory/data to external storage (e.g. GitHub, S3, etc.)
 
+/**
+ * Define specific provider names for better type safety
+ */
+export type SyncProviderName = 'github' | 's3' | 'local';
+
 export interface ISyncProvider {
   /**
    * Name of the provider (e.g. 'github')
    */
-  name: string;
+  name: SyncProviderName;
 
   /**
    * Push changes to remote

@@ -4,7 +4,7 @@ import { ISyncProvider } from '@yuihub/core';
 import path from 'path';
 
 export class GitHubSyncProvider implements ISyncProvider {
-  name = 'github';
+  readonly name = 'github' as const;
   private git: SimpleGit;
   private repoPath: string;
 
