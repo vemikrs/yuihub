@@ -1,11 +1,11 @@
 {
-  "name": "yuihub-copilot-chat",
-  "displayName": "YuiHub Copilot Chat (V1)",
+  "name": "yuihub-vscode-client",
+  "displayName": "YuiHub VSCode Client (V1)",
   "publisher": "ve",
   "version": "1.0.0",
-  "description": "YuiHub V1 Client: Connects to local YuiHub Engine for semantic memory and private agent execution.",
+  "description": "YuiHub VSCode Client: Connects to local YuiHub Engine for semantic memory and private agent execution.",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
@@ -17,7 +17,12 @@
   },
   "keywords": [
     "YuiHub",
+    "VSCode",
     "Copilot",
+    "Antigravity",
+    "Cursor",
+    "Agent",
+    "Memory",
     "Chat",
     "Context",
     "Packet"
@@ -107,10 +112,10 @@
     "@yuihub/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0",
-    "@types/node": "^20.0.0",
-    "esbuild": "^0.20.0",
+    "@types/vscode": "^1.108.1",
+    "@types/node": "^25.0.9",
+    "esbuild": "^0.27.2",
     "typescript": "^5.4.0",
-    "@vscode/vsce": "^2.24.0"
+    "@vscode/vsce": "^3.7.1"
   }
 }
