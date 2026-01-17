@@ -66,13 +66,18 @@
       "properties": {
         "yuihub.apiBaseUrl": {
           "type": "string",
-          "default": "http://localhost:3000",
+          "default": "http://localhost:4182",
           "description": "Base URL of the YuiHub API"
         },
         "yuihub.apiKey": {
           "type": "string",
           "default": "",
-          "description": "API Token (Optional in Private Mode)"
+          "description": "API Token (Optional - uses file-based token by default)"
+        },
+        "yuihub.useManagedAuth": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use file-based token from ~/.yuihub/.token"
         },
         "yuihub.searchLimit": {
           "type": "number",

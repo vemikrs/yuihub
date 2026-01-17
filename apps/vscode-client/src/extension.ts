@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
+import { readToken, getDefaultDataDir } from './auth.js';
 
 // --- Types ---
 type Health = { ok: boolean; version?: string; status?: string };
@@ -17,12 +18,16 @@ type SaveResponse = { ok: boolean; count: number }; // V1 API: { count: number }
 // --- Configuration Helper ---
 const SECRET_API_KEY = 'yuihub.apiKey';
 let secretToken: string | undefined;
+let fileToken: string | undefined;
 
 function cfg<T = string>(key: string): T {
   return vscode.workspace.getConfiguration().get<T>(key)!;
 }
 function baseUrl() { return cfg<string>('yuihub.apiBaseUrl').replace(/\/$/, ''); }
-function apiKey() { return secretToken || cfg<string>('yuihub.apiKey'); }
+function apiKey() { 
+  // Priority: Secret Storage > File-based Token > Settings
+  return secretToken || fileToken || cfg<string>('yuihub.apiKey'); 
+}
 
 // --- Logger ---
 const out = vscode.window.createOutputChannel('YuiHub');
@@ -102,6 +107,14 @@ class SearchResultsProvider implements vscode.TreeDataProvider<SearchHit> {
 // --- Main Activation ---
 export function activate(context: vscode.ExtensionContext) {
   log('Activating YuiHub Client V1...');
+
+  // File-based Token Init (read from ~/.yuihub/.token)
+  readToken().then(token => {
+    if (token) {
+      fileToken = token;
+      log('Loaded token from file-based handshake');
+    }
+  });
 
   // Secret Storage Init
   context.secrets.get(SECRET_API_KEY).then(v => secretToken = v);
@@ -214,9 +227,40 @@ export function activate(context: vscode.ExtensionContext) {
     await vscode.window.showTextDocument(doc, { preview: true });
   }));
 
-  // 6. Create Checkpoint (Decision Anchor) - Placeholder for Phase 2b
+  // 6. Create Checkpoint (Decision Anchor)
+  type CheckpointResponse = { ok: boolean; checkpoint: { id: string; session_id: string; created_at: string } };
+  
   context.subscriptions.push(vscode.commands.registerCommand('yuihub.createCheckpoint', async () => {
-     vscode.window.showInformationMessage('Checkpoint feature coming soon!');
+    // Get current session
+    const sessionId = context.workspaceState.get<string>('yuihub.sessionId');
+    if (!sessionId) {
+      vscode.window.showWarningMessage('No active session. Save something first to create a session.');
+      return;
+    }
+
+    // Get checkpoint details from user
+    const summary = await vscode.window.showInputBox({ 
+      prompt: 'Checkpoint Summary (decision/conclusion)',
+      placeHolder: 'e.g., Decided to use React for the frontend'
+    });
+    if (!summary) return;
+
+    const intent = await vscode.window.showInputBox({ 
+      prompt: 'Current Intent/Goal',
+      placeHolder: 'e.g., Building the user dashboard'
+    });
+    if (!intent) return;
+
+    try {
+      const res = await fetchApi<CheckpointResponse>('POST', '/checkpoints', {
+        session_id: sessionId,
+        summary,
+        intent
+      });
+      vscode.window.showInformationMessage(`Checkpoint created: ${res.checkpoint.id}`);
+    } catch {
+      // Error handled in fetchApi
+    }
   }));
 }
 
