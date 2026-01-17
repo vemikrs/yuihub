@@ -1,11 +1,14 @@
 import { ToolDef } from './tools.js'; // We will define this next
 
+export interface ToolCall {
+  name: string;
+  args: Record<string, any>;
+  id?: string;
+}
+
 export interface GenAIResult {
   text: string;
-  toolCalls?: {
-    name: string;
-    args: Record<string, any>;
-  }[];
+  toolCalls?: ToolCall[];
   usage?: {
     promptTokens: number;
     completionTokens: number;

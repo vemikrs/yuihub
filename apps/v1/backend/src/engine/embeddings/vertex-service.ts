@@ -1,42 +1,54 @@
 import { IEmbeddingService, EmbeddingOutput } from './types.js';
+import { VertexAI, GenerativeModel } from '@google-cloud/vertexai';
 
 export class VertexEmbeddingService implements IEmbeddingService {
-    private modelName: string = 'gemini-embedding-001';
-    private projectId?: string;
-    private location?: string;
+  private config: any;
+  private client: VertexAI | null = null;
+  private model: GenerativeModel | null = null;
 
-    constructor(modelName: string, projectId?: string, location?: string) {
-        this.modelName = modelName;
-        this.projectId = projectId;
-        this.location = location;
+  constructor(config: any) {
+    this.config = config;
+  }
+
+  async init(): Promise<void> {
+    if (!this.config.projectId || !this.config.location) {
+        if (!this.config.projectId) throw new Error("Vertex AI requires 'projectId' in config or env");
+        if (!this.config.location) throw new Error("Vertex AI requires 'location' in config or env");
     }
 
-    async init(): Promise<void> {
-        // Vertex AI client init would go here.
-        // For now, we rely on REST API or ADC environment variables.
-        // We might need to verify credentials or connection here.
-        // Stub: Just log
-        console.log(`[Vertex] Initializing Embedding Service for model: ${this.modelName} (Project: ${this.projectId || 'ADC'})`);
+    this.client = new VertexAI({
+        project: this.config.projectId,
+        location: this.config.location,
+    });
+    
+    // 'gemini-embedding-001' or user config
+    const modelName = this.config.embeddingModel || 'gemini-embedding-001';
+    this.model = this.client.getGenerativeModel({ model: modelName });
+
+    console.log(`[Vertex] Embedding Service Initialized: ${modelName} (${this.config.projectId}/${this.config.location})`);
+  }
+
+  async embed(text: string): Promise<EmbeddingOutput> {
+    if (!this.model) await this.init();
+    
+    // Cast to any to bypass TS error if embedContent is missing in type definition but present in runtime
+    // or if version mismatch.
+    const result = await (this.model as any).embedContent(text);
+    
+    // handling response structure
+    const embedding = result.embedding;
+    if (!embedding || !embedding.values) {
+        throw new Error('Vertex AI returned empty embedding');
     }
 
-    async embed(text: string): Promise<EmbeddingOutput> {
-         // Stub implementation for compilation first.
-         // Real implementation requires @google-cloud/aiplatform or fetch()
-         // We will throw for now or return a mock if needed for test, but throw is better to signal "not ready"
-         throw new Error('Vertex Embedding not yet fully implemented. Please implement API call.');
-         
-         /*
-         return {
-             data: [...],
-             dimensions: 768
-         };
-         */
-    }
+    return {
+      data: embedding.values, 
+      dimensions: embedding.values.length
+    };
+  }
 
-    getDimensions(): number {
-        // Known dimensions for Gemini models
-        if (this.modelName.includes('text-embedding-004')) return 768;
-        if (this.modelName.includes('gemini-embedding-001')) return 768;
-        return 768; // Default fallback
-    }
+  getDimensions(): number {
+    return 768; 
+  }
 }
+
