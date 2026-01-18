@@ -7,7 +7,7 @@ import { LanceVectorStore } from './engine/vector-store.js';
 import { CompositeVectorStore } from './engine/composite-vector-store.js';
 import { Indexer } from './engine/indexer.js';
 import { SafeWatcher } from './engine/watcher.js';
-import { globalMutex } from './engine/lock.js';
+import { withWriteLock, withReadLock, withRetry } from './engine/lock.js';
 import { extractTerms } from './api/text-process.js';
 import { GitHubSyncProvider } from './sync/github-provider.js';
 import { SyncScheduler } from './sync/scheduler.js';
@@ -225,30 +225,31 @@ server.post('/save', {
 }, async (req: FastifyRequest<{ Body: SaveBodyType }>, reply) => {
   const { entries } = req.body;
 
-  // Mutex Lock for Write
-  const release = await globalMutex.acquire();
+  // Write Lock with Retry for LanceDB safety
   try {
-    // Process each entry
-    for (const entry of entries) {
-       // Enhanced Logic: Japanese Terms Extraction
-       const extractedTerms = extractTerms(entry.text);
-       const tags = new Set([...(entry.tags || []), ...extractedTerms]);
-       
-       const finalEntry = {
-        ...entry,
-        id: entry.id || randomUUID(), // Generate ID if atomic entry
-        tags: Array.from(tags),
-        date: new Date().toISOString()
-       };
+    await withWriteLock(() => withRetry(async () => {
+      // Process each entry
+      for (const entry of entries) {
+         // Enhanced Logic: Japanese Terms Extraction
+         const extractedTerms = extractTerms(entry.text);
+         const tags = new Set([...(entry.tags || []), ...extractedTerms]);
+         
+         const finalEntry = {
+          ...entry,
+          id: entry.id || randomUUID(), // Generate ID if atomic entry
+          tags: Array.from(tags),
+          date: new Date().toISOString()
+         };
 
-       // Physical Save (Markdown)
-       const filename = finalEntry.session_id ? `${finalEntry.session_id}.md` : `entry-${finalEntry.id}.md`;
-       const filePath = path.join(DATA_DIR, 'notes', filename);
-       
-       const fileContent = `\n\n---\nid: ${finalEntry.id}\ndate: ${finalEntry.date}\ntags: [${finalEntry.tags.join(', ')}]\n---\n\n${finalEntry.text}`;
-       
-       await fs.appendFile(filePath, fileContent);
-    }
+         // Physical Save (Markdown)
+         const filename = finalEntry.session_id ? `${finalEntry.session_id}.md` : `entry-${finalEntry.id}.md`;
+         const filePath = path.join(DATA_DIR, 'notes', filename);
+         
+         const fileContent = `\n\n---\nid: ${finalEntry.id}\ndate: ${finalEntry.date}\ntags: [${finalEntry.tags.join(', ')}]\n---\n\n${finalEntry.text}`;
+         
+         await fs.appendFile(filePath, fileContent);
+      }
+    }));
     
     // Lock released, Watcher picks up changes.
     return { ok: true, count: entries.length };
@@ -257,19 +258,17 @@ server.post('/save', {
     server.log.error(err);
     reply.code(500);
     return { ok: false, error: 'Save failed' };
-  } finally {
-    release();
   }
 });
 
-// 2. SEARCH Endpoint
+// 2. SEARCH Endpoint (Read Lock)
 server.get('/search', {
   schema: {
     querystring: SearchQuerySchema
   }
 }, async (req: FastifyRequest<{ Querystring: SearchQueryType }>, reply) => {
   const { q, limit, tag, session } = req.query;
-  const results = await vectorStore.search(q, limit, { tag, session });
+  const results = await withReadLock(() => vectorStore.search(q, limit, { tag, session }));
   return { ok: true, results };
 });
 
@@ -329,10 +328,12 @@ server.post('/checkpoints', {
     created_at: new Date().toISOString()
   };
   
-  // Persist checkpoint
-  const checkpointDir = path.join(DATA_DIR, 'checkpoints');
-  await fs.ensureDir(checkpointDir);
-  await fs.writeJson(path.join(checkpointDir, `${checkpoint.id}.json`), checkpoint, { spaces: 2 });
+  // Write Lock with Retry for file safety
+  await withWriteLock(() => withRetry(async () => {
+    const checkpointDir = path.join(DATA_DIR, 'checkpoints');
+    await fs.ensureDir(checkpointDir);
+    await fs.writeJson(path.join(checkpointDir, `${checkpoint.id}.json`), checkpoint, { spaces: 2 });
+  }));
   
   return { ok: true, checkpoint };
 });
