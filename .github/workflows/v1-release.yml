@@ -1,0 +1,122 @@
+name: V1 Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/v1/**'
+      - 'apps/vscode-client/**'
+      - 'packages/core/**'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm install -g npm@latest
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Version Bump & Tag
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "Current: $VERSION"
+
+          # Check tag exists, bump suffix if needed
+          TAG_NAME="v$VERSION"
+          while git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; do
+            # Increment suffix: -beta.1 → -beta.2
+            if [[ $VERSION =~ ^(.+)-([a-z]+)\.([0-9]+)$ ]]; then
+              PREFIX="${BASH_REMATCH[1]}"
+              LABEL="${BASH_REMATCH[2]}"
+              NUM=$((${BASH_REMATCH[3]} + 1))
+              VERSION="$PREFIX-$LABEL.$NUM"
+            else
+              # No suffix: 1.0.0 → 1.0.1
+              IFS='.' read -ra P <<< "$VERSION"
+              VERSION="${P[0]}.${P[1]}.$((${P[2]} + 1))"
+            fi
+            TAG_NAME="v$VERSION"
+          done
+
+          echo "$VERSION" > VERSION
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Sync package.json versions
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          # Root
+          jq --arg v "$VERSION" '.version = $v' package.json > tmp && mv tmp package.json
+          # MCP Server
+          cd apps/v1/mcp-server && npm version $VERSION --no-git-tag-version --allow-same-version && cd -
+          # VSCode Client
+          cd apps/vscode-client && npm version $VERSION --no-git-tag-version --allow-same-version && cd -
+
+      - name: Commit & Push
+        run: |
+          git add VERSION package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
+          git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
+          git fetch origin main && git rebase origin/main
+          git push origin main
+          git tag ${{ steps.version.outputs.tag }}
+          git push origin ${{ steps.version.outputs.tag }}
+
+      - name: Build All
+        run: |
+          pnpm --filter @yuihub/mcp-server build
+          pnpm --filter yuihub-vscode-client build
+          cd apps/vscode-client && npx @vscode/vsce package -o yuihub-vscode-client.vsix
+
+      - name: Publish MCP Server to npm
+        run: |
+          cd apps/v1/mcp-server
+          VERSION="${{ steps.version.outputs.version }}"
+          if npm view @yuihub/mcp-server@$VERSION 2>/dev/null; then
+            echo "Already published"
+          else
+            npm publish --access public --provenance
+          fi
+
+      - name: Publish VSCode to Marketplace
+        run: |
+          cd apps/vscode-client
+          npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+        continue-on-error: true
+
+      - name: Publish VSCode to OpenVSIX
+        run: |
+          cd apps/vscode-client
+          npx ovsx publish yuihub-vscode-client.vsix -p ${{ secrets.OVSX_TOKEN }}
+        continue-on-error: true
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: YuiHub V1 ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: apps/vscode-client/yuihub-vscode-client.vsix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
