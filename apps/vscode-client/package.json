@@ -64,6 +64,11 @@
         "command": "yuihub.setApiToken",
         "title": "YuiHub: Set API Token",
         "category": "YuiHub"
+      },
+      {
+        "command": "yuihub.installMcpServer",
+        "title": "YuiHub: Install MCP Server (Antigravity/Cursor)",
+        "category": "YuiHub"
       }
     ],
     "configuration": {

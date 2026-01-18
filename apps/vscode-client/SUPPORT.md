@@ -1,47 +1,53 @@
-# サポートガイド — YuiHub VS Code Bridge
+# サポートガイド — YuiHub VSCode Client
 
-本拡張機能をご利用いただきありがとうございます。  
-
-⚠️ **ご注意ください：この拡張機能は YuiHub プロジェクトの Prototype フェーズです。**  
-- 機能は最小限です。  
-- 安定性や後方互換性は保証されません。  
-- 今後の開発フェーズに伴い、大きく仕様が変更される可能性があります。  
-
-その前提でご利用いただき、フィードバックを歓迎します。
+本拡張機能をご利用いただきありがとうございます。
 
 ---
 
 ## よくある質問（FAQ）
 
-### Q. Smoke Test が失敗します
-- `yuihub.apiBaseUrl` が正しいかご確認ください（例: `http://localhost:3000`）。
-- サーバが起動しているか確認してください。
-- APIキーが必要な構成の場合は、設定に入力してください。
+### Q. 接続テストが失敗します
 
-### Q. 保存（/save）が失敗します
-- Thread ID が設定されているか確認してください。
-- サーバ側のログにエラーが記録されていないか確認してください。
+- Backend が起動しているか確認 (`pnpm dev:backend`)
+- `yuihub.apiBaseUrl` が正しいか確認 (デフォルト: `http://localhost:4182`)
+
+### Q. MCP ツールが見えない
+
+1. `YuiHub: Install MCP Server` コマンドを実行
+2. Antigravity/Cursor を再起動
+
+### Q. Language Model Tools が動作しない
+
+- VSCode 1.104.0 以上が必要です
+
+### Q. 保存が失敗する
+
+- Backend が起動しているか確認
+- Backend ログでエラーを確認
 
 ---
 
 ## バグ報告・機能リクエスト
-- [GitHub Issues](https://github.com/vemikrs/vscode-yuihub-copilot-chat/issues) にて受付けています。
-- 再現手順、環境（OS / VS Code バージョン）、設定内容を添えてご報告いただけると助かります。
+
+[GitHub Issues](https://github.com/vemikrs/yuihub/issues) にて受付けています。
+
+報告時に以下を添えてください:
+
+- 再現手順
+- 環境 (OS / VSCode バージョン)
+- 設定内容
 
 ---
 
-## コントリビュート
-- Pull Request は歓迎します。
-- ただし PoC フェーズであり、開発方針が流動的なため、大きな変更は事前に Issue でご相談ください。
+## セキュリティ
 
----
+脆弱性を発見した場合は、公開 Issue ではなく以下まで:
 
-## 緊急のご連絡
-- セキュリティ上の懸念や脆弱性を発見した場合は、公開 Issue ではなく直接以下までご連絡ください：
-  - Email: contact@vemi.jp
+- Email: contact@vemi.jp
 
 ---
 
 ## 開発者情報
-- Publisher: **vemikrs**  
-- Homepage: [https://github.com/vemikrs/vscode-yuihub-copilot-chat](https://github.com/vemikrs/vscode-yuihub-copilot-chat)
+
+- Publisher: **vemikrs**
+- Repository: [https://github.com/vemikrs/yuihub](https://github.com/vemikrs/yuihub)

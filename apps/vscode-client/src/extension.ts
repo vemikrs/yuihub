@@ -263,6 +263,65 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }));
 
+  // 7. Install MCP Server (Antigravity/Cursor)
+  context.subscriptions.push(vscode.commands.registerCommand('yuihub.installMcpServer', async () => {
+    const os = await import('os');
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    const home = os.homedir();
+    
+    // MCP Server configuration
+    const mcpConfig = {
+      yuihub: {
+        command: 'node',
+        args: [path.join(context.extensionPath, '..', 'v1', 'mcp-server', 'dist', 'index.js')]
+      }
+    };
+    
+    // Config file paths
+    const configPaths = [
+      { name: 'Antigravity', path: path.join(home, '.gemini', 'antigravity', 'mcp_config.json') },
+      { name: 'Cursor (Global)', path: path.join(home, '.cursor', 'mcp.json') },
+    ];
+    
+    const results: string[] = [];
+    
+    for (const config of configPaths) {
+      try {
+        // Ensure directory exists
+        const dir = path.dirname(config.path);
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        
+        // Read existing config or create new
+        let existing: any = { mcpServers: {} };
+        if (fs.existsSync(config.path)) {
+          try {
+            existing = JSON.parse(fs.readFileSync(config.path, 'utf-8'));
+            if (!existing.mcpServers) existing.mcpServers = {};
+          } catch {
+            existing = { mcpServers: {} };
+          }
+        }
+        
+        // Add YuiHub MCP Server
+        existing.mcpServers.yuihub = mcpConfig.yuihub;
+        
+        // Write back
+        fs.writeFileSync(config.path, JSON.stringify(existing, null, 2) + '\n');
+        results.push(`✅ ${config.name}`);
+      } catch (e: any) {
+        results.push(`❌ ${config.name}: ${e.message}`);
+      }
+    }
+    
+    const message = `MCP Server Installed:\n${results.join('\n')}\n\nRestart Antigravity/Cursor to activate.`;
+    vscode.window.showInformationMessage(message, 'OK');
+    log(message);
+  }));
+
   // --- Language Model Tools Registration ---
   // These tools are exposed to Copilot/Antigravity for AI-assisted workflows
   
