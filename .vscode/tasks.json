@@ -2,393 +2,127 @@
   "version": "2.0.0",
   "tasks": [
     {
-        "label": "YuiHub:Index:Reindex:CLI:dry-run",
-                "type": "shell",
-                "command": "node",
-                "args": [
-                    "scripts/build-index.mjs",
-                    "--paths",
-                    "notes",
-                    "--paths",
-                    "docs/logdocs",
-                    "--paths",
-                    "yuihub_api/data/chatlogs",
-                    "--mode=Shelter",
-                    "--visibility=private,internal",
-                    "--dryRun"
-                ],
-                "problemMatcher": []
-        },
-    {
-        "label": "YuiHub:Index:Reindex:Local",
-                "type": "shell",
-                "command": "node",
-                "args": [
-                    "scripts/chunk_and_lunr.mjs",
-                    "--source=yuihub_api/data/chatlogs",
-                    "--output=yuihub_api/data/index"
-                ],
-                "problemMatcher": []
+      "label": "V1: test",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
     },
-            {
-                "label": "YuiHub:Index:Reindex:OPS:dry-run",
-                "type": "shell",
-                "command": "bash",
-                "args": [
-                    "-lc",
-                    "source .env 2>/dev/null || true; curl -s -H \"Authorization: Bearer $LOCAL_OPS_TOKEN\" -H \"Content-Type: application/json\" -d '{\"paths\":[\"notes\",\"docs/logdocs\",\"yuihub_api/data/chatlogs\"],\"filters\":{\"mode\":[\"Shelter\"],\"visibility\":[\"private\",\"internal\"]},\"dryRun\":true}' http://127.0.0.1:3000/ops/reindex"
-                ],
-                "group": "test",
-                "problemMatcher": []
-            },
-            {
-                "label": "YuiHub:Index:Reindex:OPS",
-                "type": "shell",
-                "command": "bash",
-                "args": [
-                    "-lc",
-                    "source .env 2>/dev/null || true; curl -s -H \"Authorization: Bearer $LOCAL_OPS_TOKEN\" -H \"Content-Type: application/json\" -d '{\"paths\":[\"notes\",\"docs/logdocs\",\"yuihub_api/data/chatlogs\"],\"filters\":{\"mode\":[\"Shelter\"],\"visibility\":[\"private\",\"internal\"]},\"dryRun\":false}' http://127.0.0.1:3000/ops/reindex"
-                ],
-                "group": "test",
-                "problemMatcher": []
-            },
-        {
-            "label": "YuiHub:API:Start",
-      "type": "shell",
-      "command": "npm",
-            "args": ["run", "start:api"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*YuiHub API server listening.*$",
-                    "endsPattern": "^.*YuiHub API server listening.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub:API:Start (Dev)",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "dev:api"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*watching for file changes.*$",
-                    "endsPattern": "^.*YuiHub API server listening.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub:API:Start (Dev + Quick Tunnel)",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "dev:tunnel"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "options": {
-                "env": {
-                    "ENABLE_TUNNEL": "true",
-                    "TUNNEL_MODE": "quick"
-                }
-            },
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*YuiHub API server listening.*$",
-                    "endsPattern": "^.*Cloudflare Tunnel: https.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub:API:Start (Prod + Named Tunnel)",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "source .env && npm run start:prod-tunnel"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "options": {
-                "env": {
-                    "ENABLE_TUNNEL": "true",
-                    "TUNNEL_MODE": "named"
-                }
-            },
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*YuiHub API server listening.*$",
-                    "endsPattern": "^.*Cloudflare Tunnel: https://poc-yuihub.vemi.jp.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub:MCP:Start", 
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "start:mcp"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "options": {
-                "env": {
-                    "YUIHUB_API": "http://localhost:3000"
-                }
-            },
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^(.*)$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^.*Starting yuihub-mcp.*$",
-                    "endsPattern": "^.*MCP Server ready.*$"
-                }
-            }
-        },
-        {
-            "label": "YuiHub:Index:Build:All",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "build-all"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "options": {
-                "env": {
-                    "DATA_ROOT": "${workspaceFolder}/yuihub_api/data",
-                    "LOCAL_STORAGE_PATH": "${workspaceFolder}/yuihub_api/data/chatlogs"
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:Health",
-            "type": "shell",
-            "command": "curl",
-            "args": ["-s", "-f", "http://localhost:3000/health"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:API-Quick",
-            "type": "shell", 
-            "command": "bash",
-            "args": ["-lc", "curl -s http://localhost:3000/health; echo HEALTH_OK; curl -s http://localhost:3000/recent?n=3 | head -20; echo RECENT_OK"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:API:Stop:Safe",
-            "type": "shell",
-            "command": "bash", 
-            "args": ["-c", "pkill -f 'node.*yuihub_api/src/server.js' && echo '✓ Server stopped safely' || echo 'ℹ No server process found'"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:API:Stop:Force (Port 3000)",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "fuser -k 3000/tcp 2>/dev/null && echo '✓ Port 3000 processes killed' || echo 'ℹ No processes found on port 3000'"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:API:Stop:All (Force)",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "echo '🛑 Stopping YuiHub API on port 3000...' && fuser -k 3000/tcp 2>/dev/null && echo '✅ Port 3000 processes killed' || echo 'ℹ No processes found on port 3000'"],
-            "group": "build", 
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:YuiFlow",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "test:yuiflow"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:E2E-Workflow", 
-            "type": "shell",
-            "command": "./run-tests.sh",
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Dev:Full-Stack",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "dev:full"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "isBackground": true,
-            "options": {
-                "env": {
-                    "NODE_ENV": "development",
-                    "DATA_ROOT": "${workspaceFolder}/data",
-                    "YUIHUB_API": "http://localhost:3000"
-                }
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:Validate-YuiFlow",
-            "type": "shell",
-            "command": "npm", 
-            "args": ["run", "validate:yuiflow"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "YuiHub:Test:E2E-GPTs",
-            "type": "shell",
-            "command": "bash",
-            "args": ["-c", "source .env && npm run test:e2e:gpts"],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
-            "problemMatcher": []
+    {
+      "label": "V1: test:backend",
+      "type": "npm",
+      "script": "test:backend",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "V1: test:mcp-server",
+      "type": "npm",
+      "script": "test:mcp-server",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "V1: build:all",
+      "type": "npm",
+      "script": "build:all",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "V1: build:core",
+      "type": "npm",
+      "script": "build:core",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "V1: build:backend",
+      "type": "npm",
+      "script": "build:backend",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "V1: build:mcp-server",
+      "type": "npm",
+      "script": "build:mcp-server",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "V1: build:vscode-client",
+      "type": "npm",
+      "script": "build:vscode-client",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "V1: dev:backend",
+      "type": "npm",
+      "script": "dev:backend",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^.*$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Server listening.*$",
+          "endsPattern": "^.*Server listening.*$"
         }
-    ]
+      }
+    },
+    {
+      "label": "V1: dev:mcp-stdio",
+      "type": "npm",
+      "script": "dev:mcp-stdio",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "V1: dev:mcp-sse",
+      "type": "npm",
+      "script": "dev:mcp-sse",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "V1: vscode:watch",
+      "type": "npm",
+      "script": "vscode:watch",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "V1: vscode:typecheck",
+      "type": "npm",
+      "script": "vscode:typecheck",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "V1: vscode:package",
+      "type": "npm",
+      "script": "vscode:package",
+      "problemMatcher": []
+    },
+    {
+      "label": "V1: sync:version",
+      "type": "npm",
+      "script": "sync:version",
+      "problemMatcher": []
+    },
+    {
+      "label": "V1: Health Check",
+      "type": "shell",
+      "command": "curl",
+      "args": ["-s", "-f", "http://localhost:4182/health"],
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
 }
