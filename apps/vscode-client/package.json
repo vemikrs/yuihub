@@ -2,7 +2,7 @@
   "name": "yuihub-vscode-client",
   "displayName": "YuiHub VSCode Client (V1)",
   "publisher": "ve",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "YuiHub VSCode Client: Connects to local YuiHub Engine for semantic memory and private agent execution.",
   "repository": {
     "type": "git",
