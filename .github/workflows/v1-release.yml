@@ -74,6 +74,11 @@ jobs:
             echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
 
+      # Run tests before release to ensure code quality
+      - name: Run Tests
+        run: pnpm test
+        working-directory: apps/v1/backend
+
       - name: Sync package.json versions
         run: pnpm sync:version
 

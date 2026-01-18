@@ -3,10 +3,7 @@ name: Vitest Tests CI
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  push:
-    branches:
-      - main
-      - develop
+  # Note: push to main is handled by V1 Release workflow (tests run before release)
 
 env:
   NODE_VERSION: '22'
