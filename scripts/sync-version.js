@@ -30,21 +30,49 @@ console.log(`📦 Syncing version: ${version}`);
 
 /**
  * Convert semver prerelease to VS Code compatible version
- * Examples:
- *   1.0.0-beta.5  → 1.1.5 (odd minor = prerelease)
+ * 
+ * VS Code Marketplace only supports major.minor.patch format.
+ * We use the "odd minor = prerelease" convention recommended by VS Code.
+ * 
+ * CONVERSION RULES:
+ *   1.0.0-beta.5  → 1.1.5 (minor 0→1, patch = beta number)
  *   1.0.0-alpha.3 → 1.1.3
  *   1.0.0-rc.1    → 1.1.1
+ *   1.2.0-beta.3  → 1.3.3 (minor 2→3)
  *   1.0.0         → 1.0.0 (unchanged)
- *   2.1.3         → 2.1.3 (unchanged, already even minor = release)
+ *   2.1.3         → 2.1.3 (unchanged)
+ * 
+ * SKIPPED VERSIONS (飛び番):
+ *   - 1.1.x is reserved for prereleases of 1.0.x, so 1.1.0 should not be used as a release version
+ *   - 1.3.x is reserved for prereleases of 1.2.x, etc.
+ *   - Use even minor numbers for releases: 1.0.x, 1.2.x, 1.4.x, etc.
+ * 
+ * INVALID VERSIONS (converted versions would conflict):
+ *   - 1.1.0-beta.x → Would convert to 1.1.x, which conflicts with 1.0.0-beta.x conversions
+ *   - Always use even minor numbers for the base version in prereleases
+ * 
+ * @param {string} semver - Version string (e.g., "1.0.0-beta.5")
+ * @returns {string} - VS Code compatible version
+ * @throws {Error} - If version would create a conflict
  */
 function toVSCodeVersion(semver) {
   // Match prerelease pattern: major.minor.patch-label.number
   const prereleaseMatch = semver.match(/^(\d+)\.(\d+)\.(\d+)-(alpha|beta|rc)\.(\d+)$/);
   if (prereleaseMatch) {
-    const [, major, minor, , , prereleaseNum] = prereleaseMatch;
-    // Use minor+1 if minor is even (to make it odd = prerelease)
+    const [, major, minor, , label, prereleaseNum] = prereleaseMatch;
     const minorNum = parseInt(minor, 10);
-    const vscodeMinor = minorNum % 2 === 0 ? minorNum + 1 : minorNum;
+    
+    // Validate: odd minor prereleases would conflict with even minor prerelease conversions
+    if (minorNum % 2 === 1) {
+      throw new Error(
+        `Invalid prerelease version: ${semver}\n` +
+        `Odd minor versions (${minorNum}) are reserved for VS Code prerelease conversions.\n` +
+        `Use even minor numbers for prereleases: ${major}.${minorNum - 1}.x-${label}.x or ${major}.${minorNum + 1}.x-${label}.x`
+      );
+    }
+    
+    // Use minor+1 (odd = prerelease)
+    const vscodeMinor = minorNum + 1;
     return `${major}.${vscodeMinor}.${prereleaseNum}`;
   }
   // Regular version: return as-is
