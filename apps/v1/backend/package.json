@@ -57,7 +57,7 @@
     "fastify-type-provider-zod": "^6.1.0",
     "fastq": "^1.20.1",
     "fs-extra": "^11.3.3",
-    "inquirer": "^9.3.8",
+    "inquirer": "^13.2.0",
     "lodash": "^4.17.21",
     "simple-git": "^3.30.0",
     "tiny-segmenter": "^0.2.0",
