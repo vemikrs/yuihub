@@ -98,7 +98,11 @@ jobs:
           if npm view @yuihub/core@$VERSION 2>/dev/null; then
             echo "Already published"
           else
-            pnpm publish --access public --no-git-checks --provenance
+            if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+              pnpm publish --access public --no-git-checks --provenance --tag beta
+            else
+              pnpm publish --access public --no-git-checks --provenance
+            fi
           fi
 
       - name: Publish @yuihub/mcp-server to npm
@@ -108,7 +112,11 @@ jobs:
           if npm view @yuihub/mcp-server@$VERSION 2>/dev/null; then
             echo "Already published"
           else
-            pnpm publish --access public --no-git-checks --provenance
+            if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+              pnpm publish --access public --no-git-checks --provenance --tag beta
+            else
+              pnpm publish --access public --no-git-checks --provenance
+            fi
           fi
 
       - name: Publish @yuihub/server to npm
@@ -118,7 +126,11 @@ jobs:
           if npm view @yuihub/server@$VERSION 2>/dev/null; then
             echo "Already published"
           else
-            pnpm publish --access public --no-git-checks --provenance
+            if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+              pnpm publish --access public --no-git-checks --provenance --tag beta
+            else
+              pnpm publish --access public --no-git-checks --provenance
+            fi
           fi
 
       - name: Publish VSCode to Marketplace
