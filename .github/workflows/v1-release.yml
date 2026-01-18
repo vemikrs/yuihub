@@ -65,6 +65,13 @@ jobs:
           echo "$VERSION" > VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+          
+          # Check if prerelease (for VSCode Marketplace)
+          if [[ $VERSION =~ -(alpha|beta|rc)\. ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Sync package.json versions
         run: pnpm sync:version
@@ -120,7 +127,13 @@ jobs:
       - name: Publish VSCode to Marketplace
         run: |
           cd apps/vscode-client
-          npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+          if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+            echo "Publishing as pre-release..."
+            npx @vscode/vsce publish --pre-release -p ${{ secrets.VSCE_PAT }}
+          else
+            echo "Publishing as release..."
+            npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+          fi
         continue-on-error: true
 
       - name: Publish VSCode to OpenVSIX
