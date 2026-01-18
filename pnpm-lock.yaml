@@ -138,9 +138,6 @@ importers:
       zod:
         specifier: ^4.3.5
         version: 4.3.5
-      zod-to-json-schema:
-        specifier: ^3.25.1
-        version: 3.25.1(zod@4.3.5)
     devDependencies:
       '@types/node':
         specifier: ^25.0.9
@@ -561,7 +558,6 @@ packages:
   '@lancedb/lancedb@0.23.0':
     resolution: {integrity: sha512-aYrIoEG24AC+wILCL57Ius/Y4yU+xFHDPKLvmjzzN4byAjzeIGF0TC86S5RBt4Ji+dxS7yIWV5Q/gE5/fybIFQ==}
     engines: {node: '>= 18'}
-    cpu: [x64, arm64]
     os: [darwin, linux, win32]
     peerDependencies:
       apache-arrow: '>=15.0.0 <=18.1.0'
