@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import Fastify, { FastifyRequest } from 'fastify';
 import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
 import rateLimit from '@fastify/rate-limit';
