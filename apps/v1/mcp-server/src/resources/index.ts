@@ -3,13 +3,18 @@
  */
 
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import {
+  ListResourcesRequestSchema,
+  ListResourceTemplatesRequestSchema,
+  ReadResourceRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import type { YuiHubClient } from '../client.js';
 import { toMCPError } from '../errors.js';
 import { handleRecent, handleSession, handleSystemStatus } from './handlers.js';
 
 export function registerResources(server: Server, client: YuiHubClient): void {
   // List resources handler
-  server.setRequestHandler({ method: 'resources/list' } as any, async () => {
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
     return {
       resources: [
         {
@@ -29,7 +34,7 @@ export function registerResources(server: Server, client: YuiHubClient): void {
   });
 
   // Resource templates for dynamic URIs
-  server.setRequestHandler({ method: 'resources/templates/list' } as any, async () => {
+  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
     return {
       resourceTemplates: [
         {
@@ -43,7 +48,7 @@ export function registerResources(server: Server, client: YuiHubClient): void {
   });
 
   // Read resource handler
-  server.setRequestHandler({ method: 'resources/read' } as any, async (request: any) => {
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
 
     try {

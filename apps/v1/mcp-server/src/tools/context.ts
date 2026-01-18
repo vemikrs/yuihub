@@ -34,7 +34,7 @@ export const createCheckpointSchema = z.object({
   session_id: z.string().describe('Session ID to checkpoint'),
   summary: z.string().describe('Summary of the decision/conclusion'),
   intent: z.string().describe('Current goal/intent'),
-  working_memory: z.record(z.unknown()).optional().describe('Current working memory state'),
+  working_memory: z.record(z.string(), z.unknown()).optional().describe('Current working memory state'),
   entry_ids: z.array(z.string()).optional().describe('Related entry IDs'),
 });
 
