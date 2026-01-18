@@ -1,6 +1,6 @@
 {
   "name": "yuihub-workspace",
-  "version": "0.2.1",
+  "version": "1.0.0-beta.1",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@9.15.9",
@@ -8,6 +8,7 @@
     "node": "^22.0.0"
   },
   "scripts": {
+    "sync:version": "node scripts/sync-version.js",
     "test": "pnpm test:backend && pnpm test:mcp-server",
     "test:backend": "pnpm --filter @yuihub/v1-backend test",
     "test:mcp-server": "pnpm --filter @yuihub/mcp-server test",
@@ -21,7 +22,7 @@
     "dev:mcp-sse": "pnpm --filter @yuihub/mcp-server dev:sse",
     "vscode:watch": "pnpm --filter yuihub-vscode-client watch",
     "vscode:typecheck": "pnpm --filter yuihub-vscode-client typecheck",
-    "vscode:package": "pnpm --filter yuihub-vscode-client package"
+    "vscode:package": "pnpm sync:version && pnpm --filter yuihub-vscode-client package"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
