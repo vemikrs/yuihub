@@ -103,7 +103,156 @@
           "icon": "media/search-icon.svg"
         }
       ]
-    }
+    },
+    "languageModelTools": [
+      {
+        "name": "yuihub_save_thought",
+        "displayName": "Save Thought",
+        "description": "Save a thought, memo, or decision to YuiHub memory",
+        "toolReferenceName": "yuihub_save_thought",
+        "modelDescription": "Use this tool to save important thoughts, decisions, memos, or context to YuiHub semantic memory for later retrieval.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "The thought, memo, or decision to save"
+            },
+            "session_id": {
+              "type": "string",
+              "description": "Session/Thread ID (th-ULID format)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional tags"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "private",
+                "public"
+              ],
+              "default": "private"
+            }
+          },
+          "required": [
+            "text",
+            "session_id"
+          ]
+        }
+      },
+      {
+        "name": "yuihub_search_memory",
+        "displayName": "Search Memory",
+        "description": "Search past memories using semantic search",
+        "toolReferenceName": "yuihub_search_memory",
+        "modelDescription": "Use this tool to search YuiHub semantic memory for relevant past thoughts, decisions, and context.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Semantic search query"
+            },
+            "limit": {
+              "type": "number",
+              "default": 10,
+              "description": "Maximum results"
+            },
+            "session": {
+              "type": "string",
+              "description": "Filter by session ID"
+            },
+            "tag": {
+              "type": "string",
+              "description": "Filter by tag"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      {
+        "name": "yuihub_start_session",
+        "displayName": "Start Session",
+        "description": "Start a new thinking session/thread",
+        "toolReferenceName": "yuihub_start_session",
+        "modelDescription": "Use this tool to create a new YuiHub session for organizing related thoughts and context.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Optional session title"
+            }
+          }
+        }
+      },
+      {
+        "name": "yuihub_fetch_context",
+        "displayName": "Fetch Context",
+        "description": "Fetch context packet for a given intent or session",
+        "toolReferenceName": "yuihub_fetch_context",
+        "modelDescription": "Use this tool to retrieve relevant context from YuiHub memory for a specific intent or session.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "intent": {
+              "type": "string",
+              "description": "Current intent/goal for context retrieval"
+            },
+            "session": {
+              "type": "string",
+              "description": "Session ID to get context for"
+            }
+          }
+        }
+      },
+      {
+        "name": "yuihub_create_checkpoint",
+        "displayName": "Create Checkpoint",
+        "description": "Create a decision checkpoint to persist current state",
+        "toolReferenceName": "yuihub_create_checkpoint",
+        "modelDescription": "Use this tool to create a checkpoint that persists the current decision state and working memory.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "description": "Session ID to checkpoint"
+            },
+            "summary": {
+              "type": "string",
+              "description": "Summary of the decision/conclusion"
+            },
+            "intent": {
+              "type": "string",
+              "description": "Current goal/intent"
+            },
+            "working_memory": {
+              "type": "object",
+              "description": "Current working memory state"
+            },
+            "entry_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Related entry IDs"
+            }
+          },
+          "required": [
+            "session_id",
+            "summary",
+            "intent"
+          ]
+        }
+      }
+    ]
   },
   "main": "./dist/extension.js",
   "license": "MIT",

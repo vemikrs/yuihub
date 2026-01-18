@@ -262,6 +262,127 @@ export function activate(context: vscode.ExtensionContext) {
       // Error handled in fetchApi
     }
   }));
+
+  // --- Language Model Tools Registration ---
+  // These tools are exposed to Copilot/Antigravity for AI-assisted workflows
+  
+  // Tool: yuihub_save_thought
+  context.subscriptions.push(vscode.lm.registerTool('yuihub_save_thought', {
+    async invoke(options, token) {
+      const { text, session_id, tags, mode } = options.input as any;
+      try {
+        const res = await fetchApi<SaveResponse>('POST', '/save', {
+          entries: [{
+            text,
+            session_id,
+            tags: tags || [],
+            mode: mode || 'private'
+          }]
+        });
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Saved ${res.count} entry to session ${session_id}`)
+        ]);
+      } catch (e: any) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Error: ${e.message}`)
+        ]);
+      }
+    }
+  }));
+
+  // Tool: yuihub_search_memory
+  context.subscriptions.push(vscode.lm.registerTool('yuihub_search_memory', {
+    async invoke(options, token) {
+      const { query, limit, session, tag } = options.input as any;
+      try {
+        const params = new URLSearchParams({ q: query, limit: String(limit || 10) });
+        if (session) params.append('session', session);
+        if (tag) params.append('tag', tag);
+        
+        const res = await fetchApi<SearchResponse>('GET', `/search?${params}`);
+        const formatted = res.results.map((r, i) => 
+          `[${i + 1}] (score: ${r.score?.toFixed(3) ?? 'N/A'})\n${r.text.slice(0, 200)}${r.text.length > 200 ? '...' : ''}`
+        ).join('\n\n');
+        
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(formatted || 'No results found.')
+        ]);
+      } catch (e: any) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Error: ${e.message}`)
+        ]);
+      }
+    }
+  }));
+
+  // Tool: yuihub_start_session
+  type ThreadResponse = { ok: boolean; session: { id: string; title: string; created_at: string } };
+  context.subscriptions.push(vscode.lm.registerTool('yuihub_start_session', {
+    async invoke(options, token) {
+      const { title } = options.input as any;
+      try {
+        const res = await fetchApi<ThreadResponse>('POST', '/threads/new', { title });
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Created new session:\nID: ${res.session.id}\nTitle: ${res.session.title}\nCreated: ${res.session.created_at}`)
+        ]);
+      } catch (e: any) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Error: ${e.message}`)
+        ]);
+      }
+    }
+  }));
+
+  // Tool: yuihub_fetch_context
+  type ContextResponse = { ok: boolean; packet: { intent: string; session_id?: string; long_term_memory: Array<{ text: string; relevance: number }>; meta: { mode: string } } };
+  context.subscriptions.push(vscode.lm.registerTool('yuihub_fetch_context', {
+    async invoke(options, token) {
+      const { intent, session } = options.input as any;
+      try {
+        const params = new URLSearchParams();
+        if (intent) params.append('q', intent);
+        if (session) params.append('session', session);
+        
+        const res = await fetchApi<ContextResponse>('GET', `/export/context?${params}`);
+        const memories = res.packet.long_term_memory.map((m, i) => 
+          `[${i + 1}] (relevance: ${m.relevance.toFixed(3)})\n${m.text.slice(0, 200)}${m.text.length > 200 ? '...' : ''}`
+        ).join('\n\n');
+        
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Intent: ${res.packet.intent}\nSession: ${res.packet.session_id || 'N/A'}\nMode: ${res.packet.meta.mode}\n\nLong-term Memory:\n${memories || 'No relevant memories found.'}`)
+        ]);
+      } catch (e: any) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Error: ${e.message}`)
+        ]);
+      }
+    }
+  }));
+
+  // Tool: yuihub_create_checkpoint
+  context.subscriptions.push(vscode.lm.registerTool('yuihub_create_checkpoint', {
+    async invoke(options, token) {
+      const { session_id, summary, intent, working_memory, entry_ids } = options.input as any;
+      try {
+        const res = await fetchApi<CheckpointResponse>('POST', '/checkpoints', {
+          session_id,
+          summary,
+          intent,
+          working_memory,
+          entry_ids
+        });
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Created checkpoint:\nID: ${res.checkpoint.id}\nSession: ${res.checkpoint.session_id}\nCreated: ${res.checkpoint.created_at}`)
+        ]);
+      } catch (e: any) {
+        return new vscode.LanguageModelToolResult([
+          new vscode.LanguageModelTextPart(`Error: ${e.message}`)
+        ]);
+      }
+    }
+  }));
+
+  log('Language Model Tools registered (5 tools)');
 }
 
 export function deactivate() {}
