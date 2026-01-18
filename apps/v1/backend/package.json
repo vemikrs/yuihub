@@ -54,7 +54,7 @@
     "chokidar": "^5.0.0",
     "cron": "^4.4.0",
     "fastify": "^5.2.0",
-    "fastify-type-provider-zod": "^4.0.0",
+    "fastify-type-provider-zod": "^6.1.0",
     "fastq": "^1.20.1",
     "fs-extra": "^11.3.3",
     "inquirer": "^9.3.8",
