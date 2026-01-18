@@ -271,11 +271,11 @@ export function activate(context: vscode.ExtensionContext) {
     
     const home = os.homedir();
     
-    // MCP Server configuration
+    // MCP Server configuration using npx
     const mcpConfig = {
       yuihub: {
-        command: 'node',
-        args: [path.join(context.extensionPath, '..', 'v1', 'mcp-server', 'dist', 'index.js')]
+        command: 'npx',
+        args: ['-y', '@yuihub/mcp-server']
       }
     };
     
