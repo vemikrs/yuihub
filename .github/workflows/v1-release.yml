@@ -148,14 +148,14 @@ jobs:
       - name: Publish VSCode to Marketplace
         run: |
           cd apps/vscode-client
+          VSIX_FILE=$(ls packages/yuihub-vscode-client-*.vsix)
           if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
-            echo "Publishing as pre-release..."
-            npx @vscode/vsce publish --pre-release -p ${{ secrets.VSCE_PAT }}
+            echo "Publishing $VSIX_FILE as pre-release..."
+            npx @vscode/vsce publish --packagePath "$VSIX_FILE" --pre-release -p ${{ secrets.VSCE_PAT }}
           else
-            echo "Publishing as release..."
-            npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+            echo "Publishing $VSIX_FILE as release..."
+            npx @vscode/vsce publish --packagePath "$VSIX_FILE" -p ${{ secrets.VSCE_PAT }}
           fi
-        continue-on-error: true
 
       - name: Publish VSCode to OpenVSIX
         run: |
