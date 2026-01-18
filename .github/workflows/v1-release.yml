@@ -30,6 +30,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Ensure npm CLI is latest for Trusted Publishing support
+      - name: Update npm CLI
+        run: npm install -g npm@latest
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
@@ -80,17 +84,28 @@ jobs:
       - name: Package VSCode Extension
         run: pnpm vscode:package
 
-      - name: Publish MCP Server to npm
+      # npm Trusted Publishing (OIDC) - no NPM_TOKEN required
+      # Requires configuration on npmjs.com: Package Settings → Trusted Publisher → GitHub Actions
+      # Repository: vemikrs/yuihub, Workflow: v1-release.yml
+      - name: Publish @yuihub/core to npm
+        run: |
+          cd packages/core
+          VERSION="${{ steps.version.outputs.version }}"
+          if npm view @yuihub/core@$VERSION 2>/dev/null; then
+            echo "Already published"
+          else
+            pnpm publish --access public --no-git-checks --provenance
+          fi
+
+      - name: Publish @yuihub/mcp-server to npm
         run: |
           cd apps/v1/mcp-server
           VERSION="${{ steps.version.outputs.version }}"
           if npm view @yuihub/mcp-server@$VERSION 2>/dev/null; then
             echo "Already published"
           else
-            npm publish --access public --provenance
+            pnpm publish --access public --no-git-checks --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish VSCode to Marketplace
         run: |
