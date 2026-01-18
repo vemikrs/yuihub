@@ -2,8 +2,13 @@
   "name": "yuihub-vscode-client",
   "displayName": "YuiHub VSCode Client (V1)",
   "publisher": "ve",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "YuiHub VSCode Client: Connects to local YuiHub Engine for semantic memory and private agent execution.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vemikrs/yuihub.git",
+    "directory": "apps/vscode-client"
+  },
   "engines": {
     "vscode": "^1.108.1"
   },
@@ -260,7 +265,7 @@
     "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --format=cjs --platform=node --external:vscode --sourcemap",
     "watch": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --format=cjs --platform=node --external:vscode --sourcemap --watch",
     "typecheck": "tsc --noEmit",
-    "package": "vsce package"
+    "package": "mkdir -p packages && vsce package --no-dependencies --allow-missing-repository -o packages/"
   },
   "dependencies": {
     "@yuihub/core": "workspace:*"

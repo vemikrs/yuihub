@@ -8,13 +8,20 @@
     "node": "^22.0.0"
   },
   "scripts": {
-    "test": "pnpm run test:v1",
-    "test:v1": "pnpm --filter @yuihub/v1-backend test",
+    "test": "pnpm test:backend && pnpm test:mcp-server",
+    "test:backend": "pnpm --filter @yuihub/v1-backend test",
+    "test:mcp-server": "pnpm --filter @yuihub/mcp-server test",
     "build:core": "pnpm --filter @yuihub/core build",
     "build:backend": "pnpm --filter @yuihub/v1-backend build",
-    "build:client": "pnpm --filter yuihub-copilot-chat build",
-    "build:all-v1": "pnpm build:core && pnpm build:backend && pnpm build:client",
-    "build-all": "pnpm build:all-v1"
+    "build:mcp-server": "pnpm --filter @yuihub/mcp-server build",
+    "build:vscode-client": "pnpm --filter yuihub-vscode-client build",
+    "build:all": "pnpm build:core && pnpm build:backend && pnpm build:mcp-server && pnpm build:vscode-client",
+    "dev:backend": "pnpm --filter @yuihub/v1-backend dev",
+    "dev:mcp-stdio": "pnpm --filter @yuihub/mcp-server dev:stdio",
+    "dev:mcp-sse": "pnpm --filter @yuihub/mcp-server dev:sse",
+    "vscode:watch": "pnpm --filter yuihub-vscode-client watch",
+    "vscode:typecheck": "pnpm --filter yuihub-vscode-client typecheck",
+    "vscode:package": "pnpm --filter yuihub-vscode-client package"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
