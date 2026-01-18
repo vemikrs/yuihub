@@ -167,7 +167,17 @@ jobs:
       - name: Publish VSCode to OpenVSIX
         run: |
           cd apps/vscode-client
-          npx ovsx publish packages/yuihub-vscode-client-*.vsix -p ${{ secrets.OVSX_TOKEN }}
+          # Change publisher from 've' to 'vemikrs' for OpenVSIX
+          sed -i 's/"publisher": "ve"/"publisher": "vemikrs"/' package.json
+          # Re-package with vemikrs publisher
+          if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+            npx @vscode/vsce package --no-dependencies --allow-missing-repository -o packages/yuihub-vscode-client-openvsx.vsix --pre-release
+          else
+            npx @vscode/vsce package --no-dependencies --allow-missing-repository -o packages/yuihub-vscode-client-openvsx.vsix
+          fi
+          npx ovsx publish packages/yuihub-vscode-client-openvsx.vsix -p ${{ secrets.OVSX_TOKEN }}
+          # Revert the change
+          git checkout package.json
         continue-on-error: true
 
       - name: GitHub Release
