@@ -28,8 +28,6 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm install -g npm@latest
-
       - run: pnpm install --frozen-lockfile
 
       - name: Configure Git
@@ -65,18 +63,11 @@ jobs:
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Sync package.json versions
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          # Root
-          jq --arg v "$VERSION" '.version = $v' package.json > tmp && mv tmp package.json
-          # MCP Server
-          cd apps/v1/mcp-server && npm version $VERSION --no-git-tag-version --allow-same-version && cd -
-          # VSCode Client
-          cd apps/vscode-client && npm version $VERSION --no-git-tag-version --allow-same-version && cd -
+        run: pnpm sync:version
 
       - name: Commit & Push
         run: |
-          git add VERSION package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
+          git add VERSION package.json packages/core/package.json apps/v1/backend/package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
           git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
           git fetch origin main && git rebase origin/main
           git push origin main
@@ -84,10 +75,10 @@ jobs:
           git push origin ${{ steps.version.outputs.tag }}
 
       - name: Build All
-        run: |
-          pnpm --filter @yuihub/mcp-server build
-          pnpm --filter yuihub-vscode-client build
-          cd apps/vscode-client && npx @vscode/vsce package -o yuihub-vscode-client.vsix
+        run: pnpm build:all
+
+      - name: Package VSCode Extension
+        run: pnpm vscode:package
 
       - name: Publish MCP Server to npm
         run: |
@@ -98,6 +89,8 @@ jobs:
           else
             npm publish --access public --provenance
           fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish VSCode to Marketplace
         run: |
@@ -108,7 +101,7 @@ jobs:
       - name: Publish VSCode to OpenVSIX
         run: |
           cd apps/vscode-client
-          npx ovsx publish yuihub-vscode-client.vsix -p ${{ secrets.OVSX_TOKEN }}
+          npx ovsx publish packages/yuihub-vscode-client-*.vsix -p ${{ secrets.OVSX_TOKEN }}
         continue-on-error: true
 
       - name: GitHub Release
@@ -117,6 +110,6 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: YuiHub V1 ${{ steps.version.outputs.tag }}
           generate_release_notes: true
-          files: apps/vscode-client/yuihub-vscode-client.vsix
+          files: apps/vscode-client/packages/yuihub-vscode-client-*.vsix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
