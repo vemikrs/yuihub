@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-echo "[pre-commit] YuiHub reindex (dryRun) ..."
-node scripts/build-index.mjs --paths notes --paths docs/logdocs --mode=Shelter --visibility=private,internal --dryRun >/dev/null || {
-  echo "[pre-commit] index dryRun failed"; exit 1;
-}

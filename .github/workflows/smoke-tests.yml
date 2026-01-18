@@ -26,27 +26,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
           
       - name: Install all dependencies (workspace-aware)
-        run: npm ci
+        run: pnpm install --frozen-lockfile
           
       - name: Setup environment files
         run: |
           # 統合環境設定ファイル（Ph2b: 全モジュール共通）
           cp .env.example .env
-          mkdir -p yuihub_api/data/chatlogs
-          mkdir -p yuihub_api/data/index
+          mkdir -p apps/v0/yuihub_api/data/chatlogs
+          mkdir -p apps/v0/yuihub_api/data/index
           
       - name: Start API server in background (workspace context)
         run: |
-          timeout 30s npm run start:api &
+          timeout 30s pnpm start:api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
           sleep 10  # Give server time to start
         env:
           NODE_ENV: production
-          DATA_ROOT: ${{ github.workspace }}/yuihub_api/data
+          DATA_ROOT: ${{ github.workspace }}/apps/v0/yuihub_api/data
           
       - name: Wait for API server to be ready
         run: |
@@ -59,7 +61,7 @@ jobs:
       - name: Run smoke tests
         id: smoke_tests
         run: |
-          cd tests/smoke
+          cd apps/v0/tests/smoke
           chmod +x *.sh
           ./run-all-tests-ci.sh
         continue-on-error: false
@@ -70,14 +72,14 @@ jobs:
           if [ ! -z "$API_PID" ]; then
             kill $API_PID 2>/dev/null || true
           fi
-          pkill -f "yuihub_api/src/server.js" 2>/dev/null || true
+          pkill -f "apps/v0/yuihub_api/src/server.js" 2>/dev/null || true
           
       - name: Upload smoke test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: smoke-test-results
-          path: tests/smoke/
+          path: apps/v0/tests/smoke/
           retention-days: 7
           
       - name: Comment PR with results

@@ -1,0 +1,50 @@
+{
+  "name": "@yuihub/mcp-server",
+  "version": "1.0.0-beta.5",
+  "description": "YuiHub MCP Server - Protocol Adapter for Semantic Memory",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vemikrs/yuihub.git",
+    "directory": "apps/v1/mcp-server"
+  },
+  "keywords": [
+    "yuihub",
+    "mcp",
+    "semantic-memory",
+    "ai",
+    "agent"
+  ],
+  "bin": {
+    "yuihub-mcp": "./dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "dev:stdio": "tsx src/index.ts",
+    "dev:sse": "tsx src/sse-server.ts",
+    "start": "node dist/index.js",
+    "start:sse": "node dist/sse-server.js",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@yuihub/core": "workspace:*",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  }
+}
