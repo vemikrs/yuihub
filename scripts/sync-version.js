@@ -2,6 +2,7 @@
 /**
  * sync-version.js
  * Syncs version from /VERSION file to all package.json files
+ * Also updates internal @yuihub/* dependency versions
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -29,6 +30,9 @@ const packages = [
   'apps/vscode-client/package.json',
 ];
 
+// Internal @yuihub dependencies to sync
+const internalDeps = ['@yuihub/core'];
+
 for (const pkgPath of packages) {
   const fullPath = join(ROOT, pkgPath);
   if (!existsSync(fullPath)) {
@@ -37,14 +41,31 @@ for (const pkgPath of packages) {
   }
   
   const pkg = JSON.parse(readFileSync(fullPath, 'utf-8'));
-  const oldVersion = pkg.version;
+  const changes = [];
   
-  if (oldVersion === version) {
-    console.log(`  ✓ ${pkgPath} (already ${version})`);
-  } else {
+  // Sync package version
+  if (pkg.version !== version) {
+    changes.push(`version: ${pkg.version} → ${version}`);
     pkg.version = version;
+  }
+  
+  // Sync internal dependencies (skip workspace:* references for local dev)
+  for (const dep of internalDeps) {
+    if (pkg.dependencies?.[dep] && !pkg.dependencies[dep].startsWith('workspace:')) {
+      const oldDep = pkg.dependencies[dep];
+      const newDep = `^${version}`;
+      if (oldDep !== newDep) {
+        changes.push(`${dep}: ${oldDep} → ${newDep}`);
+        pkg.dependencies[dep] = newDep;
+      }
+    }
+  }
+  
+  if (changes.length > 0) {
     writeFileSync(fullPath, JSON.stringify(pkg, null, 2) + '\n');
-    console.log(`  ✅ ${pkgPath}: ${oldVersion} → ${version}`);
+    console.log(`  ✅ ${pkgPath}: ${changes.join(', ')}`);
+  } else {
+    console.log(`  ✓ ${pkgPath} (already synced)`);
   }
 }
 

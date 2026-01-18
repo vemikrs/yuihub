@@ -1,17 +1,37 @@
 {
   "name": "@yuihub/core",
-  "version": "1.0.0-beta.1",
-  "private": true,
+  "version": "1.0.0-beta.3",
+  "description": "YuiHub Core - Semantic Memory Types and Utilities",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vemikrs/yuihub.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "yuihub",
+    "semantic-memory",
+    "ai",
+    "agent",
+    "types"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "npx tsc -b",
     "dev": "npx tsc -b -w",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
