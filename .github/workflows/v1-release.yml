@@ -77,12 +77,15 @@ jobs:
       - name: Sync package.json versions
         run: pnpm sync:version
 
-      - name: Commit & Push
+      - name: Commit & Push to main
         run: |
           git add VERSION package.json packages/core/package.json apps/v1/backend/package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
           git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
           git fetch origin main && git rebase origin/main
           git push origin main
+
+      - name: Create & Push Tag
+        run: |
           git tag ${{ steps.version.outputs.tag }}
           git push origin ${{ steps.version.outputs.tag }}
 
