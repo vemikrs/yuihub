@@ -1,8 +1,31 @@
 {
-  "name": "@yuihub/v1-backend",
+  "name": "@yuihub/server",
   "version": "1.0.0-beta.4",
-  "private": true,
+  "description": "YuiHub Server - Semantic Memory API for Agentic AI",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vemikrs/yuihub.git",
+    "directory": "apps/v1/backend"
+  },
+  "keywords": [
+    "yuihub",
+    "semantic-memory",
+    "ai",
+    "agent",
+    "api-server"
+  ],
+  "bin": {
+    "yuihub-server": "./dist/server.js",
+    "yuihub": "./dist/server.js"
+  },
+  "exports": {
+    ".": "./dist/server.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "npx tsc -b",
     "dev": "npx tsx watch src/server.ts",
@@ -10,7 +33,8 @@
     "setup": "npx tsx src/cli/setup.ts",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "vitest run",
-    "test:e2e": "vitest run tests/e2e"
+    "test:e2e": "vitest run tests/e2e",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@fastify/bearer-auth": "^10.1.2",

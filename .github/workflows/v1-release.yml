@@ -107,6 +107,16 @@ jobs:
             pnpm publish --access public --no-git-checks --provenance
           fi
 
+      - name: Publish @yuihub/server to npm
+        run: |
+          cd apps/v1/backend
+          VERSION="${{ steps.version.outputs.version }}"
+          if npm view @yuihub/server@$VERSION 2>/dev/null; then
+            echo "Already published"
+          else
+            pnpm publish --access public --no-git-checks --provenance
+          fi
+
       - name: Publish VSCode to Marketplace
         run: |
           cd apps/vscode-client

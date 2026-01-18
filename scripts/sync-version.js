@@ -27,7 +27,7 @@ console.log(`📦 Syncing version: ${version}`);
 const packages = [
   'package.json',
   'packages/core/package.json',
-  'apps/v1/backend/package.json',
+  'apps/v1/backend/package.json',  // @yuihub/server
   'apps/v1/mcp-server/package.json',
   'apps/vscode-client/package.json',
 ];
