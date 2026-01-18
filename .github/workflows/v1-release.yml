@@ -1,6 +1,7 @@
 name: V1 Release
 
 on:
+  workflow_dispatch:  # Allow manual trigger
   push:
     branches: [main]
     paths:
