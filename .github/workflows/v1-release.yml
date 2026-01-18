@@ -98,7 +98,14 @@ jobs:
         run: pnpm build:all
 
       - name: Package VSCode Extension
-        run: pnpm vscode:package
+        run: |
+          cd apps/vscode-client
+          mkdir -p packages
+          if [ "${{ steps.version.outputs.prerelease }}" = "true" ]; then
+            npx @vscode/vsce package --no-dependencies --allow-missing-repository -o packages/ --pre-release
+          else
+            npx @vscode/vsce package --no-dependencies --allow-missing-repository -o packages/
+          fi
 
       # npm Trusted Publishing (OIDC) - no NPM_TOKEN required
       # Requires configuration on npmjs.com: Package Settings → Trusted Publisher → GitHub Actions
