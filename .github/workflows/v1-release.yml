@@ -1,13 +1,13 @@
 name: V1 Release
 
 on:
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch: # Allow manual trigger
   push:
     branches: [main]
     paths:
-      - 'apps/v1/**'
-      - 'apps/vscode-client/**'
-      - 'packages/core/**'
+      - "apps/v1/**"
+      - "apps/vscode-client/**"
+      - "packages/core/**"
 
 permissions:
   contents: write
@@ -25,11 +25,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "22"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
 
       - run: pnpm install --frozen-lockfile
+
+      # Rebuild native modules (sharp, tree-sitter) for CI environment
+      - name: Rebuild native modules
+        run: pnpm rebuild
 
       # Ensure npm CLI is latest for Trusted Publishing support
       - name: Update npm CLI
@@ -66,7 +70,7 @@ jobs:
           echo "$VERSION" > VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
-          
+
           # Check if prerelease (for VSCode Marketplace)
           if [[ $VERSION =~ -(alpha|beta|rc)\. ]]; then
             echo "prerelease=true" >> $GITHUB_OUTPUT
