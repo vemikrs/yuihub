@@ -1,13 +1,8 @@
-import Parser from 'tree-sitter';
-import Javascript from 'tree-sitter-javascript';
-// TypeScript definitions need checking, often generic 'tree-sitter-typescript' package 
-// exports both typescript and tsx.
-// For now, assuming standard CommonJS interoperability via default import or requires usually works in Node.
+import { Language, Parser, Query } from 'web-tree-sitter';
 import { createRequire } from 'module';
+import { dirname, join } from 'path';
 
 const require = createRequire(import.meta.url);
-const Typescript = require('tree-sitter-typescript').typescript;
-const TSX = require('tree-sitter-typescript').tsx;
 
 export interface Chunk {
   text: string;
@@ -20,33 +15,92 @@ export interface Chunk {
   };
 }
 
-export class SemanticChunker {
-  private parser: Parser;
+// Lazy-loaded language instances
+let jsLang: Language | null = null;
+let tsLang: Language | null = null;
+let parserInitialized = false;
 
-  constructor() {
-    this.parser = new Parser();
+/**
+ * Get the path to WASM files from tree-sitter-wasms package
+ */
+function getWasmPath(filename: string): string {
+  // Resolve from tree-sitter-wasms package
+  const wasmPackagePath = require.resolve('tree-sitter-wasms/package.json');
+  return join(dirname(wasmPackagePath), 'out', filename);
+}
+
+/**
+ * Initialize web-tree-sitter (must be called before using)
+ */
+async function ensureParserInitialized(): Promise<void> {
+  if (parserInitialized) return;
+  await Parser.init();
+  parserInitialized = true;
+}
+
+/**
+ * Load a language WASM file
+ */
+async function loadLanguage(lang: 'javascript' | 'typescript' | 'tsx'): Promise<Language> {
+  await ensureParserInitialized();
+  
+  switch (lang) {
+    case 'javascript':
+      if (!jsLang) {
+        jsLang = await Language.load(getWasmPath('tree-sitter-javascript.wasm'));
+      }
+      return jsLang;
+    case 'typescript':
+    case 'tsx':
+      // tree-sitter-typescript.wasm handles both TypeScript and TSX
+      if (!tsLang) {
+        tsLang = await Language.load(getWasmPath('tree-sitter-typescript.wasm'));
+      }
+      return tsLang;
+    default:
+      throw new Error(`Unsupported language: ${lang}`);
+  }
+}
+
+export class SemanticChunker {
+  private parser: Parser | null = null;
+
+  /**
+   * Ensure parser is initialized
+   */
+  private async ensureParser(): Promise<Parser> {
+    if (!this.parser) {
+      await ensureParserInitialized();
+      this.parser = new Parser();
+    }
+    return this.parser;
   }
 
   /**
    * Parse code and extract semantic chunks (classes, functions, methods)
    */
   async chunk(code: string, lang: 'javascript' | 'typescript' | 'tsx'): Promise<Chunk[]> {
-    switch (lang) {
-      // Type assertion needed due to tree-sitter and tree-sitter-* type definition mismatch
-      case 'javascript': this.parser.setLanguage(Javascript as any); break;
-      case 'typescript': this.parser.setLanguage(Typescript as any); break;
-      case 'tsx': this.parser.setLanguage(TSX as any); break;
-      default: throw new Error(`Unsupported language: ${lang}`);
-    }
+    const parser = await this.ensureParser();
+    const language = await loadLanguage(lang);
+    parser.setLanguage(language);
 
-    const tree = this.parser.parse(code);
+    const tree = parser.parse(code);
     const chunks: Chunk[] = [];
+
+    // Handle parse failure
+    if (!tree) {
+      chunks.push({
+        text: code,
+        metadata: { type: 'file', startLine: 1, endLine: code.split('\n').length }
+      });
+      return chunks;
+    }
 
     // Simple query to find definitions
     // Note: Query syntax depends on grammar.
     // Need to handle errors if query fails.
     try {
-      const query = new Parser.Query(this.parser.getLanguage(), `
+      const query = new Query(language, `
         (function_declaration name: (identifier) @name) @def
         (class_declaration name: (identifier) @name) @def
         (method_definition name: (property_identifier) @name) @def
@@ -56,15 +110,16 @@ export class SemanticChunker {
       const matches = query.matches(tree.rootNode);
 
       for (const match of matches) {
-        const defNode = match.captures.find(c => c.name === 'def')?.node;
-        const nameNode = match.captures.find(c => c.name === 'name')?.node;
+        const defCapture = match.captures.find((c: { name: string }) => c.name === 'def');
+        const nameCapture = match.captures.find((c: { name: string }) => c.name === 'name');
 
-        if (defNode) {
+        if (defCapture) {
+          const defNode = defCapture.node;
           chunks.push({
             text: defNode.text,
             metadata: {
               type: defNode.type,
-              name: nameNode?.text || 'anonymous',
+              name: nameCapture?.node.text || 'anonymous',
               startLine: defNode.startPosition.row + 1,
               endLine: defNode.endPosition.row + 1
             }
