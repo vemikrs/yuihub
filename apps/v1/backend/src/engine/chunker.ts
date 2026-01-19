@@ -15,10 +15,10 @@ export interface Chunk {
   };
 }
 
-// Lazy-loaded language instances
-let jsLang: Language | null = null;
-let tsLang: Language | null = null;
-let parserInitialized = false;
+// Promise cache for language loading (prevents race conditions)
+let jsLangPromise: Promise<Language> | null = null;
+let tsLangPromise: Promise<Language> | null = null;
+let parserInitPromise: Promise<void> | null = null;
 
 /**
  * Get the path to WASM files from tree-sitter-wasms package
@@ -31,32 +31,34 @@ function getWasmPath(filename: string): string {
 
 /**
  * Initialize web-tree-sitter (must be called before using)
+ * Uses promise caching to prevent race conditions
  */
 async function ensureParserInitialized(): Promise<void> {
-  if (parserInitialized) return;
-  await Parser.init();
-  parserInitialized = true;
+  if (!parserInitPromise) {
+    parserInitPromise = Parser.init();
+  }
+  await parserInitPromise;
 }
 
 /**
- * Load a language WASM file
+ * Load a language WASM file with promise caching to prevent race conditions
  */
 async function loadLanguage(lang: 'javascript' | 'typescript' | 'tsx'): Promise<Language> {
   await ensureParserInitialized();
   
   switch (lang) {
     case 'javascript':
-      if (!jsLang) {
-        jsLang = await Language.load(getWasmPath('tree-sitter-javascript.wasm'));
+      if (!jsLangPromise) {
+        jsLangPromise = Language.load(getWasmPath('tree-sitter-javascript.wasm'));
       }
-      return jsLang;
+      return jsLangPromise;
     case 'typescript':
     case 'tsx':
       // tree-sitter-typescript.wasm handles both TypeScript and TSX
-      if (!tsLang) {
-        tsLang = await Language.load(getWasmPath('tree-sitter-typescript.wasm'));
+      if (!tsLangPromise) {
+        tsLangPromise = Language.load(getWasmPath('tree-sitter-typescript.wasm'));
       }
-      return tsLang;
+      return tsLangPromise;
     default:
       throw new Error(`Unsupported language: ${lang}`);
   }
@@ -96,16 +98,24 @@ export class SemanticChunker {
       return chunks;
     }
 
-    // Simple query to find definitions
-    // Note: Query syntax depends on grammar.
-    // Need to handle errors if query fails.
     try {
-      const query = new Query(language, `
-        (function_declaration name: (identifier) @name) @def
-        (class_declaration name: (identifier) @name) @def
-        (method_definition name: (property_identifier) @name) @def
-        (arrow_function) @def
-      `);
+      // Query patterns differ slightly between JavaScript and TypeScript grammars
+      // Use language-appropriate patterns to avoid TSQueryErrorStructure errors
+      const queryPattern = lang === 'javascript' 
+        ? `
+          (function_declaration name: (identifier) @name) @def
+          (class_declaration name: (identifier) @name) @def
+          (method_definition name: (property_identifier) @name) @def
+          (arrow_function) @def
+        `
+        : `
+          (function_declaration name: (identifier) @name) @def
+          (class_declaration name: (type_identifier) @name) @def
+          (method_signature name: (property_identifier) @name) @def
+          (arrow_function) @def
+        `;
+      
+      const query = new Query(language, queryPattern);
       
       const matches = query.matches(tree.rootNode);
 
@@ -128,12 +138,14 @@ export class SemanticChunker {
       }
     } catch (e) {
       console.warn('Query failed or grammar mismatch:', e);
-      // Fallback: entire file? or split by lines?
-      // For now, return whole as one chunk if parsing fails semantically.
+      // Fallback: entire file as one chunk
       chunks.push({
         text: code,
         metadata: { type: 'file', startLine: 1, endLine: code.split('\n').length }
       });
+    } finally {
+      // Free WASM memory to prevent memory leaks
+      tree.delete();
     }
     
     // Safety: If no chunks found (e.g. simple script without functions), add whole content
