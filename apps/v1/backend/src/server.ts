@@ -307,7 +307,7 @@ const CheckpointSchema = z.object({
   session_id: z.string(),
   summary: z.string(),
   intent: z.string(),
-  working_memory: z.record(z.unknown()).optional(),
+  working_memory: z.record(z.string(), z.unknown()).optional(),
   entry_ids: z.array(z.string()).optional()
 });
 type CheckpointType = z.infer<typeof CheckpointSchema>;
