@@ -1,11 +1,12 @@
 name: Smoke Tests
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [ready_for_review]
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: "22"
 
 permissions:
   contents: read
@@ -17,11 +18,11 @@ jobs:
     name: Run Smoke Tests
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,17 +30,17 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-          
+
       - name: Install all dependencies (workspace-aware)
         run: pnpm install --frozen-lockfile
-          
+
       - name: Setup environment files
         run: |
           # 統合環境設定ファイル（Ph2b: 全モジュール共通）
           cp .env.example .env
           mkdir -p apps/v0/yuihub_api/data/chatlogs
           mkdir -p apps/v0/yuihub_api/data/index
-          
+
       - name: Start API server in background (workspace context)
         run: |
           timeout 30s pnpm start:api &
@@ -49,7 +50,7 @@ jobs:
         env:
           NODE_ENV: production
           DATA_ROOT: ${{ github.workspace }}/apps/v0/yuihub_api/data
-          
+
       - name: Wait for API server to be ready
         run: |
           timeout 30s bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done' || {
@@ -57,7 +58,7 @@ jobs:
             curl -s http://localhost:3000/health || echo "Health check failed"
             exit 1
           }
-          
+
       - name: Run smoke tests
         id: smoke_tests
         run: |
@@ -65,7 +66,7 @@ jobs:
           chmod +x *.sh
           ./run-all-tests-ci.sh
         continue-on-error: false
-        
+
       - name: Stop API server
         if: always()
         run: |
@@ -73,7 +74,7 @@ jobs:
             kill $API_PID 2>/dev/null || true
           fi
           pkill -f "apps/v0/yuihub_api/src/server.js" 2>/dev/null || true
-          
+
       - name: Upload smoke test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,7 +82,7 @@ jobs:
           name: smoke-test-results
           path: apps/v0/tests/smoke/
           retention-days: 7
-          
+
       - name: Comment PR with results
         if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -90,25 +91,25 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
-            
+
             // Read smoke test results if available
             let testResults = 'Smoke tests execution completed.';
-            
+
             // Create comment body
             const body = `## 🧪 Smoke Test Results
-            
+
             The smoke tests have been executed for this PR.
-            
+
             ${testResults}
-            
+
             📊 **Test Summary:**
             - Test suite executed on: ${new Date().toISOString()}
             - Runner: GitHub Actions
             - Node.js version: ${{ env.NODE_VERSION }}
-            
+
             For detailed results, check the [workflow run](${context.payload.pull_request.html_url}/checks) and downloaded artifacts.
             `;
-            
+
             try {
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
