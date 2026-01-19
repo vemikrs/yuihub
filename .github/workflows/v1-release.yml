@@ -29,11 +29,17 @@ jobs:
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
 
-      - run: pnpm install --frozen-lockfile
+      # Install build tools for native modules (tree-sitter requires node-gyp)
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 build-essential
 
-      # Rebuild native modules (sharp, tree-sitter) for CI environment
+      - run: pnpm install
+
+      # Force rebuild native modules for this platform
       - name: Rebuild native modules
-        run: pnpm rebuild
+        run: pnpm rebuild --recursive
 
       # Ensure npm CLI is latest for Trusted Publishing support
       - name: Update npm CLI

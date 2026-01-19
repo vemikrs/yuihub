@@ -31,8 +31,17 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
+      # Install build tools for native modules (tree-sitter requires node-gyp)
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 build-essential
+
       - name: Install dependencies (root + workspaces)
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
+
+      - name: Rebuild native modules
+        run: pnpm rebuild --recursive
 
       - name: Build all packages
         run: pnpm build:all

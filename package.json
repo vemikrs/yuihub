@@ -28,5 +28,18 @@
     "@types/jest": "^30.0.0",
     "concurrently": "^9.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "sharp": "0.33.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "tree-sitter",
+      "tree-sitter-javascript",
+      "tree-sitter-typescript"
+    ],
+    "overrides": {
+      "sharp": "0.33.5"
+    }
+  }
 }
