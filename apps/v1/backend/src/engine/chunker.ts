@@ -32,9 +32,10 @@ export class SemanticChunker {
    */
   async chunk(code: string, lang: 'javascript' | 'typescript' | 'tsx'): Promise<Chunk[]> {
     switch (lang) {
-      case 'javascript': this.parser.setLanguage(Javascript); break;
-      case 'typescript': this.parser.setLanguage(Typescript); break;
-      case 'tsx': this.parser.setLanguage(TSX); break;
+      // Type assertion needed due to tree-sitter and tree-sitter-* type definition mismatch
+      case 'javascript': this.parser.setLanguage(Javascript as any); break;
+      case 'typescript': this.parser.setLanguage(Typescript as any); break;
+      case 'tsx': this.parser.setLanguage(TSX as any); break;
       default: throw new Error(`Unsupported language: ${lang}`);
     }
 
