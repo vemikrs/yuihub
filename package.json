@@ -29,7 +29,7 @@
     "concurrently": "^9.2.1"
   },
   "dependencies": {
-    "sharp": "0.33.5"
+    "sharp": "0.34.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -39,7 +39,7 @@
       "tree-sitter-typescript"
     ],
     "overrides": {
-      "sharp": "0.33.5"
+      "sharp": "0.34.5"
     }
   }
 }
