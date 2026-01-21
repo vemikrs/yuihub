@@ -85,8 +85,8 @@ importers:
         specifier: ^11.3.3
         version: 11.3.3
       inquirer:
-        specifier: ^13.2.0
-        version: 13.2.0(@types/node@25.0.9)
+        specifier: ^13.2.1
+        version: 13.2.1(@types/node@25.0.9)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -137,8 +137,8 @@ importers:
   apps/v1/mcp-server:
     dependencies:
       '@modelcontextprotocol/sdk':
-        specifier: ^1.25.2
-        version: 1.25.2(hono@4.11.4)(zod@4.3.5)
+        specifier: ^1.25.3
+        version: 1.25.3(hono@4.11.4)(zod@4.3.5)
       '@yuihub/core':
         specifier: workspace:*
         version: link:../../../packages/core
@@ -835,8 +835,8 @@ packages:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
 
-  '@modelcontextprotocol/sdk@1.25.2':
-    resolution: {integrity: sha512-LZFeo4F9M5qOhC/Uc1aQSrBHxMrvxett+9KLHt7OhcExtoiRN9DKgbZffMP/nxjutWDQpfMDfP3nkHI4X9ijww==}
+  '@modelcontextprotocol/sdk@1.25.3':
+    resolution: {integrity: sha512-vsAMBMERybvYgKbg/l4L1rhS7VXV1c0CtyJg72vwxONVX0l4ZfKVAnZEWTQixJGTzKnELjQ59e4NbdFDALRiAQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@cfworker/json-schema': ^4.1.1
@@ -1934,8 +1934,8 @@ packages:
   ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
 
-  inquirer@13.2.0:
-    resolution: {integrity: sha512-4CBv58vLrL4CnMgrscW/T5cLvfWM2nRLevttTiZTQyku7YV7/pc2IKyABBU2rDfVl4PiIB0sTRcwOac7BIYKLA==}
+  inquirer@13.2.1:
+    resolution: {integrity: sha512-kjIN+joqgbSncQJ6GfN7gV9AbDQlMA+hJ96xcwkQUwP9KN/ZIusoJ2mAfdt0LPrZJQsEyk5i/YrgJQTxSgzlPw==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^21.7.0 || ^20.12.0'}
     peerDependencies:
       '@types/node': '>=18'
@@ -3660,7 +3660,7 @@ snapshots:
 
   '@lukeed/ms@2.0.2': {}
 
-  '@modelcontextprotocol/sdk@1.25.2(hono@4.11.4)(zod@4.3.5)':
+  '@modelcontextprotocol/sdk@1.25.3(hono@4.11.4)(zod@4.3.5)':
     dependencies:
       '@hono/node-server': 1.19.9(hono@4.11.4)
       ajv: 8.17.1
@@ -4898,7 +4898,7 @@ snapshots:
   ini@1.3.8:
     optional: true
 
-  inquirer@13.2.0(@types/node@25.0.9):
+  inquirer@13.2.1(@types/node@25.0.9):
     dependencies:
       '@inquirer/ansi': 2.0.3
       '@inquirer/core': 11.1.1(@types/node@25.0.9)
