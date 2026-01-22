@@ -11,9 +11,22 @@ export class LocalEmbeddingService implements IEmbeddingService {
 
   async init(): Promise<void> {
     if (this.embedder) return;
-    // NOTE: This downloads the model on first run.
-    this.embedder = await pipeline('feature-extraction', this.modelName);
+    
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // NOTE: This downloads the model on first run.
+        this.embedder = await pipeline('feature-extraction', this.modelName);
+        return;
+      } catch (error) {
+        console.warn(`[Embedding] Init attempt ${attempt}/${maxRetries} failed:`, error);
+        if (attempt === maxRetries) throw error;
+        // Wait before retry (exponential backoff)
+        await new Promise(r => setTimeout(r, 1000 * attempt));
+      }
+    }
   }
+
 
   async embed(text: string): Promise<EmbeddingOutput> {
     if (!this.embedder) throw new Error('Embedder not initialized');

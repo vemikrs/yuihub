@@ -43,6 +43,15 @@ jobs:
       - name: Rebuild native modules
         run: pnpm rebuild --recursive
 
+      # Cache HuggingFace models to avoid flaky downloads
+      - name: Cache HuggingFace models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-models-${{ runner.os }}-xenova-bge-m3-v1
+          restore-keys: |
+            hf-models-${{ runner.os }}-
+
       - name: Build all packages
         run: pnpm build:all
 
