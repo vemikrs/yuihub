@@ -10,7 +10,7 @@
     "directory": "apps/vscode-client"
   },
   "engines": {
-    "vscode": "^1.104.0"
+    "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
@@ -276,10 +276,10 @@
     "@yuihub/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/vscode": "^1.104.0",
+    "@types/vscode": "^1.108.1",
     "@types/node": "^25.1.0",
     "esbuild": "^0.27.2",
-    "typescript": "^5.4.0",
+    "typescript": "^5.9.3",
     "@vscode/vsce": "^3.7.1"
   }
 }

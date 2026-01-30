@@ -39,9 +39,9 @@
   "dependencies": {
     "@fastify/bearer-auth": "^10.1.2",
     "@fastify/cors": "^11.2.0",
-    "@fastify/rate-limit": "^10.0.0",
-    "@fastify/sensible": "^6.0.0",
-    "@fastify/swagger": "^9.0.0",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/sensible": "^6.0.4",
+    "@fastify/swagger": "^9.6.1",
     "@fastify/swagger-ui": "^5.2.5",
     "@google-cloud/vertexai": "^1.10.0",
     "@lancedb/lancedb": "^0.23.0",
@@ -72,8 +72,8 @@
   "devDependencies": {
     "@types/inquirer": "^9.0.9",
     "@types/node": "^25.1.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
 }
