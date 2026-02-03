@@ -1,6 +1,6 @@
 {
   "name": "yuihub-workspace",
-  "version": "1.0.0-beta.26",
+  "version": "1.0.0-beta.27",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.28.2",
