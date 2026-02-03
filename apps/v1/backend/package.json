@@ -53,7 +53,7 @@
     "async-rwlock": "^1.1.1",
     "chokidar": "^5.0.0",
     "cron": "^4.4.0",
-    "fastify": "^5.7.2",
+    "fastify": "^5.7.4",
     "fastify-type-provider-zod": "^6.1.0",
     "fastq": "^1.20.1",
     "fs-extra": "^11.3.3",
