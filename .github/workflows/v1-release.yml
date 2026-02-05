@@ -111,8 +111,14 @@ jobs:
         run: |
           git add VERSION package.json packages/core/package.json apps/v1/backend/package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
           git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
-          git fetch origin main && git rebase origin/main
-          git push origin main
+          
+          MAX_RETRIES=3
+          for i in $(seq 1 $MAX_RETRIES); do
+            git fetch origin main && git rebase origin/main && git push origin main && exit 0
+            echo "Push failed, retry $i/$MAX_RETRIES..."
+            sleep 5
+          done
+          echo "All retries exhausted" && exit 1
 
       - name: Create & Push Tag
         run: |
