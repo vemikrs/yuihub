@@ -169,8 +169,8 @@ importers:
         specifier: ^25.2.0
         version: 25.2.0
       '@types/vscode':
-        specifier: ^1.109.0
-        version: 1.109.0
+        specifier: 1.107.0
+        version: 1.107.0
       '@vscode/vsce':
         specifier: ^3.7.1
         version: 3.7.1
@@ -1178,8 +1178,8 @@ packages:
   '@types/through@0.0.33':
     resolution: {integrity: sha512-HsJ+z3QuETzP3cswwtzt2vEIiHBk/dCcHGhbmG5X3ecnwFD/lPrMpliGXxSCg03L9AhrdwA4Oz/qfspkDW+xGQ==}
 
-  '@types/vscode@1.109.0':
-    resolution: {integrity: sha512-0Pf95rnwEIwDbmXGC08r0B4TQhAbsHQ5UyTIgVgoieDe4cOnf92usuR5dEczb6bTKEp7ziZH4TV1TRGPPCExtw==}
+  '@types/vscode@1.107.0':
+    resolution: {integrity: sha512-XS8YE1jlyTIowP64+HoN30OlC1H9xqSlq1eoLZUgFEC8oUTO6euYZxti1xRiLSfZocs4qytTzR6xCBYtioQTCg==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -4005,7 +4005,7 @@ snapshots:
     dependencies:
       '@types/node': 25.2.0
 
-  '@types/vscode@1.109.0': {}
+  '@types/vscode@1.107.0': {}
 
   '@types/yargs-parser@21.0.3': {}
 
