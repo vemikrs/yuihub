@@ -1,6 +1,6 @@
 {
   "name": "@yuihub/mcp-server",
-  "version": "1.0.0-beta.31",
+  "version": "1.0.0-beta.32",
   "description": "YuiHub MCP Server - Protocol Adapter for Semantic Memory",
   "type": "module",
   "license": "MIT",
