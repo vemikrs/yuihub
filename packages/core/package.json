@@ -1,6 +1,6 @@
 {
   "name": "@yuihub/core",
-  "version": "1.0.0-beta.32",
+  "version": "1.0.0-beta.33",
   "description": "YuiHub Core - Semantic Memory Types and Utilities",
   "type": "module",
   "license": "MIT",
