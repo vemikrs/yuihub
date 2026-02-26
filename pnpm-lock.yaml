@@ -112,8 +112,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       web-tree-sitter:
-        specifier: ^0.26.5
-        version: 0.26.5
+        specifier: ^0.26.6
+        version: 0.26.6
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -140,8 +140,8 @@ importers:
   apps/v1/mcp-server:
     dependencies:
       '@modelcontextprotocol/sdk':
-        specifier: ^1.27.0
-        version: 1.27.0(zod@4.3.6)
+        specifier: ^1.27.1
+        version: 1.27.1(zod@4.3.6)
       '@yuihub/core':
         specifier: workspace:*
         version: link:../../../packages/core
@@ -1014,8 +1014,8 @@ packages:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
 
-  '@modelcontextprotocol/sdk@1.27.0':
-    resolution: {integrity: sha512-qOdO524oPMkUsOJTrsH9vz/HN3B5pKyW+9zIW51A9kDMVe7ON70drz1ouoyoyOcfzc+oxhkQ6jWmbyKnlWmYqA==}
+  '@modelcontextprotocol/sdk@1.27.1':
+    resolution: {integrity: sha512-sr6GbP+4edBwFndLbM60gf07z0FQ79gaExpnsjMGePXqFcSSb7t6iscpjk9DhFhwd+mTEQrzNafGP8/iGGFYaA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@cfworker/json-schema': ^4.1.1
@@ -3188,8 +3188,8 @@ packages:
       jsdom:
         optional: true
 
-  web-tree-sitter@0.26.5:
-    resolution: {integrity: sha512-u9sl+q21VSKX2T8dhpQw8bMGGqNfwaIyuoYE3kdOQGVDrOqrmcS9GmaQoCS602iaFnuokn3WCHW374c7GAnuaQ==}
+  web-tree-sitter@0.26.6:
+    resolution: {integrity: sha512-fSPR7VBW/fZQdUSp/bXTDLT+i/9dwtbnqgEBMzowrM4U3DzeCwDbY3MKo0584uQxID4m/1xpLflrlT/rLIRPew==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -3939,7 +3939,7 @@ snapshots:
 
   '@lukeed/ms@2.0.2': {}
 
-  '@modelcontextprotocol/sdk@1.27.0(zod@4.3.6)':
+  '@modelcontextprotocol/sdk@1.27.1(zod@4.3.6)':
     dependencies:
       '@hono/node-server': 1.19.9(hono@4.12.2)
       ajv: 8.18.0
@@ -6302,7 +6302,7 @@ snapshots:
       - tsx
       - yaml
 
-  web-tree-sitter@0.26.5: {}
+  web-tree-sitter@0.26.6: {}
 
   webidl-conversions@3.0.1: {}
 
