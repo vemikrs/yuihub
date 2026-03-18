@@ -29,7 +29,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
 
       # Install build tools for native modules (tree-sitter requires node-gyp)
       - name: Install build tools
