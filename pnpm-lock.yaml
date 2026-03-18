@@ -49,8 +49,8 @@ importers:
         specifier: ^1.10.0
         version: 1.10.0
       '@lancedb/lancedb':
-        specifier: ^0.26.2
-        version: 0.26.2(apache-arrow@18.1.0)
+        specifier: ^0.27.0
+        version: 0.27.0(apache-arrow@18.1.0)
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -956,54 +956,54 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lancedb/lancedb-darwin-arm64@0.26.2':
-    resolution: {integrity: sha512-LAZ/v261eTlv44KoEm+AdqGnohS9IbVVVJkH9+8JTqwhe/k4j4Af8X9cD18tsaJAAtrGxxOCyIJ3wZTiBqrkCw==}
+  '@lancedb/lancedb-darwin-arm64@0.27.0':
+    resolution: {integrity: sha512-fZ4Yn+g1HRbSgrMp9ihWU4ufT0lv197IZDQUAcYFBa8tf8NRknDxRMrtcsa8d+2msdbcDDehd8t6/wsL4Aknyg==}
     engines: {node: '>= 18'}
     cpu: [arm64]
     os: [darwin]
 
-  '@lancedb/lancedb-linux-arm64-gnu@0.26.2':
-    resolution: {integrity: sha512-guHKm+zvuQB22dgyn6/sYZJvD6IL9lC24cl6ZuzVX/jYgag/gNLHT86HongrcBjgdjI6+YIGmdfD6b/iAKxn3Q==}
+  '@lancedb/lancedb-linux-arm64-gnu@0.27.0':
+    resolution: {integrity: sha512-sKfvndTBWA+CPUSuhdUP152nKc1bMFYP5pHiSW0kUiuejPFrN2zjKXN8ZWpnsY5njN87duLKWqUZ6kjA4rZ/8A==}
     engines: {node: '>= 18'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@lancedb/lancedb-linux-arm64-musl@0.26.2':
-    resolution: {integrity: sha512-pR6Hs/0iphItrJYYLf/yrqCC+scPcHpCGl6rHqcU2GHxo5RFpzlMzqW1DiXScGiBRuCcD9HIMec+kBsOgXv4GQ==}
+  '@lancedb/lancedb-linux-arm64-musl@0.27.0':
+    resolution: {integrity: sha512-GsVLXM3xVJeuL7G/1X8OsvOozOyZ5/2VC6DSSk5EaAjZFy7iKosah0DmbmSxTOx3Fu9u9RA20i/rA/cco9MVvw==}
     engines: {node: '>= 18'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@lancedb/lancedb-linux-x64-gnu@0.26.2':
-    resolution: {integrity: sha512-u4UUSPwd2YecgGqWjh9W0MHKgsVwB2Ch2ROpF8AY+IA7kpGsbB18R1/t7v2B0q7pahRy20dgsaku5LH1zuzMRQ==}
+  '@lancedb/lancedb-linux-x64-gnu@0.27.0':
+    resolution: {integrity: sha512-RRcPd3f6qPmwJc7ocD5lV/twjBnTbv1FnUBt323jCOzy9/DptBFGuBn/uMzmCZi7xYb+5JW2IqwNjcqsYXXwWA==}
     engines: {node: '>= 18'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@lancedb/lancedb-linux-x64-musl@0.26.2':
-    resolution: {integrity: sha512-XIS4qkVfGlzmsUPqAG2iKt8ykuz28GfemGC0ijXwu04kC1pYiCFzTpB3UIZjm5oM7OTync1aQ3mGTj1oCciSPA==}
+  '@lancedb/lancedb-linux-x64-musl@0.27.0':
+    resolution: {integrity: sha512-zd16xBGWwWoTLgitbcnnpycP121tJCo8kBH6WFuIGMQkg4leWUlsNT11yVQJ0dtjX0Wp+W9jvehI+F4qVArV8A==}
     engines: {node: '>= 18'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@lancedb/lancedb-win32-arm64-msvc@0.26.2':
-    resolution: {integrity: sha512-//tZDPitm2PxNvalHP+m+Pf6VvFAeQgcht1+HJnutjH4gp6xYW6ynQlWWFDBmz9WRkUT+mXu2O4FUIhbdNaJSQ==}
+  '@lancedb/lancedb-win32-arm64-msvc@0.27.0':
+    resolution: {integrity: sha512-LSDwrajXQzRtWa/pLlGMISFd05E1KuCKyURQHFpoqNRey2N8bgo3a6FuVRRl+Hy9+s9aLN7hAkKkL8ByyDM9Uw==}
     engines: {node: '>= 18'}
     cpu: [arm64]
     os: [win32]
 
-  '@lancedb/lancedb-win32-x64-msvc@0.26.2':
-    resolution: {integrity: sha512-GH3pfyzicgPGTb84xMXgujlWDaAnBTmUyjooYiCE2tC24BaehX4hgFhXivamzAEsF5U2eVsA/J60Ppif+skAbA==}
+  '@lancedb/lancedb-win32-x64-msvc@0.27.0':
+    resolution: {integrity: sha512-48VAgiNHWUrcBTfSRhCoQd94L8DPsnhHqNauwfuaC7+yb57U5SujYtP5ySfk4mXa1Jf2JJqeZPTy/1BmCYcD8A==}
     engines: {node: '>= 18'}
     cpu: [x64]
     os: [win32]
 
-  '@lancedb/lancedb@0.26.2':
-    resolution: {integrity: sha512-umk4WMCTwJntLquwvUbpqE+TXREolcQVL9MHcxr8EhRjsha88+ATJ4QuS/hpyiE1CG3R/XcgrMgJAGkziPC/gA==}
+  '@lancedb/lancedb@0.27.0':
+    resolution: {integrity: sha512-Av+XZXjfQmdISXkoi9o5B4k0VvtuAf1PPCjM6OgaaMor0BtZAt8GyfNYiuIXJQgZgp0GtIwF0jSmO6mjcI/7bA==}
     engines: {node: '>= 18'}
     cpu: [x64, arm64]
     os: [darwin, linux, win32]
@@ -3909,39 +3909,39 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lancedb/lancedb-darwin-arm64@0.26.2':
+  '@lancedb/lancedb-darwin-arm64@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-linux-arm64-gnu@0.26.2':
+  '@lancedb/lancedb-linux-arm64-gnu@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-linux-arm64-musl@0.26.2':
+  '@lancedb/lancedb-linux-arm64-musl@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-linux-x64-gnu@0.26.2':
+  '@lancedb/lancedb-linux-x64-gnu@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-linux-x64-musl@0.26.2':
+  '@lancedb/lancedb-linux-x64-musl@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-win32-arm64-msvc@0.26.2':
+  '@lancedb/lancedb-win32-arm64-msvc@0.27.0':
     optional: true
 
-  '@lancedb/lancedb-win32-x64-msvc@0.26.2':
+  '@lancedb/lancedb-win32-x64-msvc@0.27.0':
     optional: true
 
-  '@lancedb/lancedb@0.26.2(apache-arrow@18.1.0)':
+  '@lancedb/lancedb@0.27.0(apache-arrow@18.1.0)':
     dependencies:
       apache-arrow: 18.1.0
       reflect-metadata: 0.2.2
     optionalDependencies:
-      '@lancedb/lancedb-darwin-arm64': 0.26.2
-      '@lancedb/lancedb-linux-arm64-gnu': 0.26.2
-      '@lancedb/lancedb-linux-arm64-musl': 0.26.2
-      '@lancedb/lancedb-linux-x64-gnu': 0.26.2
-      '@lancedb/lancedb-linux-x64-musl': 0.26.2
-      '@lancedb/lancedb-win32-arm64-msvc': 0.26.2
-      '@lancedb/lancedb-win32-x64-msvc': 0.26.2
+      '@lancedb/lancedb-darwin-arm64': 0.27.0
+      '@lancedb/lancedb-linux-arm64-gnu': 0.27.0
+      '@lancedb/lancedb-linux-arm64-musl': 0.27.0
+      '@lancedb/lancedb-linux-x64-gnu': 0.27.0
+      '@lancedb/lancedb-linux-x64-musl': 0.27.0
+      '@lancedb/lancedb-win32-arm64-msvc': 0.27.0
+      '@lancedb/lancedb-win32-x64-msvc': 0.27.0
 
   '@lukeed/ms@2.0.2': {}
 
