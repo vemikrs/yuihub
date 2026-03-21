@@ -58,3 +58,12 @@ jobs:
       - name: Run Vitest tests
         run: pnpm test
         working-directory: apps/v1/backend
+
+      # Verify VSCode extension packaging to catch dependency compatibility issues
+      # (e.g. pnpm overrides forcing major-version bumps that break @vscode/vsce tools)
+      - name: Verify VSCode extension packaging
+        run: |
+          cd apps/vscode-client
+          mkdir -p /tmp/vsce-package-check
+          npx @vscode/vsce package --no-dependencies --allow-missing-repository -o /tmp/vsce-package-check/ --pre-release
+          echo "VSCode extension packaged successfully"
