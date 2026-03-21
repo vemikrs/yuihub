@@ -48,7 +48,8 @@
       "@hono/node-server": "1.19.11",
       "express-rate-limit": "8.3.1",
       "underscore": "1.13.8",
-      "minimatch": "10.2.4"
+      "minimatch": "10.2.4",
+      "@vscode/vsce>minimatch": "3.1.2"
     }
   }
 }
