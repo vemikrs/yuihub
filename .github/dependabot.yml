@@ -7,8 +7,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "09:00"
+      interval: "weekly"
       timezone: "Asia/Tokyo"
     open-pull-requests-limit: 10
     # Group minor and patch updates together
@@ -38,8 +37,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "09:00"
+      interval: "weekly"
       timezone: "Asia/Tokyo"
     open-pull-requests-limit: 5
     groups:
