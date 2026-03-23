@@ -15,7 +15,7 @@ overrides:
   express-rate-limit: 8.3.1
   underscore: 1.13.8
   minimatch: 10.2.4
-  '@vscode/vsce>minimatch': 3.1.2
+  '@vscode/vsce>minimatch': 3.1.5
 
 importers:
 
@@ -2460,8 +2460,8 @@ packages:
     resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
     engines: {node: 18 || 20 || >=22}
 
-  minimatch@3.1.2:
-    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+  minimatch@3.1.5:
+    resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -4478,7 +4478,7 @@ snapshots:
       leven: 3.1.0
       markdown-it: 14.1.1
       mime: 1.6.0
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       parse-semver: 1.1.1
       read: 1.0.7
       secretlint: 10.2.2
@@ -5639,7 +5639,7 @@ snapshots:
     dependencies:
       brace-expansion: 5.0.4
 
-  minimatch@3.1.2:
+  minimatch@3.1.5:
     dependencies:
       brace-expansion: 1.1.12
 
