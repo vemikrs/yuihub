@@ -3,9 +3,9 @@
   "version": "1.0.0-beta.51",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.28.2",
+  "packageManager": "pnpm@10.32.1",
   "engines": {
-    "node": "^22.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "sync:version": "node scripts/sync-version.js",
@@ -38,18 +38,25 @@
       "tree-sitter-javascript",
       "tree-sitter-typescript"
     ],
+    "peerDependencyRules": {
+      "ignoreMissing": [],
+      "allowedVersions": {
+        "tree-sitter-typescript>tree-sitter": "*",
+        "tree-sitter-javascript>tree-sitter": "*"
+      }
+    },
     "overrides": {
       "sharp": "0.34.5",
       "@isaacs/brace-expansion": "5.0.1",
       "markdown-it": "14.1.1",
-      "qs": "6.14.2",
+      "qs": "6.15.0",
       "undici": "7.24.5",
       "hono": "4.12.8",
       "@hono/node-server": "1.19.11",
       "express-rate-limit": "8.3.1",
       "underscore": "1.13.8",
       "minimatch": "10.2.4",
-      "@vscode/vsce>minimatch": "3.1.2"
+      "@vscode/vsce>minimatch": "3.1.5"
     }
   }
 }
