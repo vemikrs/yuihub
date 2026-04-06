@@ -7,7 +7,9 @@ on:
   # Note: push to main is handled by V1 Release workflow (tests run before release)
 
 env:
-  NODE_VERSION: "22"
+  # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
+  # runner image 修正後は "22" に戻してよい
+  NODE_VERSION: "22.22.1"
 
 permissions:
   contents: read

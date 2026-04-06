@@ -31,7 +31,9 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
+          # runner image 修正後は "22" に戻してよい
+          node-version: "22.22.1"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
 
@@ -56,9 +58,10 @@ jobs:
           restore-keys: |
             hf-models-${{ runner.os }}-
 
-      # Ensure npm CLI is latest for Trusted Publishing support
+      # npm 11.11.0+ で promise-retry バグ修正済み & OIDC provenance サポート
+      # Node 22.22.2 同梱 npm 10.9.7 はバグがあるため明示的にバージョン指定
       - name: Update npm CLI
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.11.0
 
       - name: Configure Git
         run: |
