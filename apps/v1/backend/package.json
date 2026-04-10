@@ -1,6 +1,6 @@
 {
   "name": "@yuihub/server",
-  "version": "1.0.0-beta.57",
+  "version": "1.0.0-beta.58",
   "description": "YuiHub Server - Semantic Memory API for Agentic AI",
   "type": "module",
   "license": "MIT",
