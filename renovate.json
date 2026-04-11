@@ -23,6 +23,11 @@
     {
       "matchPackageNames": ["@types/vscode"],
       "groupName": "vscode engine and types"
+    },
+    {
+      "matchPackageNames": ["@vscode/vsce>minimatch"],
+      "enabled": false,
+      "description": "@vscode/vsce is not compatible with minimatch v10+ (default export is no longer a function). Keep this override pinned at 3.x manually."
     }
   ]
 }
