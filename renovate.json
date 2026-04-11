@@ -3,5 +3,22 @@
   "extends": [
     "config:recommended"
   ],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)apps/vscode-client/package\\.json$"],
+      "matchStrings": [
+        "\"engines\":\\s*\\{\\s*\"vscode\":\\s*\"\\^(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "@types/vscode",
+      "datasourceTemplate": "npm"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["@types/vscode"],
+      "groupName": "vscode engine and types"
+    }
+  ]
 }
