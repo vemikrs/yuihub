@@ -27,16 +27,18 @@ jobs:
           fetch-depth: 0
           ref: main  # Always checkout latest main, not trigger SHA
 
-      # setup-node must run BEFORE pnpm/action-setup so that pnpm uses the
-      # pinned Node.js binary. If pnpm is set up first it latches onto whatever
-      # node is on PATH at that moment (system default on ubuntu-latest).
+      # pnpm/action-setup must run BEFORE setup-node so that setup-node can
+      # find pnpm to configure the pnpm store cache (cache: "pnpm").
+      # tree-sitter's C++20 requirement is handled by the pnpm patch in
+      # patches/tree-sitter@0.25.0.patch, so node version latching is no
+      # longer an issue.
+      - uses: pnpm/action-setup@v5
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24.14.1"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
-
-      - uses: pnpm/action-setup@v5
 
       # Install build tools for native modules (tree-sitter requires node-gyp)
       - name: Install build tools
