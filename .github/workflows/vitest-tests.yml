@@ -7,9 +7,8 @@ on:
   # Note: push to main is handled by V1 Release workflow (tests run before release)
 
 env:
-  # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
-  # runner image 修正後は "22" に戻してよい
-  NODE_VERSION: "22.22.1"
+  # Keep in sync with node-version in v1-release.yml
+  NODE_VERSION: "24.14.1"
 
 permissions:
   contents: read
@@ -25,6 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # setup-node must run BEFORE pnpm/action-setup (mirrors v1-release.yml order)
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:

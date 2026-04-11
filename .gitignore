@@ -156,6 +156,10 @@ public
 .yarn/install-state.gz
 .pnp.*
 
+# Claude Code local files
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
 # YuiHub specific files
 # Cloudflare tunnel dynamic files (regenerated each run)
 .cloudflare/*.yml

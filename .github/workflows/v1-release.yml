@@ -27,15 +27,16 @@ jobs:
           fetch-depth: 0
           ref: main  # Always checkout latest main, not trigger SHA
 
-      - uses: pnpm/action-setup@v5
-
+      # setup-node must run BEFORE pnpm/action-setup so that pnpm uses the
+      # pinned Node.js binary. If pnpm is set up first it latches onto whatever
+      # node is on PATH at that moment (system default on ubuntu-latest).
       - uses: actions/setup-node@v6
         with:
-          # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
-          # runner image 修正後は "22" に戻してよい
           node-version: "24.14.1"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
+
+      - uses: pnpm/action-setup@v5
 
       # Install build tools for native modules (tree-sitter requires node-gyp)
       - name: Install build tools
