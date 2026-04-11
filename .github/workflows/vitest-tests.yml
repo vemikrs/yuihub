@@ -38,11 +38,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3 build-essential
-          # Node 24 headers require C++20. tree-sitter@0.25.0's binding.gyp omits
-          # cflags_cc, so we inject -std=c++20 via ~/.gyp/common.gypi — the one
-          # location node-gyp always reads regardless of version or bundling.
-          mkdir -p ~/.gyp
-          echo '{"target_defaults":{"cflags_cc":["-std=c++20"]}}' > ~/.gyp/common.gypi
 
       - name: Install dependencies (root + workspaces)
         run: pnpm install
