@@ -7,9 +7,8 @@ on:
   # Note: push to main is handled by V1 Release workflow (tests run before release)
 
 env:
-  # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
-  # runner image 修正後は "22" に戻してよい
-  NODE_VERSION: "22.22.1"
+  # Keep in sync with node-version in v1-release.yml
+  NODE_VERSION: "24.14.1"
 
 permissions:
   contents: read
@@ -25,6 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # setup-node must run BEFORE pnpm/action-setup (mirrors v1-release.yml order)
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -39,11 +39,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3 build-essential
 
+      # Node 24 headers require C++20; tree-sitter@0.25.0 doesn't set it in binding.gyp
       - name: Install dependencies (root + workspaces)
         run: pnpm install
+        env:
+          npm_config_CXXFLAGS: "-std=c++20"
 
       - name: Rebuild native modules
         run: pnpm rebuild --recursive
+        env:
+          npm_config_CXXFLAGS: "-std=c++20"
 
       # Cache HuggingFace models to avoid flaky downloads
       - name: Cache HuggingFace models

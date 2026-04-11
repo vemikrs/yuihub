@@ -27,15 +27,16 @@ jobs:
           fetch-depth: 0
           ref: main  # Always checkout latest main, not trigger SHA
 
-      - uses: pnpm/action-setup@v5
-
+      # setup-node must run BEFORE pnpm/action-setup so that pnpm uses the
+      # pinned Node.js binary. If pnpm is set up first it latches onto whatever
+      # node is on PATH at that moment (system default on ubuntu-latest).
       - uses: actions/setup-node@v6
         with:
-          # Node 22.22.2 同梱の npm 10.9.7 に promise-retry 欠落バグあり (nodejs/node#62425)
-          # runner image 修正後は "22" に戻してよい
           node-version: "24.14.1"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
+
+      - uses: pnpm/action-setup@v5
 
       # Install build tools for native modules (tree-sitter requires node-gyp)
       - name: Install build tools
@@ -43,11 +44,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3 build-essential
 
+      # Node 24 headers require C++20. tree-sitter@0.25.0's binding.gyp does not
+      # set cxx_standard, so we inject it via CXXFLAGS to prevent the compile
+      # error "#error C++20 or later required." from v8config.h.
       - run: pnpm install
+        env:
+          npm_config_CXXFLAGS: "-std=c++20"
 
       # Force rebuild native modules for this platform
       - name: Rebuild native modules
         run: pnpm rebuild --recursive
+        env:
+          npm_config_CXXFLAGS: "-std=c++20"
 
       # Cache HuggingFace models to avoid flaky downloads
       - name: Cache HuggingFace models
