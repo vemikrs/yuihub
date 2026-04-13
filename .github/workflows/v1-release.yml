@@ -32,7 +32,7 @@ jobs:
       # tree-sitter's C++20 requirement is handled by the pnpm patch in
       # patches/tree-sitter@0.25.0.patch, so node version latching is no
       # longer an issue.
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v6
         with:
