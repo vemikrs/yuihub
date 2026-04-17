@@ -2,3 +2,12 @@ packages:
   - "apps/v1/*"
   - "apps/vscode-client"
   - "packages/*"
+
+# Prevent pnpm from writing a `packageManagerDependencies` section into
+# pnpm-lock.yaml on every install. pnpm is installed by pnpm/action-setup
+# in CI and by developers locally via the `packageManager` field + Corepack,
+# so we don't need pnpm to self-manage its own version.
+# Note: pnpm 10 reads this setting from pnpm-workspace.yaml only, NOT from
+# .npmrc — non-auth settings migrated in v10. An earlier .npmrc attempt
+# was silently ignored. See pnpm/pnpm discussion #9037.
+managePackageManagerVersions: false
