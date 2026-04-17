@@ -56,7 +56,7 @@ jobs:
           sudo apt-get install -y python3 build-essential
           npm install -g node-gyp
 
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
 
       # Force rebuild native modules for this platform
       - name: Rebuild native modules
@@ -127,19 +127,6 @@ jobs:
         run: |
           git add VERSION package.json packages/core/package.json apps/v1/backend/package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
           git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
-
-          # Diagnostic: rebase has been failing with "You have unstaged changes".
-          # Capture tracked-but-unstaged files so we can identify which build
-          # step is writing to a tracked path. Remove once fix is in place.
-          echo "::group::git status --porcelain (post-commit)"
-          git status --porcelain
-          echo "::endgroup::"
-          echo "::group::git diff --stat (unstaged tracked changes)"
-          git diff --stat
-          echo "::endgroup::"
-          echo "::group::git diff (first 200 lines)"
-          git diff | head -200
-          echo "::endgroup::"
 
           MAX_RETRIES=3
           for i in $(seq 1 $MAX_RETRIES); do
