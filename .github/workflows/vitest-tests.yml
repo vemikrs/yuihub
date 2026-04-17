@@ -24,20 +24,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      # setup-node must run BEFORE pnpm/action-setup (mirrors v1-release.yml order)
+      # Install sequence must mirror v1-release.yml so release-time install
+      # failures surface on PR. pnpm/action-setup runs BEFORE setup-node so
+      # setup-node can configure the pnpm store cache (cache: "pnpm").
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      # Install build tools for native modules (tree-sitter requires node-gyp)
+      # Keep in sync with v1-release.yml: install node-gyp globally so
+      # tree-sitter's install script can spawn it during pnpm install.
       - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y python3 build-essential
+          npm install -g node-gyp
 
       - name: Install dependencies (root + workspaces)
         run: pnpm install
