@@ -128,16 +128,6 @@ jobs:
           git add VERSION package.json packages/core/package.json apps/v1/backend/package.json apps/v1/mcp-server/package.json apps/vscode-client/package.json
           git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]" || true
 
-          # Build/test steps can leave tracked files dirty (e.g. pnpm rewriting
-          # pnpm-lock.yaml, rebuild updating patches/). Surface what was dirty
-          # for visibility, then reset so the following rebase can proceed.
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "::warning::Unstaged changes after release commit — discarding before rebase:"
-            git status --porcelain
-            git diff --stat
-            git reset --hard HEAD
-          fi
-
           MAX_RETRIES=3
           for i in $(seq 1 $MAX_RETRIES); do
             git fetch origin main && git rebase origin/main && git push origin main && exit 0
