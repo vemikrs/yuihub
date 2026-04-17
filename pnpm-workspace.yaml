@@ -3,11 +3,40 @@ packages:
   - "apps/vscode-client"
   - "packages/*"
 
-# Prevent pnpm from writing a `packageManagerDependencies` section into
-# pnpm-lock.yaml on every install. pnpm is installed by pnpm/action-setup
-# in CI and by developers locally via the `packageManager` field + Corepack,
-# so we don't need pnpm to self-manage its own version.
-# Note: pnpm 10 reads this setting from pnpm-workspace.yaml only, NOT from
-# .npmrc — non-auth settings migrated in v10. An earlier .npmrc attempt
-# was silently ignored. See pnpm/pnpm discussion #9037.
+# pnpm 10 migrated non-auth settings out of .npmrc/package.json#pnpm into
+# pnpm-workspace.yaml. Keeping all pnpm settings in one file avoids
+# ERR_PNPM_LOCKFILE_CONFIG_MISMATCH caused by mixed source states.
+# See pnpm/pnpm discussion #9037.
+
+# Disable pnpm's auto-write of `packageManagerDependencies` into pnpm-lock.yaml.
+# pnpm is installed via pnpm/action-setup in CI and Corepack locally, so pnpm
+# does not need to self-manage its own version.
 managePackageManagerVersions: false
+
+onlyBuiltDependencies:
+  - sharp
+  - tree-sitter
+  - tree-sitter-javascript
+  - tree-sitter-typescript
+
+peerDependencyRules:
+  ignoreMissing: []
+  allowedVersions:
+    tree-sitter-typescript>tree-sitter: "*"
+    tree-sitter-javascript>tree-sitter: "*"
+
+overrides:
+  sharp: 0.34.5
+  "@isaacs/brace-expansion": 5.0.1
+  markdown-it: 14.1.1
+  qs: 6.15.1
+  undici: 8.1.0
+  hono: 4.12.14
+  "@hono/node-server": 1.19.14
+  express-rate-limit: 8.3.2
+  underscore: 1.13.8
+  minimatch: 10.2.5
+  "@vscode/vsce>minimatch": 3.1.5
+
+patchedDependencies:
+  tree-sitter@0.25.0: patches/tree-sitter@0.25.0.patch
