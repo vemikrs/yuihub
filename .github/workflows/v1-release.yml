@@ -8,6 +8,11 @@ on:
       - "apps/v1/**"
       - "apps/vscode-client/**"
       - "packages/core/**"
+      # Dependency resolution and build artifacts are also published, so
+      # workspace-wide lock/package/patch changes must trigger a release.
+      - "pnpm-lock.yaml"
+      - "package.json"
+      - "patches/**"
 
 permissions:
   contents: write
