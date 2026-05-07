@@ -11,7 +11,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)apps/vscode-client/package\\.json$"],
+      "managerFilePatterns": [
+        "/(^|/)apps/vscode-client/package\\.json$/"
+      ],
       "matchStrings": [
         "\"engines\":\\s*\\{\\s*\"vscode\":\\s*\"\\^(?<currentValue>[^\"]+)\""
       ],
