@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Install sequence must mirror v1-release.yml so release-time install
       # failures surface on PR. pnpm/action-setup runs BEFORE setup-node so
