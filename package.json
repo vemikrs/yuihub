@@ -29,7 +29,7 @@
     "concurrently": "^9.2.1"
   },
   "dependencies": {
-    "sharp": "0.34.5"
+    "sharp": "0.35.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -46,7 +46,7 @@
       }
     },
     "overrides": {
-      "sharp": "0.34.5",
+      "sharp": "0.35.3",
       "@isaacs/brace-expansion": "5.0.1",
       "markdown-it": "14.1.1",
       "qs": "6.15.2",
